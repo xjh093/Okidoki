@@ -384,6 +384,110 @@ kOkidoki_imp(autoHeight, ({
     };
 }
 
+#pragma mark - UIImageView
+
+kOkidoki_imp(image, ({
+    if ([view isKindOfClass:[UIImageView class]]) {
+        if ([image isKindOfClass:[NSString class]]) {
+            [view performSelector:@selector(setImage:) withObject:[UIImage imageNamed:image]];
+        }else if ([image isKindOfClass:[UIImage class]]){
+            [view performSelector:@selector(setImage:) withObject:image];
+        }
+    }
+}))
+
+- (Okidoki*(^)(id,id))imageForTintColor{
+    return ^id(id image, id color){
+        UIView *view = self.view;
+        
+        if ([view isKindOfClass:[UIImageView class]]) {
+            UIImageView *imageView = (UIImageView *)view;
+            imageView.tintColor = [UIColor okidokiColor:color];
+            
+            if ([image isKindOfClass:[NSString class]]) {
+                imageView.image = [[UIImage imageNamed:image]
+                                   imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+            }else if ([image isKindOfClass:[UIImage class]]){
+                imageView.image = [image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+            }
+        }
+        
+        return view.okidoki;
+    };
+}
+
+
+#pragma mark - UITextField
+
+kOkidoki_imp(bdStyle, ({
+    if ([view isKindOfClass:[UITextField class]] &&
+        [bdStyle isKindOfClass:[NSNumber class]]) {
+        [view performSelector:@selector(setBorderStyle:) withObject:bdStyle];
+    }
+}))
+
+kOkidoki_imp(pHolder, ({
+    if ([view isKindOfClass:[UITextField class]] &&
+        [pHolder isKindOfClass:[NSString class]]) {
+        [view performSelector:@selector(setPlaceholder:) withObject:pHolder];
+    }
+}))
+
+kOkidoki_imp(pHColor, ({
+    if ([view isKindOfClass:[UITextField class]]) {
+        [view setValue:[UIColor okidokiColor:pHColor] forKeyPath:@"_placeholderLabel.textColor"];
+    }
+}))
+
+kOkidoki_imp(pHFont, ({
+    if ([view isKindOfClass:[UITextField class]] &&
+        [pHFont isKindOfClass:[UIFont class]]) {
+        [self setValue:pHFont forKeyPath:@"_placeholderLabel.font"];
+    }
+}))
+
+kOkidoki_imp(cbMode, ({
+    if ([view isKindOfClass:[UITextField class]] &&
+        [cbMode isKindOfClass:[NSNumber class]]) {
+        [view performSelector:@selector(setClearButtonMode:) withObject:cbMode];
+    }
+}))
+
+kOkidoki_imp(lvMode, ({
+    if ([view isKindOfClass:[UITextField class]] &&
+        [lvMode isKindOfClass:[NSNumber class]]) {
+        [view performSelector:@selector(setLeftViewMode:) withObject:lvMode];
+    }
+}))
+
+kOkidoki_imp(rvMode, ({
+    if ([view isKindOfClass:[UITextField class]] &&
+        [rvMode isKindOfClass:[NSNumber class]]) {
+        [view performSelector:@selector(setRightViewMode:) withObject:rvMode];
+    }
+}))
+
+kOkidoki_imp(lfView, ({
+    if ([view isKindOfClass:[UITextField class]] &&
+        [lfView isKindOfClass:[UIView class]]) {
+        [view performSelector:@selector(setLeftView:) withObject:lfView];
+    }
+}))
+
+kOkidoki_imp(rtView, ({
+    if ([view isKindOfClass:[UITextField class]] &&
+        [rtView isKindOfClass:[UIView class]]) {
+        [view performSelector:@selector(setRightView:) withObject:rtView];
+    }
+}))
+
+kOkidoki_imp(secure, ({
+    if ([view isKindOfClass:[UITextField class]] &&
+        [secure isKindOfClass:[NSNumber class]]) {
+        [view performSelector:@selector(setSecureTextEntry:) withObject:secure];
+    }
+}))
+
 @end
 
 @implementation UIView (Okidoki)
