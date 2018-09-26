@@ -54,7 +54,7 @@
 
 /** NSString */
 - (Okidoki*(^)(id))text;
-/** NSFont */
+/** UIFont */
 - (Okidoki*(^)(id))font;
 /** UIColor,NSString(eg.#FFFEEE,0xFFFEEE,0XFFFEEE) */
 - (Okidoki*(^)(id))color;
@@ -94,6 +94,38 @@
 - (Okidoki*(^)(id,id,id))attributedSubstringForState;
 /** substring: NSString, value:color or font, range: NSValue, state: NSNumber */
 - (Okidoki*(^)(id,id,id,id))attributedSubstringInRangeForState;
+
+#pragma mark - UIImageView
+
+/** image: UIImage, NSString */
+- (Okidoki*(^)(id))image;
+/** image: UIImage,NSString, color: UIColor */
+- (Okidoki*(^)(id,id))imageForTintColor;
+
+
+#pragma mark - UITextField
+
+/** borderStyle, NSNumber: @1,@2,@3,@4 */
+- (Okidoki*(^)(id))bdStyle;
+/** placeholder, NSString */
+- (Okidoki*(^)(id))pHolder;
+/** placeholder color, UIColor,NSString(eg.#FFFEEE,0xFFFEEE,0XFFFEEE) */
+- (Okidoki*(^)(id))pHColor;
+/** placeholder font, UIFont */
+- (Okidoki*(^)(id))pHFont;
+/** clearButtonMode, NSNumber: @1,@2,@3,@4 */
+- (Okidoki*(^)(id))cbMode;
+/** leftViewMode, NSNumber: @1,@2,@3,@4 */
+- (Okidoki*(^)(id))lvMode;
+/** rightViewMode, NSNumber: @1,@2,@3,@4 */
+- (Okidoki*(^)(id))rvMode;
+/** leftView, UIView */
+- (Okidoki*(^)(id))lfView;
+/** rightView, UIView */
+- (Okidoki*(^)(id))rtView;
+/** secureTextEntry, BOOL: @YES, @NO */
+- (Okidoki*(^)(id))secure;
+
 
 @end
 
