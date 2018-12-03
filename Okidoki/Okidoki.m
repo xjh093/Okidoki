@@ -328,6 +328,95 @@ kOkidoki_imp(autoHeight, ({
     };
 }
 
+- (Okidoki*(^)(id))imageUpTitleDown{
+    return ^id(id offsetY){
+        UIView *view = self.view;
+        
+        if ([view isKindOfClass:[UIButton class]]) {
+            UIButton *button = (UIButton *)view;
+            CGFloat Y = [offsetY floatValue];
+            
+            [button layoutSubviews];
+            [button setImageEdgeInsets:UIEdgeInsetsMake(-button.titleLabel.intrinsicContentSize.height-Y,0,0,-button.titleLabel.intrinsicContentSize.width)];
+            [button setTitleEdgeInsets:UIEdgeInsetsMake(0,-CGRectGetWidth(button.imageView.frame),-CGRectGetHeight(button.imageView.frame)-Y,0)];
+            
+        }
+        
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(id))imageDownTitleUp{
+    return ^id(id offsetY){
+        UIView *view = self.view;
+        
+        if ([view isKindOfClass:[UIButton class]]) {
+            UIButton *button = (UIButton *)view;
+            CGFloat Y = [offsetY floatValue];
+            
+            [button layoutSubviews];
+            [button setImageEdgeInsets:UIEdgeInsetsMake(button.titleLabel.intrinsicContentSize.height+Y,0,0,-button.titleLabel.intrinsicContentSize.width)];
+            [button setTitleEdgeInsets:UIEdgeInsetsMake(-CGRectGetWidth(button.imageView.frame)-Y,-CGRectGetWidth(button.imageView.frame),0,0)];
+            
+        }
+        
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(id))imageRightTitleLeft{
+    return ^id(id offsetX){
+        UIView *view = self.view;
+        
+        if ([view isKindOfClass:[UIButton class]]) {
+            UIButton *button = (UIButton *)view;
+            CGFloat X = [offsetX floatValue];
+            
+            [button layoutSubviews];
+            [button setImageEdgeInsets:UIEdgeInsetsMake(0,0,0,-button.titleLabel.intrinsicContentSize.width*2-X)];
+            [button setTitleEdgeInsets:UIEdgeInsetsMake(0,-button.imageView.frame.size.width*2-X,0,0)];
+            
+        }
+        
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(id))imageLeftTitleRight{
+    return ^id(id offsetX){
+        UIView *view = self.view;
+        
+        if ([view isKindOfClass:[UIButton class]]) {
+            UIButton *button = (UIButton *)view;
+            CGFloat X = [offsetX floatValue];
+            
+            [button layoutSubviews];
+            [button setImageEdgeInsets:UIEdgeInsetsMake(0,0,0,X)];
+            [button setTitleEdgeInsets:UIEdgeInsetsMake(0,X,0,0)];
+            
+        }
+        
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(void))imageCenterTitleCenter{
+    return ^id(){
+        UIView *view = self.view;
+        
+        if ([view isKindOfClass:[UIButton class]]) {
+            UIButton *button = (UIButton *)view;
+            
+            [button layoutSubviews];
+            [button setImageEdgeInsets:UIEdgeInsetsMake(0,0,0,-button.titleLabel.intrinsicContentSize.width)];
+            [button setTitleEdgeInsets:UIEdgeInsetsMake(0,-button.imageView.frame.size.width,0,0)];
+            
+        }
+        
+        return view.okidoki;
+    };
+}
+
 - (Okidoki*(^)(id,id,id))attributedSubstringForState{
     return ^id(id substring, id value, id state){
         UIView *view = self.view;
