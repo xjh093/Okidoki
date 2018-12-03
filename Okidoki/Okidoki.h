@@ -90,6 +90,16 @@
 - (Okidoki*(^)(id,id))bgImageForState;
 /** lineSpace: NSNumber, state: NSNumber */
 - (Okidoki*(^)(id,id))lineSpaceForState;
+/** space: NSNumber */
+- (Okidoki*(^)(id))imageUpTitleDown;
+/** space: NSNumber */
+- (Okidoki*(^)(id))imageDownTitleUp;
+/** space: NSNumber */
+- (Okidoki*(^)(id))imageRightTitleLeft;
+/** space: NSNumber */
+- (Okidoki*(^)(id))imageLeftTitleRight;
+/** all center */
+- (Okidoki*(^)(void))imageCenterTitleCenter;
 /** substring: NSString, value:color or font, state: NSNumber */
 - (Okidoki*(^)(id,id,id))attributedSubstringForState;
 /** substring: NSString, value:color or font, range: NSValue, state: NSNumber */
