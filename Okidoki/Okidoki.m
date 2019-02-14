@@ -148,7 +148,7 @@ kOkidoki_imp(lineSpace, ({
         
         NSMutableAttributedString *attStr = [[NSMutableAttributedString alloc] initWithAttributedString:label.attributedText];
         NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-        [paragraphStyle setLineSpacing:space < 0 ? 0 : space];
+        [paragraphStyle setLineSpacing:space < 0 ? 0 : (space - (label.font.lineHeight - label.font.pointSize))];
         paragraphStyle.alignment = label.textAlignment;
         [attStr addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [label.text length])];
         label.attributedText = attStr;
