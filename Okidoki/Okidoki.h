@@ -27,59 +27,62 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
+#import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 
 @interface Okidoki : NSObject
 
 #pragma mark - UIView
 
-/** NSNumber */
+/** NSNumber,NSString */
 - (Okidoki*(^)(id))tag;
-/** NSValue */
+/** NSValue,NSString */
 - (Okidoki*(^)(id))frame;
-/** NSNumber */
+/** NSNumber,NSString */
 - (Okidoki*(^)(id))alpha;
-/** UIColor,NSString(eg.#FFFEEE,0xFFFEEE,0XFFFEEE) */
+/** UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
 - (Okidoki*(^)(id))bgColor;
-/** UIColor,NSString(eg.#FFFEEE,0xFFFEEE,0XFFFEEE) */
+/** UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
 - (Okidoki*(^)(id))bdColor;
-/** NSNumber */
+/** NSNumber,NSString */
 - (Okidoki*(^)(id))bdWidth;
-/** NSNumber */
+/** NSNumber,NSString */
 - (Okidoki*(^)(id))cnRadius;
-/** @(YES) or @(NO) */
+/** @(YES) or @(NO),NSString */
 - (Okidoki*(^)(id))mtBounds;
 
 #pragma mark - UILabel & UITextView & UITextField
 
 /** NSString */
 - (Okidoki*(^)(id))text;
-/** UIFont */
+/** UIFont,NSString(@"17",@"s17",@"b17",@"i17") */
 - (Okidoki*(^)(id))font;
-/** UIColor,NSString(eg.#FFFEEE,0xFFFEEE,0XFFFEEE) */
+/** UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
 - (Okidoki*(^)(id))color;
-/** NSNumber: @0,@1,@2 */
+/** NSNumber: @0,@1,@2,NSString */
 - (Okidoki*(^)(id))align;
-/** substring: NSString, value:color or font. */
+/** substring: NSString, value:color(UIColor,NSString) or font(UIFont,NSString). */
 - (Okidoki*(^)(id,id))attributedSubstring;
-/** substring: NSString, value:color or font, range: NSValue. */
+/** substring: NSString, value:color(UIColor,NSString) or font(UIFont,NSString), range: NSValue. */
 - (Okidoki*(^)(id,id,id))attributedSubstringInRange;
 
 #pragma mark - UILabel
 
-/** NSNumber(NSInteger) */
+/** NSNumber(NSInteger) ,NSString*/
 - (Okidoki*(^)(id))lines;
-/** adjustsFontSizeToFitWidth: @(YES) or @(NO) */
+/** adjustsFontSizeToFitWidth: @(YES) or @(NO), NSString*/
 - (Okidoki*(^)(id))adjust;
-/** NSNumber(CGFloat) */
+/** NSNumber(CGFloat), NSString*/
 - (Okidoki*(^)(id))lineSpace;
-/** NSNumber(CGFloat), 0 means no max width limit. */
+/** NSNumber(CGFloat), 0 means no max width limit. NSString */
 - (Okidoki*(^)(id))autoWidth;
-/** NSNumber(CGFloat), 0 means no max height limit. */
+/** NSNumber(CGFloat), 0 means no max height limit. NSString */
 - (Okidoki*(^)(id))autoHeight;
 
 #pragma mark - UIButton
 
+/** title: NSString state: normal*/
+- (Okidoki*(^)(id))title;
 /** title: NSString, state: NSNumber */
 - (Okidoki*(^)(id,id))titleForState;
 /** color: UIColor,NSString(eg.#FFFEEE,0xFFFEEE,0XFFFEEE) , state: NSNumber */
@@ -115,7 +118,7 @@
 
 #pragma mark - UITextField
 
-/** borderStyle, NSNumber: @1,@2,@3,@4 */
+/** borderStyle, NSString,NSNumber: @1,@2,@3,@4 */
 - (Okidoki*(^)(id))bdStyle;
 /** placeholder, NSString */
 - (Okidoki*(^)(id))pHolder;
@@ -136,6 +139,17 @@
 /** secureTextEntry, BOOL: @YES, @NO */
 - (Okidoki*(^)(id))secure;
 
+#pragma mark - UIScrollView
+
+- (Okidoki*(^)(id))verInd;
+- (Okidoki*(^)(id))horInd;
+- (Okidoki*(^)(id))paging;
+- (Okidoki*(^)(id))bounces;
+
+#pragma mark - UITextView
+
+- (Okidoki*(^)(id))editable;
+- (Okidoki*(^)(id))selectable;
 
 @end
 
@@ -144,6 +158,11 @@
 @end
 
 @interface UIColor (Okidoki)
-/** color: UIColor,NSString(eg.#FFFEEE,0xFFFEEE,0XFFFEEE) */
+/** color: UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
 + (UIColor *)okidokiColor:(id)color;
+@end
+
+@interface UIFont (Okidoki)
+/** color: UIFont,NSString(eg.@"17",@"s17",@"b17",@"i17") */
++ (UIFont *)okidokiFont:(id)font;
 @end
