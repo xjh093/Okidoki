@@ -60,7 +60,7 @@ kOkidoki_imp(frame, ({
     if ([frame isKindOfClass:[NSValue class]]) {
         view.frame = [frame CGRectValue];
     }else if ([frame isKindOfClass:[NSString class]]) {
-        
+        //TODO:
     }
 }))
 
