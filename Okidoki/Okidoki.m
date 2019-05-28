@@ -30,6 +30,35 @@
 #import "Okidoki.h"
 #import <objc/runtime.h>
 
+static CGFloat Okidoki_scale;
+static CGFloat Okidoki_width;
+
+CGFloat Okidoki_NumberAdaptor(CGFloat number)
+{
+    if (number == 0 || number == CGFLOAT_MAX || number == -CGFLOAT_MAX) {
+        return number;
+    }
+    
+    Okidoki_scale = [UIScreen mainScreen].scale;
+    Okidoki_width = [UIScreen mainScreen].bounds.size.width;
+    
+    number = number * Okidoki_width / 375.0;
+    CGFloat _scale = Okidoki_scale;
+    
+    // 因为设备点转化为像素时，如果偏移了半个像素点就有可能会产生虚化的效果，因此这里要将设备点先转化为像素点，然后再添加0.5个偏移取整后再除以倍数则是转化为有效的设备逻辑点。
+#if CGFLOAT_IS_DOUBLE == 1
+    if (number < 0)
+        return ceil(fma(number, _scale, -0.5)) / _scale;
+    else
+        return floor(fma(number, _scale, 0.5)) / _scale;
+#else
+    if (number < 0)
+        return ceilf(fmaf(number, _scale, -0.5f)) / _scale;
+    else
+        return floorf(fmaf(number, _scale, 0.5f)) / _scale;
+#endif
+}
+
 #define kOkidoki_imp(sel,imp) \
 - (Okidoki*(^)(id))sel{ \
     return ^id(id sel){ \
