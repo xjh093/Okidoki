@@ -30,6 +30,10 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 
+#define kNumberAdaptor(x) Okidoki_NumberAdaptor(x)
+
+CGFloat Okidoki_NumberAdaptor(CGFloat number);
+
 @interface Okidoki : NSObject
 
 #pragma mark - UIView
