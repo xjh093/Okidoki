@@ -41,6 +41,10 @@ button.okidoki
 ---
 
 # Logs:
+### 2019-05-28
+- update.
+   - kNumberAdaptor();
+
 ### 2019-05-16
 - update.
 
