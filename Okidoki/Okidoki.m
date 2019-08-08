@@ -609,7 +609,7 @@ kOkidoki_imp(pHFont, ({
     if ([view isKindOfClass:[UITextField class]] &&
         ([pHFont isKindOfClass:[UIFont class]] ||
          [pHFont isKindOfClass:[NSString class]])) {
-        [self setValue:[UIFont okidokiFont:pHFont] forKeyPath:@"_placeholderLabel.font"];
+        [view setValue:[UIFont okidokiFont:pHFont] forKeyPath:@"_placeholderLabel.font"];
     }
 }))
 
