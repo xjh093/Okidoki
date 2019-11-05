@@ -42,6 +42,9 @@ button.okidoki
 
 # Logs:
 
+### 2019-11-05
+- modify autoWidth() method.
+
 ### 2019-08-08
 - fix a bug~
     - a bug can cause crash.
