@@ -214,6 +214,7 @@ kOkidoki_imp(autoWidth, ({
     if([view isKindOfClass:[UILabel class]]){
     
         UILabel *label = (UILabel *)view;
+        CGFloat height = CGRectGetHeight(label.frame);
         
         CGRect frame = label.frame;
         label.numberOfLines = 1;
@@ -226,6 +227,7 @@ kOkidoki_imp(autoWidth, ({
         }else{
             frame.size.width = label.frame.size.width;
         }
+        frame.size.height = height;
         label.frame = frame;
     }
 }))
