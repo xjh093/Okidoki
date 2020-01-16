@@ -42,6 +42,9 @@ button.okidoki
 
 # Logs:
 
+### 2020-01-16
+- modify pHColor() and pHFont() methods.
+
 ### 2019-11-05
 - modify autoWidth() method.
 
