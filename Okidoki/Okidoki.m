@@ -603,7 +603,15 @@ kOkidoki_imp(pHolder, ({
 
 kOkidoki_imp(pHColor, ({
     if ([view isKindOfClass:[UITextField class]]) {
-        [view setValue:[UIColor okidokiColor:pHColor] forKeyPath:@"_placeholderLabel.textColor"];
+        UITextField *t = (UITextField *)view;
+        NSMutableAttributedString *attr = t.attributedText.mutableCopy;
+        if (attr.string.length == 0 && t.placeholder.length > 0) {
+            attr = [[NSMutableAttributedString alloc] initWithString:t.placeholder];
+        }
+        if (attr.string.length > 0) {
+            [attr addAttribute:NSForegroundColorAttributeName value:[UIColor okidokiColor:pHColor] range:NSMakeRange(0, attr.string.length)];
+            t.attributedText = attr;
+        }
     }
 }))
 
@@ -611,7 +619,15 @@ kOkidoki_imp(pHFont, ({
     if ([view isKindOfClass:[UITextField class]] &&
         ([pHFont isKindOfClass:[UIFont class]] ||
          [pHFont isKindOfClass:[NSString class]])) {
-        [view setValue:[UIFont okidokiFont:pHFont] forKeyPath:@"_placeholderLabel.font"];
+        UITextField *t = (UITextField *)view;
+        NSMutableAttributedString *attr = t.attributedText.mutableCopy;
+        if (attr.string.length == 0 && t.placeholder.length > 0) {
+            attr = [[NSMutableAttributedString alloc] initWithString:t.placeholder];
+        }
+        if (attr.string.length > 0) {
+            [attr addAttribute:NSFontAttributeName value:[UIFont okidokiFont:pHFont] range:NSMakeRange(0, attr.string.length)];
+            t.attributedText = attr;
+        }
     }
 }))
 
