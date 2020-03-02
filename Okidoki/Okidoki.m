@@ -604,13 +604,13 @@ kOkidoki_imp(pHolder, ({
 kOkidoki_imp(pHColor, ({
     if ([view isKindOfClass:[UITextField class]]) {
         UITextField *t = (UITextField *)view;
-        NSMutableAttributedString *attr = t.attributedText.mutableCopy;
+        NSMutableAttributedString *attr = t.attributedPlaceholder.mutableCopy;
         if (attr.string.length == 0 && t.placeholder.length > 0) {
             attr = [[NSMutableAttributedString alloc] initWithString:t.placeholder];
         }
         if (attr.string.length > 0) {
             [attr addAttribute:NSForegroundColorAttributeName value:[UIColor okidokiColor:pHColor] range:NSMakeRange(0, attr.string.length)];
-            t.attributedText = attr;
+            t.attributedPlaceholder = attr;
         }
     }
 }))
@@ -620,13 +620,13 @@ kOkidoki_imp(pHFont, ({
         ([pHFont isKindOfClass:[UIFont class]] ||
          [pHFont isKindOfClass:[NSString class]])) {
         UITextField *t = (UITextField *)view;
-        NSMutableAttributedString *attr = t.attributedText.mutableCopy;
+        NSMutableAttributedString *attr = t.attributedPlaceholder.mutableCopy;
         if (attr.string.length == 0 && t.placeholder.length > 0) {
             attr = [[NSMutableAttributedString alloc] initWithString:t.placeholder];
         }
         if (attr.string.length > 0) {
             [attr addAttribute:NSFontAttributeName value:[UIFont okidokiFont:pHFont] range:NSMakeRange(0, attr.string.length)];
-            t.attributedText = attr;
+            t.attributedPlaceholder = attr;
         }
     }
 }))
