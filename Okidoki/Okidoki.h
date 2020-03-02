@@ -69,6 +69,10 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number);
 - (Okidoki*(^)(id,id))attributedSubstring;
 /** substring: NSString, value:color(UIColor,NSString) or font(UIFont,NSString), range: NSValue. */
 - (Okidoki*(^)(id,id,id))attributedSubstringInRange;
+/** substring: NSString, key: NSAttributedStringKey, value: color/font/number etc. */
+- (Okidoki*(^)(id,id,id))attributedSubstringKeyValue;
+/** substring: NSString, key: NSAttributedStringKey, value: color/font/number etc. range: NSValue. */
+- (Okidoki*(^)(id,id,id,id))attributedSubstringKeyValueInRange;
 
 #pragma mark - UILabel
 
