@@ -314,6 +314,42 @@ kOkidoki_imp(autoHeight, ({
     };
 }
 
+- (Okidoki*(^)(id,id,id))attributedSubstringKeyValue{
+    return ^id(id string, id key, id value){
+        UIView *view = self.view;
+        if ([view respondsToSelector:@selector(attributedText)]) {
+            NSString *text = [view performSelector:@selector(text)];
+            NSMutableAttributedString *attr = [[view performSelector:@selector(attributedText)] mutableCopy];
+            if (attr.string.length == 0) {
+                attr = [[NSMutableAttributedString alloc] initWithString:text];
+            }
+            if (attr.string.length > 0) {
+                [attr addAttribute:key value:value range:[attr.string rangeOfString:string]];
+                [view performSelector:@selector(setAttributedText:) withObject:attr];
+            }
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(id,id,id,id))attributedSubstringKeyValueInRange{
+    return ^id(id string, id key, id value, id range){
+        UIView *view = self.view;
+        if ([view respondsToSelector:@selector(attributedText)]) {
+            NSString *text = [view performSelector:@selector(text)];
+            NSMutableAttributedString *attr = [[view performSelector:@selector(attributedText)] mutableCopy];
+            if (attr.string.length == 0) {
+                attr = [[NSMutableAttributedString alloc] initWithString:text];
+            }
+            if (attr.string.length > 0) {
+                [attr addAttribute:key value:value range:[range rangeValue]];
+                [view performSelector:@selector(setAttributedText:) withObject:attr];
+            }
+        }
+        return view.okidoki;
+    };
+}
+
 #pragma mark - UIButton
 
 kOkidoki_imp(title, ({
