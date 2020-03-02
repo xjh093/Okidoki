@@ -115,6 +115,10 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number);
 - (Okidoki*(^)(id,id,id))attributedSubstringForState;
 /** substring: NSString, value:color or font, range: NSValue, state: NSNumber */
 - (Okidoki*(^)(id,id,id,id))attributedSubstringInRangeForState;
+/** substring: NSString, key: NSAttributedStringKey, value: color/font/number etc. */
+- (Okidoki*(^)(id,id,id,id))attributedSubstringKeyValueForState;
+/** substring: NSString, key: NSAttributedStringKey, value: color/font/number etc. range: NSValue. */
+- (Okidoki*(^)(id,id,id,id,id))attributedSubstringKeyValueInRangeForState;
 
 #pragma mark - UIImageView
 
