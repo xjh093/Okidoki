@@ -42,6 +42,9 @@ button.okidoki
 
 # Logs:
 
+### 2020-03-02
+- fix bugs and add methods.
+
 ### 2020-01-16
 - modify pHColor() and pHFont() methods.
 
