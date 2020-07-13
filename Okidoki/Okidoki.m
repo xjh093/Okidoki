@@ -390,8 +390,12 @@ kOkidoki_imp(title, ({
     return ^id(id image, id state){
         UIView *view = self.view;
         
+        if ([image isKindOfClass:[NSString class]]) {
+            image = [UIImage imageNamed:image];
+        }
+        
         if ([view isKindOfClass:[UIButton class]] &&
-            [image isKindOfClass:[NSString class]] &&
+            [image isKindOfClass:[UIImage class]] &&
             [state isKindOfClass:[NSNumber class]]) {
             [(UIButton *)view setImage:image forState:[state integerValue]];
         }
@@ -404,8 +408,12 @@ kOkidoki_imp(title, ({
     return ^id(id bgImage, id state){
         UIView *view = self.view;
         
+        if ([bgImage isKindOfClass:[NSString class]]) {
+            bgImage = [UIImage imageNamed:bgImage];
+        }
+        
         if ([view isKindOfClass:[UIButton class]] &&
-            [bgImage isKindOfClass:[NSString class]] &&
+            [bgImage isKindOfClass:[UIImage class]] &&
             [state isKindOfClass:[NSNumber class]]) {
             [(UIButton *)view setBackgroundImage:bgImage forState:[state integerValue]];
         }
