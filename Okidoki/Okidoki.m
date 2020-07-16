@@ -99,6 +99,13 @@ kOkidoki_imp(alpha, ({
         view.alpha = [alpha floatValue];
     }
 }))
+    
+kOkidoki_imp(hidden, ({
+    if ([hidden isKindOfClass:[NSNumber class]] ||
+        [hidden isKindOfClass:[NSString class]]) {
+        view.hidden = [hidden boolValue];
+    }
+}))
 
 kOkidoki_imp(bgColor, ({
     view.backgroundColor = [UIColor okidokiColor:bgColor];
