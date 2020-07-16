@@ -44,6 +44,8 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number);
 - (Okidoki*(^)(id))frame;
 /** NSNumber,NSString */
 - (Okidoki*(^)(id))alpha;
+/** NSNumber,NSString */
+- (Okidoki*(^)(id))hidden;
 /** UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
 - (Okidoki*(^)(id))bgColor;
 /** UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
