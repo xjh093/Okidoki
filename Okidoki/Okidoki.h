@@ -97,9 +97,9 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number);
 - (Okidoki*(^)(id,id))titleForState;
 /** color: UIColor,NSString(eg.#FFFEEE,0xFFFEEE,0XFFFEEE) , state: NSNumber */
 - (Okidoki*(^)(id,id))colorForState;
-/** image: UIImage, state: NSNumber */
+/** image: NSString, UIImage, state: NSNumber */
 - (Okidoki*(^)(id,id))imageForState;
-/** bgImage: UIImage, state: NSNumber */
+/** bgImage: NSString, UIImage, state: NSNumber */
 - (Okidoki*(^)(id,id))bgImageForState;
 /** lineSpace: NSNumber, state: NSNumber */
 - (Okidoki*(^)(id,id))lineSpaceForState;
