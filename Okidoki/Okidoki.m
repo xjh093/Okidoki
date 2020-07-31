@@ -89,7 +89,7 @@ kOkidoki_imp(frame, ({
     if ([frame isKindOfClass:[NSValue class]]) {
         view.frame = [frame CGRectValue];
     }else if ([frame isKindOfClass:[NSString class]]) {
-        //TODO:
+        view.frame = CGRectFromString(frame);
     }
 }))
 
@@ -438,9 +438,9 @@ kOkidoki_imp(title, ({
             NSAttributedString *attributedString = [button attributedTitleForState:[state integerValue]]?:[[NSAttributedString alloc] initWithString:button.currentTitle];
             NSMutableAttributedString *attStr = [[NSMutableAttributedString alloc] initWithAttributedString:attributedString];
             NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-            [paragraphStyle setLineSpacing:space < 0 ? 0 : space];
+            [paragraphStyle setLineSpacing:space < 0 ? 0 : (space - (button.titleLabel.font.lineHeight - button.titleLabel.font.pointSize))];
             paragraphStyle.alignment = button.titleLabel.textAlignment;
-            [attStr addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [button.currentAttributedTitle.string length])];
+            [attStr addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [attStr.string length])];
             [button setAttributedTitle:attStr forState:[state integerValue]];
         }
         
@@ -600,14 +600,15 @@ kOkidoki_imp(title, ({
         if ([view isKindOfClass:[UIButton class]]) {
             UIButton *button = (UIButton *)view;
             
-            NSString *text = [view performSelector:@selector(text)];
-            NSMutableAttributedString *attr = [[view performSelector:@selector(attributedText)] mutableCopy];
-            if (attr.string.length == 0) {
-                attr = [[NSMutableAttributedString alloc] initWithString:text];
+            NSAttributedString *attr = [button attributedTitleForState:[state integerValue]];
+            if (!attr) {
+                attr = [[NSAttributedString alloc] initWithString:button.titleLabel.text];
             }
-            if (attr.string.length > 0) {
-                [attr addAttribute:key value:value range:[attr.string rangeOfString:string]];
-                [button setAttributedTitle:attr forState:[state integerValue]];
+            
+            NSMutableAttributedString *mattr = attr.mutableCopy;
+            if (mattr.string.length > 0) {
+                [mattr addAttribute:key value:value range:[mattr.string rangeOfString:string]];
+                [button setAttributedTitle:mattr forState:[state integerValue]];
             }
         }
         return view.okidoki;
@@ -621,14 +622,15 @@ kOkidoki_imp(title, ({
         if ([view isKindOfClass:[UIButton class]]) {
             UIButton *button = (UIButton *)view;
             
-            NSString *text = [view performSelector:@selector(text)];
-            NSMutableAttributedString *attr = [[view performSelector:@selector(attributedText)] mutableCopy];
-            if (attr.string.length == 0) {
-                attr = [[NSMutableAttributedString alloc] initWithString:text];
+            NSAttributedString *attr = [button attributedTitleForState:[state integerValue]];
+            if (!attr) {
+                attr = [[NSAttributedString alloc] initWithString:button.titleLabel.text];
             }
-            if (attr.string.length > 0) {
-                [attr addAttribute:key value:value range:[range rangeValue]];
-                [button setAttributedTitle:attr forState:[state integerValue]];
+            
+            NSMutableAttributedString *mattr = attr.mutableCopy;
+            if (mattr.string.length > 0) {
+                [mattr addAttribute:key value:value range:[range rangeValue]];
+                [button setAttributedTitle:mattr forState:[state integerValue]];
             }
         }
         return view.okidoki;
@@ -910,7 +912,7 @@ kOkidoki_imp(selectable, ({
         return theFont;
     }
     
-    return [UIFont systemFontOfSize:[UIFont systemFontSize]];;
+    return [UIFont systemFontOfSize:[UIFont systemFontSize]];
 }
 
 @end
