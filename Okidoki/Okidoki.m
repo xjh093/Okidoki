@@ -828,6 +828,144 @@ kOkidoki_imp(selectable, ({
     return okidoki;
 }
 
+- (CGFloat)ok_left {
+    return CGRectGetMinX(self.frame);
+}
+
+- (void)setOk_left:(CGFloat)ok_left {
+    CGRect frame = self.frame;
+    frame.origin.x = ok_left;
+    self.frame = frame;
+}
+
+- (CGFloat)ok_top {
+    return CGRectGetMinY(self.frame);
+}
+
+- (void)setOk_top:(CGFloat)ok_top {
+    CGRect frame = self.frame;
+    frame.origin.y = ok_top;
+    self.frame = frame;
+}
+
+- (CGFloat)ok_right {
+    return CGRectGetMaxX(self.frame);
+}
+
+- (void)setOk_right:(CGFloat)ok_right {
+    CGRect frame = self.frame;
+    
+    if (frame.size.width > 0) {
+        frame.origin.x = ok_right - CGRectGetWidth(frame);
+    } else {
+        frame.size.width = ok_right - frame.origin.x;
+    }
+    
+    self.frame = frame;
+}
+
+- (CGFloat)ok_bottom {
+    return CGRectGetMaxY(self.frame);
+}
+
+- (void)setOk_bottom:(CGFloat)ok_bottom {
+    CGRect frame = self.frame;
+    
+    if (frame.size.height > 0) {
+        frame.origin.y = ok_bottom - CGRectGetHeight(frame);
+    } else {
+        frame.size.height = ok_bottom - frame.origin.y;
+    }
+    
+    self.frame = frame;
+}
+
+- (CGFloat)ok_width {
+    return CGRectGetWidth(self.frame);
+}
+
+- (void)setOk_width:(CGFloat)ok_width {
+    CGRect frame = self.frame;
+    frame.size.width = ok_width;
+    self.frame = frame;
+}
+
+- (CGFloat)ok_height {
+    return CGRectGetHeight(self.frame);
+}
+
+- (void)setOk_height:(CGFloat)ok_height {
+    CGRect frame = self.frame;
+    frame.size.height = ok_height;
+    self.frame = frame;
+}
+
+- (CGFloat)ok_centerX {
+    return self.center.x;
+}
+
+- (void)setOk_centerX:(CGFloat)ok_centerX {
+    CGPoint center = self.center;
+    center.x = ok_centerX;
+    self.center = center;
+}
+
+- (CGFloat)ok_centerY {
+    return self.center.y;
+}
+
+- (void)setOk_centerY:(CGFloat)ok_centerY {
+    CGPoint center = self.center;
+    center.y = ok_centerY;
+    self.center = center;
+}
+
+- (CGPoint)ok_origin {
+    return self.frame.origin;
+}
+
+- (void)setOk_origin:(CGPoint)ok_origin {
+    CGRect frame = self.frame;
+    frame.origin = ok_origin;
+    self.frame = frame;
+}
+
+- (CGSize)ok_size {
+    return self.frame.size;
+}
+
+- (void)setOk_size:(CGSize)ok_size {
+    CGRect frame = self.frame;
+    frame.size = ok_size;
+    self.frame = frame;
+}
+
+- (CGFloat)ok_leftRight {
+    return self.frame.origin.x;
+}
+
+- (void)setOk_leftRight:(CGFloat)ok_leftRight {
+    CGRect frame = self.frame;
+    frame.origin.x = ok_leftRight;
+    if (self.superview) {
+        frame.size.width = CGRectGetWidth(self.superview.bounds) - 2*ok_leftRight;
+    }
+    self.frame = frame;
+}
+
+- (CGFloat)ok_topBottom {
+    return self.frame.origin.y;
+}
+
+- (void)setOk_topBottom:(CGFloat)ok_topBottom {
+    CGRect frame = self.frame;
+    frame.origin.y = ok_topBottom;
+    if (self.superview) {
+        frame.size.height = CGRectGetHeight(self.superview.bounds) - 2*ok_topBottom;
+    }
+    self.frame = frame;
+}
+
 @end
 
 @implementation UIColor (Okidoki)

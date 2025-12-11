@@ -172,6 +172,19 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number);
 
 @interface UIView (Okidoki)
 @property (nonatomic,  strong) Okidoki *okidoki;
+
+@property (nonatomic) CGFloat ok_left;
+@property (nonatomic) CGFloat ok_top;
+@property (nonatomic) CGFloat ok_right;
+@property (nonatomic) CGFloat ok_bottom;
+@property (nonatomic) CGFloat ok_width;
+@property (nonatomic) CGFloat ok_height;
+@property (nonatomic) CGFloat ok_centerX;
+@property (nonatomic) CGFloat ok_centerY;
+@property (nonatomic) CGPoint ok_origin;
+@property (nonatomic) CGSize  ok_size;
+@property (nonatomic) CGFloat ok_leftRight;
+@property (nonatomic) CGFloat ok_topBottom;
 @end
 
 @interface UIColor (Okidoki)
