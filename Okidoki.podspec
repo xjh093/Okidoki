@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "Okidoki"
-  spec.version      = "0.0.3"
+  spec.version      = "0.0.4"
   spec.summary      = "Object-C UI Chaining Syntax."
 
   spec.description  = <<-DESC
@@ -10,7 +10,7 @@ Pod::Spec.new do |spec|
   spec.homepage     = "https://github.com/xjh093/Okidoki"
   spec.license      = "MIT"
   spec.author       = { "Haomissyou" => "xjh093@126.com" }
-  spec.platform     = :ios, "10.0"
+  spec.platform     = :ios, "11.0"
   spec.source       = { :git => "https://github.com/xjh093/Okidoki.git", :tag => spec.version.to_s }
 
   spec.source_files = "Okidoki/**/*.{h,m}"
