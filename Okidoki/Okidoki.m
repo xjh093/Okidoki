@@ -129,6 +129,29 @@ kOkidoki_imp(cnRadius, ({
     }
 }))
 
+kOkidoki_imp(mkCorners, ({
+    if([mkCorners isKindOfClass:[NSArray class]] &&
+       [mkCorners count] > 0){
+        CACornerMask mask = 0;
+        if ([mkCorners containsObject:@1]) {
+            mask |= kCALayerMinXMinYCorner;
+        }
+        if ([mkCorners containsObject:@2]) {
+            mask |= kCALayerMaxXMinYCorner;
+        }
+        if ([mkCorners containsObject:@3]) {
+            mask |= kCALayerMaxXMaxYCorner;
+        }
+        if ([mkCorners containsObject:@4]) {
+            mask |= kCALayerMinXMaxYCorner;
+        }
+        
+        if (mask > 0) {
+            view.layer.maskedCorners = mask;
+        }
+    }
+}))
+
 kOkidoki_imp(mtBounds, ({
     if([mtBounds isKindOfClass:[NSNumber class]] ||
        [mtBounds isKindOfClass:[NSString class]]){

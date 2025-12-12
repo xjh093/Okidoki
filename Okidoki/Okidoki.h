@@ -27,8 +27,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-// version: 0.0.1
-// 2025-03-14 16:26:38
+// version: 0.0.3
+// 2025-12-12 11:45:51
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
@@ -57,6 +57,8 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number);
 - (Okidoki*(^)(id))bdWidth;
 /** NSNumber,NSString */
 - (Okidoki*(^)(id))cnRadius;
+/** NSArray: @[@1,@2,@3,@4] */
+- (Okidoki*(^)(id))mkCorners;
 /** @(YES) or @(NO),NSString */
 - (Okidoki*(^)(id))mtBounds;
 
