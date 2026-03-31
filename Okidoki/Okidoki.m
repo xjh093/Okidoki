@@ -159,6 +159,74 @@ kOkidoki_imp(mtBounds, ({
     }
 }))
 
+kOkidoki_imp(shadowColor, ({
+    UIColor *color = [UIColor okidokiColor:shadowColor];
+    if (color) {
+        view.layer.shadowColor = color.CGColor;
+    }
+}))
+
+kOkidoki_imp(shadowOpacity, ({
+    if([shadowOpacity isKindOfClass:[NSNumber class]] ||
+       [shadowOpacity isKindOfClass:[NSString class]]){
+        view.layer.shadowOpacity = [shadowOpacity floatValue];
+    }
+}))
+
+kOkidoki_imp(shadowOffset, ({
+    if ([shadowOffset isKindOfClass:[NSValue class]]) {
+        view.layer.shadowOffset = [shadowOffset CGSizeValue];
+    }else if ([shadowOffset isKindOfClass:[NSString class]]) {
+        view.layer.shadowOffset = CGSizeFromString(shadowOffset);
+    }
+}))
+
+kOkidoki_imp(shadowRadius, ({
+    if([shadowRadius isKindOfClass:[NSNumber class]] ||
+       [shadowRadius isKindOfClass:[NSString class]]){
+        view.layer.shadowRadius = [shadowRadius floatValue];
+    }
+}))
+
+kOkidoki_imp(shadowPath, ({
+    if ([shadowPath isKindOfClass:[UIBezierPath class]]) {
+        view.layer.shadowPath = [(UIBezierPath *)shadowPath CGPath];
+    }else if (CFGetTypeID((__bridge CFTypeRef)shadowPath) == CGPathGetTypeID()) {
+        view.layer.shadowPath = (__bridge CGPathRef)shadowPath;
+    }
+}))
+
+kOkidoki_imp(addSubview, ({
+    if ([addSubview isKindOfClass:[UIView class]]) {
+        [view addSubview:(UIView *)addSubview];
+    }
+}))
+
+kOkidoki_imp(addToSuperview, ({
+    if ([addToSuperview isKindOfClass:[UIView class]]) {
+        [(UIView *)addToSuperview addSubview:view];
+    }
+}))
+
+kOkidoki_imp(userInteractionEnabled, ({
+    if ([userInteractionEnabled isKindOfClass:[NSNumber class]] ||
+        [userInteractionEnabled isKindOfClass:[NSString class]]) {
+        view.userInteractionEnabled = [userInteractionEnabled boolValue];
+    }
+}))
+
+
+#pragma mark - UILabel
+
+kOkidoki_imp(highlightedTextColor, ({
+    if ([view isKindOfClass:[UILabel class]]) {
+        UIColor *color = [UIColor okidokiColor:highlightedTextColor];
+        if (color) {
+            [(UILabel *)view setHighlightedTextColor:color];
+        }
+    }
+}))
+
 kOkidoki_imp(text, ({
     if([text isKindOfClass:[NSString class]]){
         if ([view respondsToSelector:@selector(setText:)]) {
@@ -311,7 +379,6 @@ kOkidoki_imp(autoHeight, ({
     };
 }
 
-
 - (Okidoki*(^)(id,id,id))attributedSubstringInRange{
     return ^id(id string, id value, id range){
         UIView *view = self.view;
@@ -379,6 +446,56 @@ kOkidoki_imp(autoHeight, ({
         return view.okidoki;
     };
 }
+
+#pragma mark - UIControl
+
+kOkidoki_imp(enabled, ({
+    if ([view isKindOfClass:[UIControl class]]) {
+        if ([enabled isKindOfClass:[NSNumber class]] ||
+            [enabled isKindOfClass:[NSString class]]) {
+            [(UIControl *)view setEnabled:[enabled boolValue]];
+        }
+    }
+}))
+
+kOkidoki_imp(selected, ({
+    if ([view isKindOfClass:[UIControl class]]) {
+        if ([selected isKindOfClass:[NSNumber class]] ||
+            [selected isKindOfClass:[NSString class]]) {
+            [(UIControl *)view setSelected:[selected boolValue]];
+        }
+    }
+}))
+
+kOkidoki_imp(highlighted, ({
+    if ([highlighted isKindOfClass:[NSNumber class]] ||
+        [highlighted isKindOfClass:[NSString class]]) {
+        BOOL isHighlighted = [highlighted boolValue];
+                
+        if ([view respondsToSelector:@selector(setHighlighted:)]) {
+            // UILabel, UIImageView, UIControl
+            [(UIControl *)view setHighlighted:isHighlighted];
+        }
+    }
+}))
+
+kOkidoki_imp(contentVerticalAlignment, ({
+    if ([view isKindOfClass:[UIControl class]]) {
+        if ([contentVerticalAlignment isKindOfClass:[NSNumber class]] ||
+            [contentVerticalAlignment isKindOfClass:[NSString class]]) {
+            [(UIControl *)view setContentVerticalAlignment:[contentVerticalAlignment integerValue]];
+        }
+    }
+}))
+
+kOkidoki_imp(contentHorizontalAlignment, ({
+    if ([view isKindOfClass:[UIControl class]]) {
+        if ([contentHorizontalAlignment isKindOfClass:[NSNumber class]] ||
+            [contentHorizontalAlignment isKindOfClass:[NSString class]]) {
+            [(UIControl *)view setContentHorizontalAlignment:[contentHorizontalAlignment integerValue]];
+        }
+    }
+}))
 
 #pragma mark - UIButton
 
@@ -679,6 +796,24 @@ kOkidoki_imp(image, ({
     }
 }))
 
+kOkidoki_imp(highlightedImage, ({
+    if ([view isKindOfClass:[UIImageView class]]) {
+        UIImageView *imageView = (UIImageView *)view;
+        if ([highlightedImage isKindOfClass:[NSString class]]) {
+            imageView.highlightedImage = [UIImage imageNamed:highlightedImage];
+        }else if ([highlightedImage isKindOfClass:[UIImage class]]){
+            imageView.highlightedImage = highlightedImage;
+        }
+    }else if ([view isKindOfClass:[UIButton class]]) {
+        UIButton *button = (UIButton *)view;
+        if ([highlightedImage isKindOfClass:[NSString class]]) {
+            [button setImage:[UIImage imageNamed:highlightedImage] forState:UIControlStateHighlighted];
+        }else if ([highlightedImage isKindOfClass:[UIImage class]]){
+            [button setImage:highlightedImage forState:UIControlStateHighlighted];
+        }
+    }
+}))
+
 - (Okidoki*(^)(id,id))imageForTintColor{
     return ^id(id image, id color){
         UIView *view = self.view;
@@ -832,6 +967,363 @@ kOkidoki_imp(selectable, ({
         [(UITextView *)view setSelectable:[selectable boolValue]];
     }
 }))
+
+#pragma mark - AutoLayout Anchors
+
+- (Okidoki*(^)(id))leadingAnchor {
+    return ^id(id params) {
+        UIView *view = self.view;
+        view.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        if ([params isKindOfClass:[NSArray class]]) {
+            NSArray *array = (NSArray *)params;
+            if (array.count > 0) {
+                id toItem = array[0];
+                CGFloat constant = array.count > 1 ? [array[1] floatValue] : 0;
+                
+                NSLayoutXAxisAnchor *toAnchor = nil;
+                if ([toItem isKindOfClass:[UIView class]]) {
+                    toAnchor = [(UIView *)toItem leadingAnchor];
+                } else if ([toItem isKindOfClass:[NSLayoutXAxisAnchor class]]) {
+                    toAnchor = (NSLayoutXAxisAnchor *)toItem;
+                }
+                
+                if (toAnchor) {
+                    [view.leadingAnchor constraintEqualToAnchor:toAnchor constant:constant].active = YES;
+                }
+            }
+        }
+        
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(id))trailingAnchor {
+    return ^id(id params) {
+        UIView *view = self.view;
+        view.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        if ([params isKindOfClass:[NSArray class]]) {
+            NSArray *array = (NSArray *)params;
+            if (array.count > 0) {
+                id toItem = array[0];
+                CGFloat constant = array.count > 1 ? [array[1] floatValue] : 0;
+                
+                NSLayoutXAxisAnchor *toAnchor = nil;
+                if ([toItem isKindOfClass:[UIView class]]) {
+                    toAnchor = [(UIView *)toItem trailingAnchor];
+                } else if ([toItem isKindOfClass:[NSLayoutXAxisAnchor class]]) {
+                    toAnchor = (NSLayoutXAxisAnchor *)toItem;
+                }
+                
+                if (toAnchor) {
+                    [view.trailingAnchor constraintEqualToAnchor:toAnchor constant:constant].active = YES;
+                }
+            }
+        }
+        
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(id))leftAnchor {
+    return ^id(id params) {
+        UIView *view = self.view;
+        view.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        if ([params isKindOfClass:[NSArray class]]) {
+            NSArray *array = (NSArray *)params;
+            if (array.count > 0) {
+                id toItem = array[0];
+                CGFloat constant = array.count > 1 ? [array[1] floatValue] : 0;
+                
+                NSLayoutXAxisAnchor *toAnchor = nil;
+                if ([toItem isKindOfClass:[UIView class]]) {
+                    toAnchor = [(UIView *)toItem leftAnchor];
+                } else if ([toItem isKindOfClass:[NSLayoutXAxisAnchor class]]) {
+                    toAnchor = (NSLayoutXAxisAnchor *)toItem;
+                }
+                
+                if (toAnchor) {
+                    [view.leftAnchor constraintEqualToAnchor:toAnchor constant:constant].active = YES;
+                }
+            }
+        }
+        
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(id))rightAnchor {
+    return ^id(id params) {
+        UIView *view = self.view;
+        view.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        if ([params isKindOfClass:[NSArray class]]) {
+            NSArray *array = (NSArray *)params;
+            if (array.count > 0) {
+                id toItem = array[0];
+                CGFloat constant = array.count > 1 ? [array[1] floatValue] : 0;
+                
+                NSLayoutXAxisAnchor *toAnchor = nil;
+                if ([toItem isKindOfClass:[UIView class]]) {
+                    toAnchor = [(UIView *)toItem rightAnchor];
+                } else if ([toItem isKindOfClass:[NSLayoutXAxisAnchor class]]) {
+                    toAnchor = (NSLayoutXAxisAnchor *)toItem;
+                }
+                
+                if (toAnchor) {
+                    [view.rightAnchor constraintEqualToAnchor:toAnchor constant:constant].active = YES;
+                }
+            }
+        }
+        
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(id))topAnchor {
+    return ^id(id params) {
+        UIView *view = self.view;
+        view.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        if ([params isKindOfClass:[NSArray class]]) {
+            NSArray *array = (NSArray *)params;
+            if (array.count > 0) {
+                id toItem = array[0];
+                CGFloat constant = array.count > 1 ? [array[1] floatValue] : 0;
+                
+                NSLayoutYAxisAnchor *toAnchor = nil;
+                if ([toItem isKindOfClass:[UIView class]]) {
+                    toAnchor = [(UIView *)toItem topAnchor];
+                } else if ([toItem isKindOfClass:[NSLayoutYAxisAnchor class]]) {
+                    toAnchor = (NSLayoutYAxisAnchor *)toItem;
+                }
+                
+                if (toAnchor) {
+                    [view.topAnchor constraintEqualToAnchor:toAnchor constant:constant].active = YES;
+                }
+            }
+        }
+        
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(id))bottomAnchor {
+    return ^id(id params) {
+        UIView *view = self.view;
+        view.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        if ([params isKindOfClass:[NSArray class]]) {
+            NSArray *array = (NSArray *)params;
+            if (array.count > 0) {
+                id toItem = array[0];
+                CGFloat constant = array.count > 1 ? [array[1] floatValue] : 0;
+                
+                NSLayoutYAxisAnchor *toAnchor = nil;
+                if ([toItem isKindOfClass:[UIView class]]) {
+                    toAnchor = [(UIView *)toItem bottomAnchor];
+                } else if ([toItem isKindOfClass:[NSLayoutYAxisAnchor class]]) {
+                    toAnchor = (NSLayoutYAxisAnchor *)toItem;
+                }
+                
+                if (toAnchor) {
+                    [view.bottomAnchor constraintEqualToAnchor:toAnchor constant:constant].active = YES;
+                }
+            }
+        }
+        
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(id))widthAnchor {
+    return ^id(id params) {
+        UIView *view = self.view;
+        view.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        if ([params isKindOfClass:[NSNumber class]]) {
+            // 固定宽度
+            CGFloat width = [params floatValue];
+            [view.widthAnchor constraintEqualToConstant:width].active = YES;
+        } else if ([params isKindOfClass:[NSArray class]]) {
+            // 相对宽度
+            NSArray *array = (NSArray *)params;
+            if (array.count > 0) {
+                id toItem = array[0];
+                CGFloat multiplier = array.count > 1 ? [array[1] floatValue] : 1.0;
+                CGFloat constant = array.count > 2 ? [array[2] floatValue] : 0;
+                
+                NSLayoutDimension *toAnchor = nil;
+                if ([toItem isKindOfClass:[UIView class]]) {
+                    toAnchor = [(UIView *)toItem widthAnchor];
+                } else if ([toItem isKindOfClass:[NSLayoutDimension class]]) {
+                    toAnchor = (NSLayoutDimension *)toItem;
+                }
+                
+                if (toAnchor) {
+                    [view.widthAnchor constraintEqualToAnchor:toAnchor multiplier:multiplier constant:constant].active = YES;
+                }
+            }
+        }
+        
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(id))heightAnchor {
+    return ^id(id params) {
+        UIView *view = self.view;
+        view.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        if ([params isKindOfClass:[NSNumber class]]) {
+            // 固定高度
+            CGFloat height = [params floatValue];
+            [view.heightAnchor constraintEqualToConstant:height].active = YES;
+        } else if ([params isKindOfClass:[NSArray class]]) {
+            // 相对高度
+            NSArray *array = (NSArray *)params;
+            if (array.count > 0) {
+                id toItem = array[0];
+                CGFloat multiplier = array.count > 1 ? [array[1] floatValue] : 1.0;
+                CGFloat constant = array.count > 2 ? [array[2] floatValue] : 0;
+                
+                NSLayoutDimension *toAnchor = nil;
+                if ([toItem isKindOfClass:[UIView class]]) {
+                    toAnchor = [(UIView *)toItem heightAnchor];
+                } else if ([toItem isKindOfClass:[NSLayoutDimension class]]) {
+                    toAnchor = (NSLayoutDimension *)toItem;
+                }
+                
+                if (toAnchor) {
+                    [view.heightAnchor constraintEqualToAnchor:toAnchor multiplier:multiplier constant:constant].active = YES;
+                }
+            }
+        }
+        
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(id))centerXAnchor {
+    return ^id(id params) {
+        UIView *view = self.view;
+        view.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        if ([params isKindOfClass:[NSArray class]]) {
+            NSArray *array = (NSArray *)params;
+            if (array.count > 0) {
+                id toItem = array[0];
+                CGFloat constant = array.count > 1 ? [array[1] floatValue] : 0;
+                
+                NSLayoutXAxisAnchor *toAnchor = nil;
+                if ([toItem isKindOfClass:[UIView class]]) {
+                    toAnchor = [(UIView *)toItem centerXAnchor];
+                } else if ([toItem isKindOfClass:[NSLayoutXAxisAnchor class]]) {
+                    toAnchor = (NSLayoutXAxisAnchor *)toItem;
+                }
+                
+                if (toAnchor) {
+                    [view.centerXAnchor constraintEqualToAnchor:toAnchor constant:constant].active = YES;
+                }
+            }
+        }
+        
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(id))centerYAnchor {
+    return ^id(id params) {
+        UIView *view = self.view;
+        view.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        if ([params isKindOfClass:[NSArray class]]) {
+            NSArray *array = (NSArray *)params;
+            if (array.count > 0) {
+                id toItem = array[0];
+                CGFloat constant = array.count > 1 ? [array[1] floatValue] : 0;
+                
+                NSLayoutYAxisAnchor *toAnchor = nil;
+                if ([toItem isKindOfClass:[UIView class]]) {
+                    toAnchor = [(UIView *)toItem centerYAnchor];
+                } else if ([toItem isKindOfClass:[NSLayoutYAxisAnchor class]]) {
+                    toAnchor = (NSLayoutYAxisAnchor *)toItem;
+                }
+                
+                if (toAnchor) {
+                    [view.centerYAnchor constraintEqualToAnchor:toAnchor constant:constant].active = YES;
+                }
+            }
+        }
+        
+        return view.okidoki;
+    };
+}
+
+#pragma mark - Convenience Methods
+
+- (Okidoki*(^)(id))edgeToSuperView {
+    return ^id(id params) {
+        UIView *view = self.view;
+        UIView *superview = view.superview;
+        
+        if (!superview) {
+            NSLog(@"[Okidoki AutoLayout] Warning: View has no superview for edgeToSuperView");
+            return view.okidoki;
+        }
+        
+        view.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        CGFloat top = 0, left = 0, bottom = 0, right = 0;
+        
+        if (!params) {
+            // 无参数，四边都为 0
+            top = left = bottom = right = 0;
+        } else if ([params isKindOfClass:[NSNumber class]]) {
+            // NSNumber，四边相同
+            CGFloat inset = [params floatValue];
+            top = left = inset;
+            bottom = right = -inset;
+        } else if ([params isKindOfClass:[NSArray class]]) {
+            // NSArray: @[@(top), @(left), @(bottom), @(right)]
+            NSArray *array = (NSArray *)params;
+            if (array.count >= 4) {
+                top = [array[0] floatValue];
+                left = [array[1] floatValue];
+                bottom = [array[2] floatValue];
+                right = [array[3] floatValue];
+            } else if (array.count == 2) {
+                // @[@(vertical), @(horizontal)]
+                CGFloat vertical = [array[0] floatValue];
+                CGFloat horizontal = [array[1] floatValue];
+                top = vertical;
+                left = horizontal;
+                bottom = -vertical;
+                right = -horizontal;
+            } else if (array.count == 1) {
+                CGFloat inset = [array[0] floatValue];
+                top = left = inset;
+                bottom = right = -inset;
+            }
+        } else if ([params isKindOfClass:[NSValue class]]) {
+            // UIEdgeInsets
+            UIEdgeInsets insets = [params UIEdgeInsetsValue];
+            top = insets.top;
+            left = insets.left;
+            bottom = -insets.bottom;
+            right = -insets.right;
+        }
+        
+        [view.topAnchor constraintEqualToAnchor:superview.topAnchor constant:top].active = YES;
+        [view.leadingAnchor constraintEqualToAnchor:superview.leadingAnchor constant:left].active = YES;
+        [view.trailingAnchor constraintEqualToAnchor:superview.trailingAnchor constant:right].active = YES;
+        [view.bottomAnchor constraintEqualToAnchor:superview.bottomAnchor constant:bottom].active = YES;
+        
+        return view.okidoki;
+    };
+}
 
 @end
 

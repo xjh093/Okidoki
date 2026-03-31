@@ -27,8 +27,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-// version: 0.0.3
-// 2025-12-12 11:45:51
+// version: 0.0.5
+// 2026-03-31 18:13:11
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
@@ -61,6 +61,27 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number);
 - (Okidoki*(^)(id))mkCorners;
 /** @(YES) or @(NO),NSString */
 - (Okidoki*(^)(id))mtBounds;
+/** UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
+- (Okidoki*(^)(id))shadowColor;
+/** NSNumber,NSString */
+- (Okidoki*(^)(id))shadowOpacity;
+/** NSValue,NSString */
+- (Okidoki*(^)(id))shadowOffset;
+/** NSNumber,NSString */
+- (Okidoki*(^)(id))shadowRadius;
+/** UIBezierPath,CGPathRef */
+- (Okidoki*(^)(id))shadowPath;
+/** UIView */
+- (Okidoki*(^)(id))addSubview;
+/** UIView */
+- (Okidoki*(^)(id))addToSuperview;
+/** @(YES) or @(NO),NSString */
+- (Okidoki*(^)(id))userInteractionEnabled;
+
+#pragma mark - UILabel
+
+/** UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
+- (Okidoki*(^)(id))highlightedTextColor;
 
 #pragma mark - UILabel & UITextView & UITextField
 
@@ -93,6 +114,19 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number);
 - (Okidoki*(^)(id))autoWidth;
 /** NSNumber(CGFloat), 0 means no max height limit. NSString */
 - (Okidoki*(^)(id))autoHeight;
+
+#pragma mark - UIControl
+
+/** @(YES) or @(NO),NSString */
+- (Okidoki*(^)(id))enabled;
+/** @(YES) or @(NO),NSString */
+- (Okidoki*(^)(id))selected;
+/** @(YES) or @(NO),NSString */
+- (Okidoki*(^)(id))highlighted;
+/** NSNumber: @0,@1,@2,@3, NSString */
+- (Okidoki*(^)(id))contentVerticalAlignment;
+/** NSNumber: @0,@1,@2,@3,@4,@5, NSString */
+- (Okidoki*(^)(id))contentHorizontalAlignment;
 
 #pragma mark - UIButton
 
@@ -131,6 +165,8 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number);
 
 /** image: UIImage, NSString */
 - (Okidoki*(^)(id))image;
+/** highlightedImage: UIImage, NSString */
+- (Okidoki*(^)(id))highlightedImage;
 /** image: UIImage,NSString, color: UIColor */
 - (Okidoki*(^)(id,id))imageForTintColor;
 
@@ -169,6 +205,105 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number);
 
 - (Okidoki*(^)(id))editable;
 - (Okidoki*(^)(id))selectable;
+
+@end
+
+@interface Okidoki (AutoLayout)
+
+#pragma mark - AutoLayout Anchors
+
+/**
+ Leading anchor constraint
+ params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
+        toView can be UIView (use its leadingAnchor) or NSLayoutXAxisAnchor
+ Example: .leadingAnchor(@[superview, @20]) or .leadingAnchor(@[superview])
+ */
+- (Okidoki*(^)(id params))leadingAnchor;
+
+/**
+ Trailing anchor constraint
+ params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
+        toView can be UIView (use its trailingAnchor) or NSLayoutXAxisAnchor
+ Example: .trailingAnchor(@[superview, @(-20)])
+ */
+- (Okidoki*(^)(id params))trailingAnchor;
+
+/**
+ Left anchor constraint
+ params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
+        toView can be UIView (use its leftAnchor) or NSLayoutXAxisAnchor
+ Example: .leftAnchor(@[superview, @20])
+ */
+- (Okidoki*(^)(id params))leftAnchor;
+
+/**
+ Right anchor constraint
+ params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
+        toView can be UIView (use its rightAnchor) or NSLayoutXAxisAnchor
+ Example: .rightAnchor(@[superview, @(-20)])
+ */
+- (Okidoki*(^)(id params))rightAnchor;
+
+/**
+ Top anchor constraint
+ params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
+        toView can be UIView (use its topAnchor) or NSLayoutYAxisAnchor
+ Example: .topAnchor(@[superview, @10])
+ */
+- (Okidoki*(^)(id params))topAnchor;
+
+/**
+ Bottom anchor constraint
+ params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
+        toView can be UIView (use its bottomAnchor) or NSLayoutYAxisAnchor
+ Example: .bottomAnchor(@[superview, @(-10)])
+ */
+- (Okidoki*(^)(id params))bottomAnchor;
+
+/**
+ Width anchor constraint
+ params:  NSNumber: @(width) for constant width
+        NSArray: @[toView, @(multiplier), @(constant)] for relative width
+ Example: .widthAnchor(@100) or .widthAnchor(@[superview, @0.5, @(-20)])
+ */
+- (Okidoki*(^)(id params))widthAnchor;
+
+/**
+ Height anchor constraint
+ params:  NSNumber: @(height) for constant height
+        NSArray: @[toView, @(multiplier), @(constant)] for relative height
+ Example: .heightAnchor(@50) or .heightAnchor(@[superview, @0.5, @0])
+ */
+- (Okidoki*(^)(id params))heightAnchor;
+
+/**
+ CenterX anchor constraint
+ params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
+        toView can be UIView (use its centerXAnchor) or NSLayoutXAxisAnchor
+ Example: .centerXAnchor(@[superview, @10])
+ */
+- (Okidoki*(^)(id params))centerXAnchor;
+
+/**
+ CenterY anchor constraint
+ params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
+        toView can be UIView (use its centerYAnchor) or NSLayoutYAxisAnchor
+ Example: .centerYAnchor(@[superview, @0])
+ */
+- (Okidoki*(^)(id params))centerYAnchor;
+
+
+#pragma mark - Convenience Methods
+
+/**
+ Edge to superview with insets
+ params:  NSNumber: @(inset) for all edges
+        NSArray: @[@(top), @(left), @(bottom), @(right)]
+        NSValue: UIEdgeInsets
+        nil: all edges = 0
+ Example: .edgeToSuperView(@20) or .edgeToSuperView(@[@10, @20, @10, @20])
+ */
+- (Okidoki*(^)(id params))edgeToSuperView;
 
 @end
 
