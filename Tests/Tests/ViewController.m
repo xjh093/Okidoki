@@ -24,7 +24,16 @@
 
 //    [self shadow_Example];
     
-    [self layout_Example:self.view];
+//    [self layout_Example:self.view];
+    
+    [self panAnimation_Example];
+}
+
+- (void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+    
+    NSLog(@"viewDidLayoutSubviews");
 }
 
 - (void)shadow_Example
@@ -337,6 +346,37 @@
         .widthAnchor(@6)
         .heightAnchor(@100);
     });
+}
+
+- (void)panAnimation_Example
+{
+    UIView *box1 = UIView.new;
+    UIView *box2 = UIView.new;
+    
+    box1.okidoki
+    .addToSuperview(self.view)
+    //.frame(@"{{30, 70}, {100, 100}}")
+    .frame([NSValue valueWithCGRect:CGRectMake(30, 70, 100, 100)])
+    .bgColor(@"FF0000")
+    .panGesture(^(UIPanGestureRecognizer *pan) {
+        NSLog(@"拖动视图");
+        CGPoint translation = [pan translationInView:pan.view.superview];
+        pan.view.center = CGPointMake(pan.view.center.x + translation.x,
+                                      pan.view.center.y + translation.y);
+        
+        // 重置累计偏移量，将手势的位移归零。
+        // 不重置：每次获取的是从手势开始的总偏移量（越来越大）
+        // 重置后：每次获取的是上次重置后的增量偏移（准确跟随手指）
+        [pan setTranslation:CGPointZero inView:pan.view.superview];
+    });
+    
+    box2.okidoki
+    .addToSuperview(self.view)
+    .bgColor(UIColor.systemGreenColor)
+    .leadingAnchor(@[box1, @10])
+    .topAnchor(@[box1.bottomAnchor, @20])
+    .rightAnchor(@[self.view, @(-20)])
+    .bottomAnchor(@[self.view, @(-20)]);
 }
 
 @end
