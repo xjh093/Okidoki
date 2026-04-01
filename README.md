@@ -42,6 +42,14 @@ button.okidoki
 
 # Logs:
 
+### 2026-03-31
+- 0.0.6
+  - addSubview、gesture、control
+
+### 2026-03-31
+- 0.0.5
+  - AutoLayout
+
 ### 2020-03-02
 - fix bugs and add methods.
 
