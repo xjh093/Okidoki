@@ -145,12 +145,45 @@
     // 示例 1: 基础布局 - 固定大小
     UIView *box1 = [[UIView alloc] init];
     box1.okidoki
-        .addToSuperview(containerView)
-        .bgColor(UIColor.systemRedColor)
-        .widthAnchor(@100)           // 宽度 100
-        .heightAnchor(@100)          // 高度 100
-        .centerXAnchor(@[containerView])  // 水平居中
-        .topAnchor(@[containerView, @(80)]);
+    .addToSuperview(containerView)
+    .bgColor(UIColor.systemRedColor)
+    .widthAnchor(@100)           // 宽度 100
+    .heightAnchor(@100)          // 高度 100
+    .centerXAnchor(@[containerView])  // 水平居中
+    .topAnchor(@[containerView, @(80)])
+    .tapGesture(^(UITapGestureRecognizer *tap) {
+        NSLog(@"点击了视图");
+        tap.view.okidoki.removeGesture(UITapGestureRecognizer.class);
+        NSLog(@"移除点击事件");
+    })
+    .longPressGesture(^(UILongPressGestureRecognizer *longPress) {
+        if (longPress.state == UIGestureRecognizerStateBegan) {
+            NSLog(@"长按开始");
+        }
+    })
+    .swipeGesture(UISwipeGestureRecognizerDirectionRight, ^(UISwipeGestureRecognizer *swipe) {
+        NSLog(@"向右滑动");
+    })
+    .panGesture(^(UIPanGestureRecognizer *pan) {
+        NSLog(@"拖动视图");
+        CGPoint translation = [pan translationInView:pan.view.superview];
+        pan.view.center = CGPointMake(pan.view.center.x + translation.x,
+                                       pan.view.center.y + translation.y);
+        [pan setTranslation:CGPointZero inView:pan.view.superview];
+    })
+    .pinchGesture(^(UIPinchGestureRecognizer *pinch) {
+        NSLog(@"缩放视图");
+        pinch.view.transform = CGAffineTransformScale(pinch.view.transform,
+                                                       pinch.scale,
+                                                       pinch.scale);
+        pinch.scale = 1.0;
+    })
+    .rotationGesture(^(UIRotationGestureRecognizer *rotation) {
+        NSLog(@"旋转视图");
+        rotation.view.transform = CGAffineTransformRotate(rotation.view.transform,
+                                                           rotation.rotation);
+        rotation.rotation = 0;
+    });
     
     // 示例 2: 填充父视图（带边距）
     UIView *box2 = [[UIView alloc] init];
@@ -249,60 +282,61 @@
     UIButton *button = [[UIButton alloc] init];
     [containerView addSubview:button];
     button.okidoki
-        .title(@"点击我")
-        .bgColor(UIColor.systemBlueColor)
-        .cnRadius(@8)
-        .topAnchor(@[box2.bottomAnchor, @(10)])
-        .centerXAnchor(@[containerView])
-        .widthAnchor(@200)
-        .heightAnchor(@44);
+    .title(@"点击我")
+    .bgColor(UIColor.systemBlueColor)
+    .cnRadius(@8)
+    .topAnchor(@[box2.bottomAnchor, @(10)])
+    .centerXAnchor(@[containerView])
+    .widthAnchor(@200)
+    .heightAnchor(@44)
+    .addControlEvent(UIControlEventTouchUpInside, ^(UIButton *button) {
+        NSLog(@"点击事件");
+        
+        button.okidoki.title(@"已点击！");
+    });
     
     // 示例 9: 使用 edgeToSuperView - 填充父视图（所有边距为 0）
     
     UIView *view9 = [[UIView alloc] init];
     view9.okidoki
-        .addToSuperview(bottomView)
-        .bgColor(@"#DFE6E9")
-        .topAnchor(@[label.bottomAnchor, @30])
-        .leadingAnchor(@[bottomView, @20])
-        .trailingAnchor(@[bottomView, @(-20)])
-        .bottomAnchor(@[bottomView, @(-20)]);
-    
-    
-    UIView *fullView = [[UIView alloc] init];
-    fullView.okidoki
-        .addToSuperview(view9)
-        .bgColor(@"#00B894")
-        .edgeToSuperView(nil);  // 完全填充，四边距离都为 0
-    
-    // 示例 10: 使用 edgeToSuperView - 四边相同边距
-    UIView *paddedView = [[UIView alloc] init];
-    paddedView.okidoki
-        .addToSuperview(view9)
-        .bgColor(@"#E17055")
-        .edgeToSuperView(@20);  // 四边距离都为 20
-    
-    // 示例 11: 使用 edgeToSuperView - 不同边距
-    UIView *customView = [[UIView alloc] init];
-    customView.okidoki
-        .addToSuperview(view9)
-        .bgColor(@"#74B9FF")
+    .addToSuperview(bottomView)
+    .bgColor(@"#DFE6E9")
+    .topAnchor(@[label.bottomAnchor, @30])
+    .leadingAnchor(@[bottomView, @20])
+    .trailingAnchor(@[bottomView, @(-20)])
+    .bottomAnchor(@[bottomView, @(-20)])
+    .addSubviewWithConfig(UIView.new, ^(Okidoki *ok){
+        ok.bgColor(@"#00B894")
+        .cnRadius(@20)
+        .edgeToSuperView(nil); // 完全填充，四边距离都为 0
+    })
+    .addSubviewWithConfig(UIView.new, ^(Okidoki *ok){
+        ok.bgColor(@"#E17055")
+        .edgeToSuperView(@15);  // 四边距离都为 20
+    })
+    .addSubviewWithConfig(UIView.new, ^(Okidoki *ok){
+        ok.bgColor(@"#74B9FF")
+        .cnRadius(@10)
         .edgeToSuperView(@[@30, @30, @(-30), @(-30)]);  // 上10，左20，下30，右40
-    
-    // 示例 12: 使用 edgeToSuperView - 垂直和水平边距
-    UIView *symmetricView = [[UIView alloc] init];
-    symmetricView.okidoki
-        .addToSuperview(view9)
-        .bgColor(@"#FD79A8")
+    })
+    .addSubviewWithConfig(UIView.new, ^(Okidoki *ok){
+        ok.bgColor(@"#FD79A8")
         .edgeToSuperView(@[@40, @50]);  // 垂直10，水平30
-    
-    // 示例 13: 使用 edgeToSuperView - UIEdgeInsets
-    UIView *insetsView = [[UIView alloc] init];
-    UIEdgeInsets insets = UIEdgeInsetsMake(60, 75, 70, 85);
-    insetsView.okidoki
-        .addToSuperview(view9)
-        .bgColor(@"#FDCB6E")
+    })
+    .addSubviewWithConfig(UIView.new, ^(Okidoki *ok){
+        UIEdgeInsets insets = UIEdgeInsetsMake(60, 75, 70, 85);
+        ok.bgColor(@"#FDCB6E")
+        .cnRadius(@10)
         .edgeToSuperView([NSValue valueWithUIEdgeInsets:insets]);
+    })
+    .addSubviewWithConfig_superView(UIView.new, ^(Okidoki *ok, UIView *superView){
+        ok.bgColor(UIColor.redColor)
+        .cnRadius(@3)
+        .leadingAnchor(@[superView, @0])
+        .centerYAnchor(@[superView])
+        .widthAnchor(@6)
+        .heightAnchor(@100);
+    });
 }
 
 @end

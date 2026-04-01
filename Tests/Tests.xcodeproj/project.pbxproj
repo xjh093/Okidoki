@@ -381,6 +381,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = D8MERC5W3E;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 4YWGN55BE7;
 				INFOPLIST_FILE = Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -390,6 +391,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.haocold.Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = haocold.develop;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = haocold_dev_20260313;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -401,6 +403,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = D8MERC5W3E;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 4YWGN55BE7;
 				INFOPLIST_FILE = Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -410,6 +413,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.haocold.Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = haocold.develop;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = haocold_dev_20260313;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

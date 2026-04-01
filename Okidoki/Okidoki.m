@@ -70,6 +70,26 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number)
     }; \
 }
 
+// 内部 Target 类，用于持有手势的 block
+@interface _OkidokiGestureTarget : NSObject
+@property (nonatomic, copy) void (^block)(id gesture);
+- (instancetype)initWithBlock:(void (^)(id gesture))block;
+- (void)invoke:(id)gesture;
+@end
+
+@implementation _OkidokiGestureTarget
+- (instancetype)initWithBlock:(void (^)(id gesture))block {
+    self = [super init];
+    if (self) {
+        _block = [block copy];
+    }
+    return self;
+}
+- (void)invoke:(id)gesture {
+    if (_block) _block(gesture);
+}
+@end
+
 @interface Okidoki ()
 @property (nonatomic,    weak) UIView *view;
 @end
@@ -202,6 +222,40 @@ kOkidoki_imp(addSubview, ({
     }
 }))
 
+- (Okidoki*(^)(id, void(^)(Okidoki *ok)))addSubviewWithConfig {
+    return ^id(id subview, void(^config)(Okidoki *ok)) {
+        UIView *view = self.view;
+        
+        if ([subview isKindOfClass:[UIView class]]) {
+            UIView *subView = (UIView *)subview;
+            [view addSubview:subView];
+            
+            if (config) {
+                config(subView.okidoki);
+            }
+        }
+        
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(id, void(^)(Okidoki *ok, UIView *superView)))addSubviewWithConfig_superView {
+    return ^id(id subview, void(^config)(Okidoki *ok, UIView *superView)) {
+        UIView *view = self.view;
+        
+        if ([subview isKindOfClass:[UIView class]]) {
+            UIView *subView = (UIView *)subview;
+            [view addSubview:subView];
+            
+            if (config) {
+                config(subView.okidoki, view);
+            }
+        }
+        
+        return view.okidoki;
+    };
+}
+
 kOkidoki_imp(addToSuperview, ({
     if ([addToSuperview isKindOfClass:[UIView class]]) {
         [(UIView *)addToSuperview addSubview:view];
@@ -215,17 +269,143 @@ kOkidoki_imp(userInteractionEnabled, ({
     }
 }))
 
+#pragma mark - Gesture
+
+- (Okidoki*(^)(void(^)(UITapGestureRecognizer *tap)))tapGesture {
+    return ^id(void(^block)(UITapGestureRecognizer *tap)) {
+        UIView *view = self.view;
+        view.userInteractionEnabled = YES;
+        
+        _OkidokiGestureTarget *target = [[_OkidokiGestureTarget alloc] initWithBlock:block];
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:target action:@selector(invoke:)];
+        [view addGestureRecognizer:tap];
+        
+        // 使用 associated object 持有 target，保证其生命周期
+        objc_setAssociatedObject(tap, _cmd, target, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(void(^)(UILongPressGestureRecognizer *longPress)))longPressGesture {
+    return ^id(void(^block)(UILongPressGestureRecognizer *longPress)) {
+        UIView *view = self.view;
+        view.userInteractionEnabled = YES;
+        
+        _OkidokiGestureTarget *target = [[_OkidokiGestureTarget alloc] initWithBlock:block];
+        UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:target action:@selector(invoke:)];
+        [view addGestureRecognizer:longPress];
+        
+        objc_setAssociatedObject(longPress, _cmd, target, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(NSUInteger, void(^)(UISwipeGestureRecognizer *swipe)))swipeGesture {
+    return ^id(NSUInteger direction, void(^block)(UISwipeGestureRecognizer *swipe)) {
+        UIView *view = self.view;
+        view.userInteractionEnabled = YES;
+        
+        _OkidokiGestureTarget *target = [[_OkidokiGestureTarget alloc] initWithBlock:block];
+        UISwipeGestureRecognizer *swipe = [[UISwipeGestureRecognizer alloc] initWithTarget:target action:@selector(invoke:)];
+        swipe.direction = direction;
+        [view addGestureRecognizer:swipe];
+        
+        objc_setAssociatedObject(swipe, _cmd, target, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        
+        // 让 Pan 手势在 Swipe 手势失败后才触发
+        for (UIGestureRecognizer *gesture in view.gestureRecognizers) {
+            if ([gesture isKindOfClass:[UIPanGestureRecognizer class]]) {
+                [gesture requireGestureRecognizerToFail:swipe];
+            }
+        }
+        
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(void(^)(UIPanGestureRecognizer *pan)))panGesture {
+    return ^id(void(^block)(UIPanGestureRecognizer *pan)) {
+        UIView *view = self.view;
+        view.userInteractionEnabled = YES;
+        
+        _OkidokiGestureTarget *target = [[_OkidokiGestureTarget alloc] initWithBlock:block];
+        UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:target action:@selector(invoke:)];
+        [view addGestureRecognizer:pan];
+        
+        objc_setAssociatedObject(pan, _cmd, target, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        
+        // 让 Pan 手势在已有的 Swipe 手势失败后才触发
+        for (UIGestureRecognizer *gesture in view.gestureRecognizers) {
+            if ([gesture isKindOfClass:[UISwipeGestureRecognizer class]]) {
+                [pan requireGestureRecognizerToFail:gesture];
+            }
+        }
+        
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(void(^)(UIPinchGestureRecognizer *pinch)))pinchGesture {
+    return ^id(void(^block)(UIPinchGestureRecognizer *pinch)) {
+        UIView *view = self.view;
+        view.userInteractionEnabled = YES;
+        
+        _OkidokiGestureTarget *target = [[_OkidokiGestureTarget alloc] initWithBlock:block];
+        UIPinchGestureRecognizer *pinch = [[UIPinchGestureRecognizer alloc] initWithTarget:target action:@selector(invoke:)];
+        [view addGestureRecognizer:pinch];
+        
+        objc_setAssociatedObject(pinch, _cmd, target, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(void(^)(UIRotationGestureRecognizer *rotation)))rotationGesture {
+    return ^id(void(^block)(UIRotationGestureRecognizer *rotation)) {
+        UIView *view = self.view;
+        view.userInteractionEnabled = YES;
+        
+        _OkidokiGestureTarget *target = [[_OkidokiGestureTarget alloc] initWithBlock:block];
+        UIRotationGestureRecognizer *rotation = [[UIRotationGestureRecognizer alloc] initWithTarget:target action:@selector(invoke:)];
+        [view addGestureRecognizer:rotation];
+        
+        objc_setAssociatedObject(rotation, _cmd, target, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(Class))removeGesture {
+    return ^id(Class gestureClass) {
+        UIView *view = self.view;
+        
+        NSArray *gestures = [view.gestureRecognizers copy];
+        for (UIGestureRecognizer *gesture in gestures) {
+            if ([gesture isKindOfClass:gestureClass]) {
+                [view removeGestureRecognizer:gesture];
+            }
+        }
+        
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(void))removeAllGestures {
+    return ^id() {
+        UIView *view = self.view;
+        
+        NSArray *gestures = [view.gestureRecognizers copy];
+        for (UIGestureRecognizer *gesture in gestures) {
+            [view removeGestureRecognizer:gesture];
+        }
+        
+        return view.okidoki;
+    };
+}
 
 #pragma mark - UILabel
-
-kOkidoki_imp(highlightedTextColor, ({
-    if ([view isKindOfClass:[UILabel class]]) {
-        UIColor *color = [UIColor okidokiColor:highlightedTextColor];
-        if (color) {
-            [(UILabel *)view setHighlightedTextColor:color];
-        }
-    }
-}))
 
 kOkidoki_imp(text, ({
     if([text isKindOfClass:[NSString class]]){
@@ -346,6 +526,15 @@ kOkidoki_imp(autoHeight, ({
             frame.size.height = label.frame.size.height;
         }
         label.frame = frame;
+    }
+}))
+
+kOkidoki_imp(highlightedTextColor, ({
+    if ([view isKindOfClass:[UILabel class]]) {
+        UIColor *color = [UIColor okidokiColor:highlightedTextColor];
+        if (color) {
+            [(UILabel *)view setHighlightedTextColor:color];
+        }
     }
 }))
 
@@ -496,6 +685,72 @@ kOkidoki_imp(contentHorizontalAlignment, ({
         }
     }
 }))
+
+- (Okidoki*(^)(UIControlEvents, void(^)(__kindof UIControl *sender)))addControlEvent {
+    return ^id(UIControlEvents events, void(^block)(__kindof UIControl *sender)) {
+        UIView *view = self.view;
+        
+        if ([view isKindOfClass:[UIControl class]]) {
+            UIControl *control = (UIControl *)view;
+            
+            _OkidokiGestureTarget *target = [[_OkidokiGestureTarget alloc] initWithBlock:block];
+            [control addTarget:target action:@selector(invoke:) forControlEvents:events];
+            
+            // 使用 associated object 持有 target，保证其生命周期
+            // 使用 events 作为 key 的一部分来区分不同事件
+            NSString *key = [NSString stringWithFormat:@"okidoki_control_event_%lu", (unsigned long)events];
+            
+            // 获取已有的 targets 数组，或创建新数组
+            NSMutableArray *targets = objc_getAssociatedObject(control, (__bridge const void *)(key));
+            if (!targets) {
+                targets = [NSMutableArray array];
+                objc_setAssociatedObject(control, (__bridge const void *)(key), targets, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            }
+            [targets addObject:target];
+        }
+        
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(UIControlEvents))removeControlEvent {
+    return ^id(UIControlEvents events) {
+        UIView *view = self.view;
+        
+        if ([view isKindOfClass:[UIControl class]]) {
+            UIControl *control = (UIControl *)view;
+            
+            NSString *key = [NSString stringWithFormat:@"okidoki_control_event_%lu", (unsigned long)events];
+            NSMutableArray *targets = objc_getAssociatedObject(control, (__bridge const void *)(key));
+            
+            // 移除所有相关的 target
+            for (_OkidokiGestureTarget *target in targets) {
+                [control removeTarget:target action:@selector(invoke:) forControlEvents:events];
+            }
+            
+            // 清空 targets 数组
+            [targets removeAllObjects];
+        }
+        
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(void))removeAllControlEvents {
+    return ^id() {
+        UIView *view = self.view;
+        
+        if ([view isKindOfClass:[UIControl class]]) {
+            UIControl *control = (UIControl *)view;
+            [control removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
+            
+            // 清空所有关联的 targets
+            objc_removeAssociatedObjects(control);
+        }
+        
+        return view.okidoki;
+    };
+}
 
 #pragma mark - UIButton
 

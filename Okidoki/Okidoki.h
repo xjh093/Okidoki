@@ -27,8 +27,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-// version: 0.0.5
-// 2026-03-31 18:13:11
+// version: 0.0.6
+// 2026-04-01 11:46:14
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
@@ -73,15 +73,35 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number);
 - (Okidoki*(^)(id))shadowPath;
 /** UIView */
 - (Okidoki*(^)(id))addSubview;
+/** UIView, block: void(^)(Okidoki *ok) */
+- (Okidoki*(^)(id, void(^)(Okidoki *ok)))addSubviewWithConfig;
+/** UIView, block: void(^)(Okidoki *ok, UIView *superView) */
+- (Okidoki*(^)(id, void(^)(Okidoki *ok, UIView *superView)))addSubviewWithConfig_superView;
 /** UIView */
 - (Okidoki*(^)(id))addToSuperview;
 /** @(YES) or @(NO),NSString */
 - (Okidoki*(^)(id))userInteractionEnabled;
 
-#pragma mark - UILabel
 
-/** UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
-- (Okidoki*(^)(id))highlightedTextColor;
+#pragma mark - Gesture
+
+/** Tap gesture, block: void(^)(UITapGestureRecognizer *tap) */
+- (Okidoki*(^)(void(^)(UITapGestureRecognizer *tap)))tapGesture;
+/** LongPress gesture, block: void(^)(UILongPressGestureRecognizer *longPress) */
+- (Okidoki*(^)(void(^)(UILongPressGestureRecognizer *longPress)))longPressGesture;
+/** Swipe gesture, direction: UISwipeGestureRecognizerDirection, block: void(^)(UISwipeGestureRecognizer *swipe) */
+- (Okidoki*(^)(NSUInteger, void(^)(UISwipeGestureRecognizer *swipe)))swipeGesture;
+/** Pan gesture, block: void(^)(UIPanGestureRecognizer *pan) */
+- (Okidoki*(^)(void(^)(UIPanGestureRecognizer *pan)))panGesture;
+/** Pinch gesture, block: void(^)(UIPinchGestureRecognizer *pinch) */
+- (Okidoki*(^)(void(^)(UIPinchGestureRecognizer *pinch)))pinchGesture;
+/** Rotation gesture, block: void(^)(UIRotationGestureRecognizer *rotation) */
+- (Okidoki*(^)(void(^)(UIRotationGestureRecognizer *rotation)))rotationGesture;
+/** Remove gesture by class, example: .removeGesture([UITapGestureRecognizer class]) */
+- (Okidoki*(^)(Class))removeGesture;
+/** Remove all gestures */
+- (Okidoki*(^)(void))removeAllGestures;
+
 
 #pragma mark - UILabel & UITextView & UITextField
 
@@ -102,6 +122,7 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number);
 /** substring: NSString, key: NSAttributedStringKey, value: color/font/number etc. range: NSValue. */
 - (Okidoki*(^)(id,id,id,id))attributedSubstringKeyValueInRange;
 
+
 #pragma mark - UILabel
 
 /** NSNumber(NSInteger) ,NSString*/
@@ -114,6 +135,9 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number);
 - (Okidoki*(^)(id))autoWidth;
 /** NSNumber(CGFloat), 0 means no max height limit. NSString */
 - (Okidoki*(^)(id))autoHeight;
+/** UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
+- (Okidoki*(^)(id))highlightedTextColor;
+
 
 #pragma mark - UIControl
 
@@ -127,6 +151,12 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number);
 - (Okidoki*(^)(id))contentVerticalAlignment;
 /** NSNumber: @0,@1,@2,@3,@4,@5, NSString */
 - (Okidoki*(^)(id))contentHorizontalAlignment;
+/** Add block for control events, controlEvents: UIControlEvents, block: void(^)(__kindof UIControl *sender) */
+- (Okidoki*(^)(UIControlEvents, void(^)(__kindof UIControl *sender)))addControlEvent;
+/** Remove all blocks for control events, controlEvents: UIControlEvents */
+- (Okidoki*(^)(UIControlEvents))removeControlEvent;
+/** Remove all targets and blocks for all events */
+- (Okidoki*(^)(void))removeAllControlEvents;
 
 #pragma mark - UIButton
 
@@ -161,6 +191,7 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number);
 /** substring: NSString, key: NSAttributedStringKey, value: color/font/number etc. range: NSValue. */
 - (Okidoki*(^)(id,id,id,id,id))attributedSubstringKeyValueInRangeForState;
 
+
 #pragma mark - UIImageView
 
 /** image: UIImage, NSString */
@@ -194,6 +225,7 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number);
 /** secureTextEntry, BOOL: @YES, @NO */
 - (Okidoki*(^)(id))secure;
 
+
 #pragma mark - UIScrollView
 
 - (Okidoki*(^)(id))verInd;
@@ -201,12 +233,14 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number);
 - (Okidoki*(^)(id))paging;
 - (Okidoki*(^)(id))bounces;
 
+
 #pragma mark - UITextView
 
 - (Okidoki*(^)(id))editable;
 - (Okidoki*(^)(id))selectable;
 
 @end
+
 
 @interface Okidoki (AutoLayout)
 
@@ -307,6 +341,7 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number);
 
 @end
 
+
 @interface UIView (Okidoki)
 @property (nonatomic,  strong) Okidoki *okidoki;
 
@@ -324,10 +359,12 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number);
 @property (nonatomic) CGFloat ok_topBottom;
 @end
 
+
 @interface UIColor (Okidoki)
 /** color: UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
 + (UIColor *)okidokiColor:(id)color;
 @end
+
 
 @interface UIFont (Okidoki)
 /** color: UIFont,NSString(eg.@"17",@"s17",@"b17",@"i17") */
