@@ -27,8 +27,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-// version: 0.0.9
-// 2026-04-02 15:38:11
+// version: 0.0.10
+// 2026-04-02 16:35:05
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
@@ -538,7 +538,7 @@ NS_ASSUME_NONNULL_BEGIN
 /** 
  borderStyle: NSNumber, NSString: @0 (None), @1 (RoundedRect)
  @code
- .borderStyle(@1)
+ textView.borderStyle(@1)
  @endcode
  */
 - (Okidoki*(^)(id))borderStyle;
@@ -1145,6 +1145,91 @@ typedef void(^OkidokiCollectionViewDidEndDisplayingCellBlock)(UICollectionView *
 @end
 
 
+// UITextField Delegate Block Types
+typedef BOOL(^OkidokiTextFieldShouldBeginEditingBlock)(UITextField *textField);
+typedef void(^OkidokiTextFieldDidBeginEditingBlock)(UITextField *textField);
+typedef BOOL(^OkidokiTextFieldShouldEndEditingBlock)(UITextField *textField);
+typedef void(^OkidokiTextFieldDidEndEditingBlock)(UITextField *textField);
+typedef BOOL(^OkidokiTextFieldShouldChangeCharactersBlock)(UITextField *textField, NSRange range, NSString *replacementString);
+typedef BOOL(^OkidokiTextFieldShouldClearBlock)(UITextField *textField);
+typedef BOOL(^OkidokiTextFieldShouldReturnBlock)(UITextField *textField);
+
+@interface Okidoki (UITextField)
+
+/** 
+ textFieldShouldBeginEditing: block
+ @code
+ .tfShouldBeginEditing(^BOOL(UITextField *textField) {
+     return YES;
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTextFieldShouldBeginEditingBlock block))tfShouldBeginEditing;
+
+/** 
+ textFieldDidBeginEditing: block
+ @code
+ .tfDidBeginEditing(^(UITextField *textField) {
+     NSLog(@"Begin editing");
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTextFieldDidBeginEditingBlock block))tfDidBeginEditing;
+
+/** 
+ textFieldShouldEndEditing: block
+ @code
+ .tfShouldEndEditing(^BOOL(UITextField *textField) {
+     return YES;
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTextFieldShouldEndEditingBlock block))tfShouldEndEditing;
+
+/** 
+ textFieldDidEndEditing: block
+ @code
+ .tfDidEndEditing(^(UITextField *textField) {
+     NSLog(@"End editing");
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTextFieldDidEndEditingBlock block))tfDidEndEditing;
+
+/** 
+ textField:shouldChangeCharactersInRange:replacementString: block
+ @code
+ .tfShouldChangeCharacters(^BOOL(UITextField *textField, NSRange range, NSString *replacementString) {
+     return YES;
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTextFieldShouldChangeCharactersBlock block))tfShouldChangeCharacters;
+
+/** 
+ textFieldShouldClear: block
+ @code
+ .tfShouldClear(^BOOL(UITextField *textField) {
+     return YES;
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTextFieldShouldClearBlock block))tfShouldClear;
+
+/** 
+ textFieldShouldReturn: block
+ @code
+ .tfShouldReturn(^BOOL(UITextField *textField) {
+     [textField resignFirstResponder];
+     return YES;
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTextFieldShouldReturnBlock block))tfShouldReturn;
+
+@end
+
+
 @interface Okidoki (AutoLayout)
 
 #pragma mark - AutoLayout Anchors
@@ -1251,9 +1336,6 @@ typedef void(^OkidokiCollectionViewDidEndDisplayingCellBlock)(UICollectionView *
  @endcode
  */
 - (Okidoki*(^)(id params))centerYAnchor;
-
-
-#pragma mark - Convenience Methods
 
 /**
  Edge to superview with insets

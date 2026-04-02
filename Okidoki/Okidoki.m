@@ -501,6 +501,71 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number)
 
 @end
 
+// 内部 Delegate Handler 类，用于处理 UITextField 代理回调
+@interface _OkidokiTextFieldDelegateHandler : NSObject <UITextFieldDelegate>
+@property (nonatomic, copy) OkidokiTextFieldShouldBeginEditingBlock shouldBeginEditingBlock;
+@property (nonatomic, copy) OkidokiTextFieldDidBeginEditingBlock didBeginEditingBlock;
+@property (nonatomic, copy) OkidokiTextFieldShouldEndEditingBlock shouldEndEditingBlock;
+@property (nonatomic, copy) OkidokiTextFieldDidEndEditingBlock didEndEditingBlock;
+@property (nonatomic, copy) OkidokiTextFieldShouldChangeCharactersBlock shouldChangeCharactersBlock;
+@property (nonatomic, copy) OkidokiTextFieldShouldClearBlock shouldClearBlock;
+@property (nonatomic, copy) OkidokiTextFieldShouldReturnBlock shouldReturnBlock;
+@end
+
+@implementation _OkidokiTextFieldDelegateHandler
+
+#pragma mark - UITextFieldDelegate
+
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
+    if (self.shouldBeginEditingBlock) {
+        return self.shouldBeginEditingBlock(textField);
+    }
+    return YES;
+}
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    if (self.didBeginEditingBlock) {
+        self.didBeginEditingBlock(textField);
+    }
+}
+
+- (BOOL)textFieldShouldEndEditing:(UITextField *)textField {
+    if (self.shouldEndEditingBlock) {
+        return self.shouldEndEditingBlock(textField);
+    }
+    return YES;
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+    if (self.didEndEditingBlock) {
+        self.didEndEditingBlock(textField);
+    }
+}
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    if (self.shouldChangeCharactersBlock) {
+        return self.shouldChangeCharactersBlock(textField, range, string);
+    }
+    return YES;
+}
+
+- (BOOL)textFieldShouldClear:(UITextField *)textField {
+    if (self.shouldClearBlock) {
+        return self.shouldClearBlock(textField);
+    }
+    return YES;
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    if (self.shouldReturnBlock) {
+        return self.shouldReturnBlock(textField);
+    }
+    return YES;
+}
+
+@end
+
+
 @interface Okidoki ()
 @property (nonatomic,    weak) UIView *view;
 @end
@@ -2564,6 +2629,111 @@ static const char kOkidokiCollectionViewDelegateHandlerKey = '\0';
         // Set the handler as delegate and dataSource
         collectionView.delegate = handler;
         collectionView.dataSource = handler;
+    }
+    return handler;
+}
+
+
+#pragma mark - UITextField
+
+// Associated object key for delegate handler
+static const char kOkidokiTextFieldDelegateHandlerKey = '\0';
+
+- (Okidoki*(^)(OkidokiTextFieldShouldBeginEditingBlock block))tfShouldBeginEditing {
+    return ^id(OkidokiTextFieldShouldBeginEditingBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITextField class]]) {
+            UITextField *textField = (UITextField *)view;
+            _OkidokiTextFieldDelegateHandler *handler = [self _textFieldDelegateHandlerForTextField:textField];
+            handler.shouldBeginEditingBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTextFieldDidBeginEditingBlock block))tfDidBeginEditing {
+    return ^id(OkidokiTextFieldDidBeginEditingBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITextField class]]) {
+            UITextField *textField = (UITextField *)view;
+            _OkidokiTextFieldDelegateHandler *handler = [self _textFieldDelegateHandlerForTextField:textField];
+            handler.didBeginEditingBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTextFieldShouldEndEditingBlock block))tfShouldEndEditing {
+    return ^id(OkidokiTextFieldShouldEndEditingBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITextField class]]) {
+            UITextField *textField = (UITextField *)view;
+            _OkidokiTextFieldDelegateHandler *handler = [self _textFieldDelegateHandlerForTextField:textField];
+            handler.shouldEndEditingBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTextFieldDidEndEditingBlock block))tfDidEndEditing {
+    return ^id(OkidokiTextFieldDidEndEditingBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITextField class]]) {
+            UITextField *textField = (UITextField *)view;
+            _OkidokiTextFieldDelegateHandler *handler = [self _textFieldDelegateHandlerForTextField:textField];
+            handler.didEndEditingBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTextFieldShouldChangeCharactersBlock block))tfShouldChangeCharacters {
+    return ^id(OkidokiTextFieldShouldChangeCharactersBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITextField class]]) {
+            UITextField *textField = (UITextField *)view;
+            _OkidokiTextFieldDelegateHandler *handler = [self _textFieldDelegateHandlerForTextField:textField];
+            handler.shouldChangeCharactersBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTextFieldShouldClearBlock block))tfShouldClear {
+    return ^id(OkidokiTextFieldShouldClearBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITextField class]]) {
+            UITextField *textField = (UITextField *)view;
+            _OkidokiTextFieldDelegateHandler *handler = [self _textFieldDelegateHandlerForTextField:textField];
+            handler.shouldClearBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTextFieldShouldReturnBlock block))tfShouldReturn {
+    return ^id(OkidokiTextFieldShouldReturnBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITextField class]]) {
+            UITextField *textField = (UITextField *)view;
+            _OkidokiTextFieldDelegateHandler *handler = [self _textFieldDelegateHandlerForTextField:textField];
+            handler.shouldReturnBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+// Helper method to get or create delegate handler
+- (_OkidokiTextFieldDelegateHandler *)_textFieldDelegateHandlerForTextField:(UITextField *)textField {
+    if (!textField) return nil;
+    
+    _OkidokiTextFieldDelegateHandler *handler = objc_getAssociatedObject(textField, &kOkidokiTextFieldDelegateHandlerKey);
+    if (!handler) {
+        handler = [[_OkidokiTextFieldDelegateHandler alloc] init];
+        objc_setAssociatedObject(textField, &kOkidokiTextFieldDelegateHandlerKey, handler, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        
+        // Set the handler as delegate
+        textField.delegate = handler;
     }
     return handler;
 }

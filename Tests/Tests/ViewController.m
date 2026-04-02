@@ -31,7 +31,9 @@
     
 //    [self tableView_Example];
     
-    [self collectionView_Example];
+//    [self collectionView_Example];
+    
+    [self textField_Example];
 }
 
 - (void)refreshAction
@@ -533,14 +535,61 @@
 
     }
     return _collectionView;
+    
+    
+}
+
+- (void)textField_Example
+{
+    UITextField *textField = [[UITextField alloc] initWithFrame:CGRectMake(20, 100, 300, 44)];
+
+    textField.okidoki
+    .addToSuperview(self.view)
+    .bgColor(@"F5F5F5")
+    .bdStyle(@(UITextBorderStyleRoundedRect))
+    .pHolder(@"请输入用户名~")
+    .pHColor(UIColor.systemRedColor)
+    .font(@"b16")
+    .tfShouldBeginEditing(^BOOL(UITextField *textField) {
+        NSLog(@"即将开始编辑");
+        return YES;
+    })
+    .tfDidBeginEditing(^(UITextField *textField) {
+        NSLog(@"已经开始编辑");
+    })
+    .tfShouldChangeCharacters(^BOOL(UITextField *textField, NSRange range, NSString *replacementString) {
+        // 限制只能输入数字
+        NSCharacterSet *numberSet = [NSCharacterSet decimalDigitCharacterSet];
+        if ([replacementString length] > 0 && ![numberSet isSupersetOfSet:[NSCharacterSet characterSetWithCharactersInString:replacementString]]) {
+            return NO;
+        }
+        return YES;
+    })
+    .tfShouldReturn(^BOOL(UITextField *textField) {
+        [textField resignFirstResponder];
+        return YES;
+    });
+    
+    
+    //
+    UITextField *passwordField = [[UITextField alloc] initWithFrame:CGRectMake(20, 200, 300, 44)];
+    passwordField.okidoki
+    .addToSuperview(self.view)
+    .bdStyle(@(UITextBorderStyleRoundedRect))
+    .pHolder(@"请输入密码")
+    .secure(@YES)
+    .cbMode(@1)
+    .tfDidEndEditing(^(UITextField *textField) {
+        NSLog(@"密码输入完成: %@", textField.text);
+    })
+    .tfShouldClear(^BOOL(UITextField *textField) {
+        NSLog(@"用户点击清除按钮");
+        return YES;
+    })
+    .tfShouldReturn(^BOOL(UITextField *textField) {
+        [textField resignFirstResponder];
+        return YES;
+    });
 }
 
 @end
-
-
-/*
- 
- 添加 UICollectionView 相关的代理方法 UICollectionViewDataSource, UICollectionViewDelegate，内部使用内部类：_OkidokiCollectionViewDelegateHanlder, 来处理代理方法，内部类绑定到当前 collectionView 上。
- .h 文件，在 @interface Okidoki (UICollectionView) xxx @end 添加方法
- .m 文件，在 #pragma mark - UICollectionView 后面实现相关方法
- */
