@@ -565,6 +565,84 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number)
 
 @end
 
+// 内部 Delegate Handler 类，用于处理 UITextView 代理回调
+@interface _OkidokiTextViewDelegateHandler : NSObject <UITextViewDelegate>
+@property (nonatomic, copy) OkidokiTextViewShouldBeginEditingBlock shouldBeginEditingBlock;
+@property (nonatomic, copy) OkidokiTextViewDidBeginEditingBlock didBeginEditingBlock;
+@property (nonatomic, copy) OkidokiTextViewShouldEndEditingBlock shouldEndEditingBlock;
+@property (nonatomic, copy) OkidokiTextViewDidEndEditingBlock didEndEditingBlock;
+@property (nonatomic, copy) OkidokiTextViewDidChangeBlock didChangeBlock;
+@property (nonatomic, copy) OkidokiTextViewDidChangeSelectionBlock didChangeSelectionBlock;
+@property (nonatomic, copy) OkidokiTextViewShouldChangeTextBlock shouldChangeTextBlock;
+@property (nonatomic, copy) OkidokiTextViewShouldChangeTextInRangesBlock shouldChangeTextInRangesBlock API_AVAILABLE(ios(26.0), tvos(26.0), visionos(26.0), watchos(26.0));
+@end
+
+@implementation _OkidokiTextViewDelegateHandler
+
+#pragma mark - UITextViewDelegate
+
+- (BOOL)textViewShouldBeginEditing:(UITextView *)textView {
+    if (self.shouldBeginEditingBlock) {
+        return self.shouldBeginEditingBlock(textView);
+    }
+    return YES;
+}
+
+- (void)textViewDidBeginEditing:(UITextView *)textView {
+    if (self.didBeginEditingBlock) {
+        self.didBeginEditingBlock(textView);
+    }
+}
+
+- (BOOL)textViewShouldEndEditing:(UITextView *)textView {
+    if (self.shouldEndEditingBlock) {
+        return self.shouldEndEditingBlock(textView);
+    }
+    return YES;
+}
+
+- (void)textViewDidEndEditing:(UITextView *)textView {
+    if (self.didEndEditingBlock) {
+        self.didEndEditingBlock(textView);
+    }
+}
+
+- (void)textViewDidChange:(UITextView *)textView {
+    if (self.didChangeBlock) {
+        self.didChangeBlock(textView);
+    }
+}
+
+- (void)textViewDidChangeSelection:(UITextView *)textView {
+    if (self.didChangeSelectionBlock) {
+        self.didChangeSelectionBlock(textView);
+    }
+}
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+    if (self.shouldChangeTextBlock) {
+        return self.shouldChangeTextBlock(textView, range, text);
+    }
+    return YES;
+}
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRanges:(NSArray<NSValue *> *)ranges replacementText:(NSString *)text API_AVAILABLE(ios(26.0), tvos(26.0), visionos(26.0), watchos(26.0)) {
+    // 优先使用新的 block
+    if (self.shouldChangeTextInRangesBlock) {
+        return self.shouldChangeTextInRangesBlock(textView, ranges, text);
+    }
+    
+    // 兼容旧的 block - 使用第一个 range
+    if (self.shouldChangeTextBlock && ranges.count > 0) {
+        NSRange firstRange = [ranges.firstObject rangeValue];
+        return self.shouldChangeTextBlock(textView, firstRange, text);
+    }
+    
+    return YES;
+}
+
+@end
+
 
 @interface Okidoki ()
 @property (nonatomic,    weak) UIView *view;
@@ -2736,6 +2814,122 @@ static const char kOkidokiTextFieldDelegateHandlerKey = '\0';
         textField.delegate = handler;
     }
     return handler;
+}
+
+
+#pragma mark - UITextView
+
+static const char kOkidokiTextViewDelegateHandlerKey;
+
+// Helper method to get or create the delegate handler
+static _OkidokiTextViewDelegateHandler* _textViewDelegateHandlerForTextView(UITextView *textView) {
+    _OkidokiTextViewDelegateHandler *handler = objc_getAssociatedObject(textView, &kOkidokiTextViewDelegateHandlerKey);
+    if (!handler) {
+        handler = [[_OkidokiTextViewDelegateHandler alloc] init];
+        objc_setAssociatedObject(textView, &kOkidokiTextViewDelegateHandlerKey, handler, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        
+        // Set the handler as delegate
+        textView.delegate = handler;
+    }
+    return handler;
+}
+
+- (Okidoki*(^)(OkidokiTextViewShouldBeginEditingBlock))tvShouldBeginEditing {
+    return ^id(OkidokiTextViewShouldBeginEditingBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITextView class]]) {
+            UITextView *textView = (UITextView *)view;
+            _OkidokiTextViewDelegateHandler *handler = _textViewDelegateHandlerForTextView(textView);
+            handler.shouldBeginEditingBlock = block;
+        }
+        return self;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTextViewDidBeginEditingBlock))tvDidBeginEditing {
+    return ^id(OkidokiTextViewDidBeginEditingBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITextView class]]) {
+            UITextView *textView = (UITextView *)view;
+            _OkidokiTextViewDelegateHandler *handler = _textViewDelegateHandlerForTextView(textView);
+            handler.didBeginEditingBlock = block;
+        }
+        return self;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTextViewShouldEndEditingBlock))tvShouldEndEditing {
+    return ^id(OkidokiTextViewShouldEndEditingBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITextView class]]) {
+            UITextView *textView = (UITextView *)view;
+            _OkidokiTextViewDelegateHandler *handler = _textViewDelegateHandlerForTextView(textView);
+            handler.shouldEndEditingBlock = block;
+        }
+        return self;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTextViewDidEndEditingBlock))tvDidEndEditing {
+    return ^id(OkidokiTextViewDidEndEditingBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITextView class]]) {
+            UITextView *textView = (UITextView *)view;
+            _OkidokiTextViewDelegateHandler *handler = _textViewDelegateHandlerForTextView(textView);
+            handler.didEndEditingBlock = block;
+        }
+        return self;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTextViewDidChangeBlock))tvDidChange {
+    return ^id(OkidokiTextViewDidChangeBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITextView class]]) {
+            UITextView *textView = (UITextView *)view;
+            _OkidokiTextViewDelegateHandler *handler = _textViewDelegateHandlerForTextView(textView);
+            handler.didChangeBlock = block;
+        }
+        return self;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTextViewDidChangeSelectionBlock))tvDidChangeSelection {
+    return ^id(OkidokiTextViewDidChangeSelectionBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITextView class]]) {
+            UITextView *textView = (UITextView *)view;
+            _OkidokiTextViewDelegateHandler *handler = _textViewDelegateHandlerForTextView(textView);
+            handler.didChangeSelectionBlock = block;
+        }
+        return self;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTextViewShouldChangeTextBlock))tvShouldChangeText {
+    return ^id(OkidokiTextViewShouldChangeTextBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITextView class]]) {
+            UITextView *textView = (UITextView *)view;
+            _OkidokiTextViewDelegateHandler *handler = _textViewDelegateHandlerForTextView(textView);
+            handler.shouldChangeTextBlock = block;
+        }
+        return self;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTextViewShouldChangeTextInRangesBlock))tvShouldChangeTextInRanges API_AVAILABLE(ios(26.0), tvos(26.0), visionos(26.0), watchos(26.0)) {
+    return ^id(OkidokiTextViewShouldChangeTextInRangesBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITextView class]]) {
+            UITextView *textView = (UITextView *)view;
+            _OkidokiTextViewDelegateHandler *handler = _textViewDelegateHandlerForTextView(textView);
+            if (@available(iOS 26.0, tvOS 26.0, visionOS 26.0, watchOS 26.0, *)) {
+                handler.shouldChangeTextInRangesBlock = block;
+            }
+        }
+        return self;
+    };
 }
 
 

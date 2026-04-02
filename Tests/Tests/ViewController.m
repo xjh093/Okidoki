@@ -33,7 +33,11 @@
     
 //    [self collectionView_Example];
     
-    [self textField_Example];
+//    [self textField_Example];
+    
+    [self textView_Example];
+    
+
 }
 
 - (void)refreshAction
@@ -590,6 +594,85 @@
         [textField resignFirstResponder];
         return YES;
     });
+}
+
+
+- (void)textView_Example
+{
+    UITextView *textView = [[UITextView alloc] initWithFrame:CGRectMake(20, 100, 300, 200)];
+    textView.okidoki
+    .addToSuperview(self.view)
+    .text(@"Hello World")
+    .font(@"16")
+    .color(@"333333")
+    .bgColor(@"F5F5F5")
+    .editable(@YES)
+    .selectable(@YES)
+    .textContainerInset([NSValue valueWithUIEdgeInsets:UIEdgeInsetsMake(10, 10, 10, 10)])
+    .addToSuperview(self.view);
+
+
+    // 代理方法
+    textView.okidoki
+    .tvShouldBeginEditing(^BOOL(UITextView *textView) {
+        NSLog(@"准备开始编辑");
+        return YES;
+    })
+    .tvDidBeginEditing(^(UITextView *textView) {
+        NSLog(@"已开始编辑");
+        textView.layer.borderColor = [UIColor blueColor].CGColor;
+        textView.layer.borderWidth = 1.0;
+    })
+    .tvShouldEndEditing(^BOOL(UITextView *textView) {
+        NSLog(@"准备结束编辑");
+        return YES;
+    })
+    .tvDidEndEditing(^(UITextView *textView) {
+        NSLog(@"已结束编辑");
+        textView.layer.borderWidth = 0;
+    })
+    .tvDidChange(^(UITextView *textView) {
+        NSLog(@"文本已改变: %@", textView.text);
+    })
+    .tvDidChangeSelection(^(UITextView *textView) {
+        NSLog(@"选择改变");
+    })
+    .tvShouldChangeText(^BOOL(UITextView *textView, NSRange range, NSString *replacementText) {
+        // 限制输入长度
+        if (replacementText.length > 0 && textView.text.length >= 100) {
+            return NO;
+        }
+        // 禁止输入换行
+        if ([replacementText isEqualToString:@"\n"]) {
+            [textView resignFirstResponder];
+            return NO;
+        }
+        return YES;
+    });
+
+
+    // 新版 API（iOS 26+）- 支持多范围编辑
+    if (@available(iOS 26.0, *)) {
+        textView.okidoki.tvShouldChangeTextInRanges(^BOOL(UITextView *textView, NSArray<NSValue *> *ranges, NSString *replacementText) {
+            // 新版 API 支持同时处理多个范围的文本变化
+            NSLog(@"将在 %ld 个范围内替换文本", (long)ranges.count);
+            
+            // 计算替换后的总长度
+            NSInteger totalLength = textView.text.length;
+            for (NSValue *rangeValue in ranges) {
+                NSRange range = [rangeValue rangeValue];
+                totalLength = totalLength - range.length + replacementText.length;
+            }
+            
+            // 限制总长度
+            if (totalLength > 200) {
+                NSLog(@"文本长度超出限制");
+                return NO;
+            }
+            
+            return YES;
+        });
+    }
 }
 
 @end

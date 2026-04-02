@@ -27,8 +27,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-// version: 0.0.10
-// 2026-04-02 16:35:05
+// version: 0.0.11
+// 2026-04-02 17:53:11
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
@@ -1226,6 +1226,102 @@ typedef BOOL(^OkidokiTextFieldShouldReturnBlock)(UITextField *textField);
  @endcode
  */
 - (Okidoki*(^)(OkidokiTextFieldShouldReturnBlock block))tfShouldReturn;
+
+@end
+
+
+// UITextView Delegate Block Types
+typedef BOOL(^OkidokiTextViewShouldBeginEditingBlock)(UITextView *textView);
+typedef void(^OkidokiTextViewDidBeginEditingBlock)(UITextView *textView);
+typedef BOOL(^OkidokiTextViewShouldEndEditingBlock)(UITextView *textView);
+typedef void(^OkidokiTextViewDidEndEditingBlock)(UITextView *textView);
+typedef void(^OkidokiTextViewDidChangeBlock)(UITextView *textView);
+typedef void(^OkidokiTextViewDidChangeSelectionBlock)(UITextView *textView);
+typedef BOOL(^OkidokiTextViewShouldChangeTextBlock)(UITextView *textView, NSRange range, NSString *replacementText);
+typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView, NSArray<NSValue *> *ranges, NSString *replacementText) API_AVAILABLE(ios(26.0), tvos(26.0), visionos(26.0), watchos(26.0));
+
+@interface Okidoki (UITextView)
+
+/** 
+ textViewShouldBeginEditing: block
+ @code
+ .tvShouldBeginEditing(^BOOL(UITextView *textView) {
+     return YES;
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTextViewShouldBeginEditingBlock block))tvShouldBeginEditing;
+
+/** 
+ textViewDidBeginEditing: block
+ @code
+ .tvDidBeginEditing(^(UITextView *textView) {
+     NSLog(@"Begin editing");
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTextViewDidBeginEditingBlock block))tvDidBeginEditing;
+
+/** 
+ textViewShouldEndEditing: block
+ @code
+ .tvShouldEndEditing(^BOOL(UITextView *textView) {
+     return YES;
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTextViewShouldEndEditingBlock block))tvShouldEndEditing;
+
+/** 
+ textViewDidEndEditing: block
+ @code
+ .tvDidEndEditing(^(UITextView *textView) {
+     NSLog(@"End editing");
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTextViewDidEndEditingBlock block))tvDidEndEditing;
+
+/** 
+ textViewDidChange: block
+ @code
+ .tvDidChange(^(UITextView *textView) {
+     NSLog(@"Text changed: %@", textView.text);
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTextViewDidChangeBlock block))tvDidChange;
+
+/** 
+ textViewDidChangeSelection: block
+ @code
+ .tvDidChangeSelection(^(UITextView *textView) {
+     NSLog(@"Selection changed");
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTextViewDidChangeSelectionBlock block))tvDidChangeSelection;
+
+/** 
+ textView:shouldChangeTextInRange:replacementText: block
+ @code
+ .tvShouldChangeText(^BOOL(UITextView *textView, NSRange range, NSString *replacementText) {
+     return YES;
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTextViewShouldChangeTextBlock block))tvShouldChangeText;
+
+/** 
+ textView:shouldChangeTextInRanges:replacementText: block (iOS 26+)
+ Compatible with new API, automatically fallbacks to old method on older iOS
+ @code
+ .tvShouldChangeTextInRanges(^BOOL(UITextView *textView, NSArray<NSValue *> *ranges, NSString *replacementText) {
+     return YES;
+ }) API_AVAILABLE(ios(26.0), tvos(26.0), visionos(26.0), watchos(26.0))
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTextViewShouldChangeTextInRangesBlock block))tvShouldChangeTextInRanges API_AVAILABLE(ios(26.0), tvos(26.0), visionos(26.0), watchos(26.0));
 
 @end
 
