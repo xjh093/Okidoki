@@ -27,8 +27,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-// version: 0.0.8
-// 2026-04-02 14:14:09
+// version: 0.0.9
+// 2026-04-02 15:38:11
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
@@ -519,8 +519,61 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - UITextView
 
+/** 
+ editable: @(YES) or @(NO), NSString
+ @code
+ .editable(@YES)
+ @endcode
+ */
 - (Okidoki*(^)(id))editable;
+
+/**
+ selectable: @(YES) or @(NO), NSString
+ @code
+ .selectable(@YES)
+ @endcode
+ */
 - (Okidoki*(^)(id))selectable;
+
+/** 
+ borderStyle: NSNumber, NSString: @0 (None), @1 (RoundedRect)
+ @code
+ .borderStyle(@1)
+ @endcode
+ */
+- (Okidoki*(^)(id))borderStyle;
+
+/**
+ attributedText: NSAttributedString
+ @code
+ .attributedText(attributedString)
+ @endcode
+ */
+- (Okidoki*(^)(id))attributedText;
+
+/**
+ inputView: UIView
+ @code
+ .inputView(customInputView)
+ @endcode
+ */
+- (Okidoki*(^)(id))inputView;
+
+/**
+ inputAccessoryView: UIView
+ @code
+ .inputAccessoryView(accessoryView)
+ @endcode
+ */
+- (Okidoki*(^)(id))inputAccessoryView;
+
+/**
+ textContainerInset: NSValue(UIEdgeInsets), NSString
+ @code
+ .textContainerInset([NSValue valueWithUIEdgeInsets:UIEdgeInsetsMake(10, 10, 10, 10)])
+ @endcode
+ */
+- (Okidoki*(^)(id))textContainerInset;
 
 @end
 
@@ -542,6 +595,7 @@ typedef void(^OkidokiScrollViewDidScrollToTopBlock)(UIScrollView *scrollView);
 typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView *scrollView);
 
 @interface Okidoki (UIScrollView)
+
 /**
  scrollViewDidScroll delegate block
  @code
@@ -703,6 +757,7 @@ typedef NSString * _Nullable (^OkidokiTableViewTitleForFooterBlock)(UITableView 
 typedef BOOL(^OkidokiTableViewCanEditRowBlock)(UITableView *tableView, NSIndexPath *indexPath);
 typedef void(^OkidokiTableViewCommitEditingStyleBlock)(UITableView *tableView, UITableViewCellEditingStyle editingStyle, NSIndexPath *indexPath);
 typedef UITableViewCellEditingStyle(^OkidokiTableViewEditingStyleBlock)(UITableView *tableView, NSIndexPath *indexPath);
+
 
 @interface Okidoki (UITableView)
 
@@ -907,6 +962,185 @@ typedef UITableViewCellEditingStyle(^OkidokiTableViewEditingStyleBlock)(UITableV
  @endcode
  */
 - (Okidoki*(^)(OkidokiTableViewEditingStyleBlock block))editingStyleForRowAtIndexPath;
+
+@end
+
+
+// UICollectionView Delegate Block Types
+typedef NSInteger(^OkidokiCollectionViewNumberOfSectionsBlock)(UICollectionView *collectionView);
+typedef NSInteger(^OkidokiCollectionViewNumberOfItemsInSectionBlock)(UICollectionView *collectionView, NSInteger section);
+typedef UICollectionViewCell * _Nonnull(^OkidokiCollectionViewCellForItemAtIndexPathBlock)(UICollectionView *collectionView, NSIndexPath *indexPath);
+typedef CGSize(^OkidokiCollectionViewSizeForItemBlock)(UICollectionView *collectionView, UICollectionViewLayout *layout, NSIndexPath *indexPath);
+typedef UIEdgeInsets(^OkidokiCollectionViewInsetForSectionBlock)(UICollectionView *collectionView, UICollectionViewLayout *layout, NSInteger section);
+typedef CGFloat(^OkidokiCollectionViewMinimumLineSpacingBlock)(UICollectionView *collectionView, UICollectionViewLayout *layout, NSInteger section);
+typedef CGFloat(^OkidokiCollectionViewMinimumInteritemSpacingBlock)(UICollectionView *collectionView, UICollectionViewLayout *layout, NSInteger section);
+typedef UICollectionReusableView * _Nonnull(^OkidokiCollectionViewViewForSupplementaryElementBlock)(UICollectionView *collectionView, NSString *kind, NSIndexPath *indexPath);
+typedef void(^OkidokiCollectionViewDidSelectItemBlock)(UICollectionView *collectionView, NSIndexPath *indexPath);
+typedef void(^OkidokiCollectionViewDidDeselectItemBlock)(UICollectionView *collectionView, NSIndexPath *indexPath);
+typedef void(^OkidokiCollectionViewWillDisplayCellBlock)(UICollectionView *collectionView, UICollectionViewCell *cell, NSIndexPath *indexPath);
+typedef void(^OkidokiCollectionViewDidEndDisplayingCellBlock)(UICollectionView *collectionView, UICollectionViewCell *cell, NSIndexPath *indexPath);
+
+@interface Okidoki (UICollectionView)
+
+// Register Cell
+/** 
+ Register cell class with identifier
+ params: NSArray: @[cellClass, @"identifier"]
+ @code
+ .cvRegisterCellClass(@[[UICollectionViewCell class], @"Cell"])
+ @endcode
+ */
+- (Okidoki*(^)(NSArray *params))cvRegisterCellClass;
+
+/** 
+ Register cell nib with identifier
+ params: NSArray: @[nibName, @"identifier"] or @[UINib, @"identifier"]
+ @code
+ .cvRegisterCellNib(@[@"MyCell", @"Cell"])
+ @endcode
+ */
+- (Okidoki*(^)(NSArray *params))cvRegisterCellNib;
+
+/** 
+ Register supplementary view class with identifier
+ params: NSArray: @[viewClass, @"kind", @"identifier"]
+ @code
+ .cvRegisterSupplementaryViewClass(@[[UICollectionReusableView class], UICollectionElementKindSectionHeader, @"Header"])
+ @endcode
+ */
+- (Okidoki*(^)(NSArray *params))cvRegisterSupplementaryViewClass;
+
+/** 
+ Register supplementary view nib with identifier
+ params: NSArray: @[nibName, @"kind", @"identifier"] or @[UINib, @"kind", @"identifier"]
+ @code
+ .cvRegisterSupplementaryViewNib(@[@"HeaderView", UICollectionElementKindSectionHeader, @"Header"])
+ @endcode
+ */
+- (Okidoki*(^)(NSArray *params))cvRegisterSupplementaryViewNib;
+
+// UICollectionViewDataSource
+/** 
+ numberOfSectionsInCollectionView: block
+ @code
+ .cvNumberOfSections(^NSInteger(UICollectionView *collectionView) {
+     return 2;
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiCollectionViewNumberOfSectionsBlock block))cvNumberOfSections;
+
+/** 
+ collectionView:numberOfItemsInSection: block
+ @code
+ .cvNumberOfItemsInSection(^NSInteger(UICollectionView *collectionView, NSInteger section) {
+     return 10;
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiCollectionViewNumberOfItemsInSectionBlock block))cvNumberOfItemsInSection;
+
+/** 
+ collectionView:cellForItemAtIndexPath: block
+ @code
+ .cvCellForItemAtIndexPath(^UICollectionViewCell *(UICollectionView *collectionView, NSIndexPath *indexPath) {
+     return cell;
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiCollectionViewCellForItemAtIndexPathBlock block))cvCellForItemAtIndexPath;
+
+/** 
+ collectionView:viewForSupplementaryElementOfKind:atIndexPath: block
+ @code
+ .cvViewForSupplementaryElement(^UICollectionReusableView *(UICollectionView *collectionView, NSString *kind, NSIndexPath *indexPath) {
+     return headerView;
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiCollectionViewViewForSupplementaryElementBlock block))cvViewForSupplementaryElement;
+
+// UICollectionViewDelegate
+/** 
+ collectionView:didSelectItemAtIndexPath: block
+ @code
+ .cvDidSelectItemAtIndexPath(^(UICollectionView *collectionView, NSIndexPath *indexPath) {
+     NSLog(@"Selected");
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiCollectionViewDidSelectItemBlock block))cvDidSelectItemAtIndexPath;
+
+/** 
+ collectionView:didDeselectItemAtIndexPath: block
+ @code
+ .cvDidDeselectItemAtIndexPath(^(UICollectionView *collectionView, NSIndexPath *indexPath) {
+     NSLog(@"Deselected");
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiCollectionViewDidDeselectItemBlock block))cvDidDeselectItemAtIndexPath;
+
+/** 
+ collectionView:willDisplayCell:forItemAtIndexPath: block
+ @code
+ .cvWillDisplayCell(^(UICollectionView *collectionView, UICollectionViewCell *cell, NSIndexPath *indexPath) {
+     // Configure cell display
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiCollectionViewWillDisplayCellBlock block))cvWillDisplayCell;
+
+/** 
+ collectionView:didEndDisplayingCell:forItemAtIndexPath: block
+ @code
+ .cvDidEndDisplayingCell(^(UICollectionView *collectionView, UICollectionViewCell *cell, NSIndexPath *indexPath) {
+     // Cleanup after cell
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiCollectionViewDidEndDisplayingCellBlock block))cvDidEndDisplayingCell;
+
+// UICollectionViewDelegateFlowLayout
+/** 
+ collectionView:layout:sizeForItemAtIndexPath: block
+ @code
+ .cvSizeForItemAtIndexPath(^CGSize(UICollectionView *collectionView, UICollectionViewLayout *layout, NSIndexPath *indexPath) {
+     return CGSizeMake(100, 100);
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiCollectionViewSizeForItemBlock block))cvSizeForItemAtIndexPath;
+
+/** 
+ collectionView:layout:insetForSectionAtIndex: block
+ @code
+ .cvInsetForSectionAtIndex(^UIEdgeInsets(UICollectionView *collectionView, UICollectionViewLayout *layout, NSInteger section) {
+     return UIEdgeInsetsMake(10, 10, 10, 10);
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiCollectionViewInsetForSectionBlock block))cvInsetForSectionAtIndex;
+
+/** 
+ collectionView:layout:minimumLineSpacingForSectionAtIndex: block
+ @code
+ .cvMinimumLineSpacing(^CGFloat(UICollectionView *collectionView, UICollectionViewLayout *layout, NSInteger section) {
+     return 10;
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiCollectionViewMinimumLineSpacingBlock block))cvMinimumLineSpacing;
+
+/** 
+ collectionView:layout:minimumInteritemSpacingForSectionAtIndex: block
+ @code
+ .cvMinimumInteritemSpacing(^CGFloat(UICollectionView *collectionView, UICollectionViewLayout *layout, NSInteger section) {
+     return 10;
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiCollectionViewMinimumInteritemSpacingBlock block))cvMinimumInteritemSpacing;
 
 @end
 

@@ -30,8 +30,8 @@
             filePath = "Tests/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "441"
-            endingLineNumber = "441"
+            startingLineNumber = "464"
+            endingLineNumber = "464"
             landmarkName = "-tableView"
             landmarkType = "7">
          </BreakpointContent>

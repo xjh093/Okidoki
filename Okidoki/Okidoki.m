@@ -299,14 +299,14 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number)
     if (self.heightForHeaderInSectionBlock) {
         return self.heightForHeaderInSectionBlock(tableView, section);
     }
-    return UITableViewAutomaticDimension;
+    return 0;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
     if (self.heightForFooterInSectionBlock) {
         return self.heightForFooterInSectionBlock(tableView, section);
     }
-    return UITableViewAutomaticDimension;
+    return 0;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
@@ -352,6 +352,151 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number)
         return self.editingStyleForRowAtIndexPathBlock(tableView, indexPath);
     }
     return UITableViewCellEditingStyleNone;
+}
+
+@end
+
+// 内部 Delegate Handler 类，用于处理 UICollectionView 代理回调
+@interface _OkidokiCollectionViewDelegateHandler : NSObject <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout>
+// DataSource blocks
+@property (nonatomic, copy) OkidokiCollectionViewNumberOfSectionsBlock numberOfSectionsBlock;
+@property (nonatomic, copy) OkidokiCollectionViewNumberOfItemsInSectionBlock numberOfItemsInSectionBlock;
+@property (nonatomic, copy) OkidokiCollectionViewCellForItemAtIndexPathBlock cellForItemAtIndexPathBlock;
+@property (nonatomic, copy) OkidokiCollectionViewViewForSupplementaryElementBlock viewForSupplementaryElementBlock;
+
+// Delegate blocks
+@property (nonatomic, copy) OkidokiCollectionViewDidSelectItemBlock didSelectItemAtIndexPathBlock;
+@property (nonatomic, copy) OkidokiCollectionViewDidDeselectItemBlock didDeselectItemAtIndexPathBlock;
+@property (nonatomic, copy) OkidokiCollectionViewWillDisplayCellBlock willDisplayCellBlock;
+@property (nonatomic, copy) OkidokiCollectionViewDidEndDisplayingCellBlock didEndDisplayingCellBlock;
+
+// FlowLayout blocks
+@property (nonatomic, copy) OkidokiCollectionViewSizeForItemBlock sizeForItemAtIndexPathBlock;
+@property (nonatomic, copy) OkidokiCollectionViewInsetForSectionBlock insetForSectionAtIndexBlock;
+@property (nonatomic, copy) OkidokiCollectionViewMinimumLineSpacingBlock minimumLineSpacingBlock;
+@property (nonatomic, copy) OkidokiCollectionViewMinimumInteritemSpacingBlock minimumInteritemSpacingBlock;
+@end
+
+@implementation _OkidokiCollectionViewDelegateHandler
+
+#pragma mark - UICollectionViewDataSource
+
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
+    if (self.numberOfSectionsBlock) {
+        return self.numberOfSectionsBlock(collectionView);
+    }
+    return 1;
+}
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    if (self.numberOfItemsInSectionBlock) {
+        return self.numberOfItemsInSectionBlock(collectionView, section);
+    }
+    return 0;
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    UICollectionViewCell *cell = nil;
+    
+    if (self.cellForItemAtIndexPathBlock) {
+        cell = self.cellForItemAtIndexPathBlock(collectionView, indexPath);
+    }
+    
+    // 如果 block 没有设置或返回了 nil，使用默认 cell
+    if (!cell) {
+        static NSString *identifier = @"OkidokiDefaultCollectionCell";
+        [collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:identifier];
+        cell = [collectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
+    }
+    
+    return cell;
+}
+
+- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
+    if (self.viewForSupplementaryElementBlock) {
+        return self.viewForSupplementaryElementBlock(collectionView, kind, indexPath);
+    }
+    
+    // 返回默认的 supplementary view
+    static NSString *identifier = @"OkidokiDefaultSupplementaryView";
+    [collectionView registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:kind withReuseIdentifier:identifier];
+    return [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:identifier forIndexPath:indexPath];
+}
+
+#pragma mark - UICollectionViewDelegate
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.didSelectItemAtIndexPathBlock) {
+        self.didSelectItemAtIndexPathBlock(collectionView, indexPath);
+    }
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.didDeselectItemAtIndexPathBlock) {
+        self.didDeselectItemAtIndexPathBlock(collectionView, indexPath);
+    }
+}
+
+- (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.willDisplayCellBlock) {
+        self.willDisplayCellBlock(collectionView, cell, indexPath);
+    }
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.didEndDisplayingCellBlock) {
+        self.didEndDisplayingCellBlock(collectionView, cell, indexPath);
+    }
+}
+
+#pragma mark - UICollectionViewDelegateFlowLayout
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.sizeForItemAtIndexPathBlock) {
+        return self.sizeForItemAtIndexPathBlock(collectionView, collectionViewLayout, indexPath);
+    }
+    
+    // 返回默认大小
+    if ([collectionViewLayout isKindOfClass:[UICollectionViewFlowLayout class]]) {
+        return ((UICollectionViewFlowLayout *)collectionViewLayout).itemSize;
+    }
+    return CGSizeMake(50, 50);
+}
+
+- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
+    if (self.insetForSectionAtIndexBlock) {
+        return self.insetForSectionAtIndexBlock(collectionView, collectionViewLayout, section);
+    }
+    
+    // 返回默认 inset
+    if ([collectionViewLayout isKindOfClass:[UICollectionViewFlowLayout class]]) {
+        return ((UICollectionViewFlowLayout *)collectionViewLayout).sectionInset;
+    }
+    return UIEdgeInsetsZero;
+}
+
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
+    if (self.minimumLineSpacingBlock) {
+        return self.minimumLineSpacingBlock(collectionView, collectionViewLayout, section);
+    }
+    
+    // 返回默认行间距
+    if ([collectionViewLayout isKindOfClass:[UICollectionViewFlowLayout class]]) {
+        return ((UICollectionViewFlowLayout *)collectionViewLayout).minimumLineSpacing;
+    }
+    return 10;
+}
+
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
+    if (self.minimumInteritemSpacingBlock) {
+        return self.minimumInteritemSpacingBlock(collectionView, collectionViewLayout, section);
+    }
+    
+    // 返回默认item间距
+    if ([collectionViewLayout isKindOfClass:[UICollectionViewFlowLayout class]]) {
+        return ((UICollectionViewFlowLayout *)collectionViewLayout).minimumInteritemSpacing;
+    }
+    return 10;
 }
 
 @end
@@ -1832,6 +1977,57 @@ kOkidoki_imp(selectable, ({
     }
 }))
 
+kOkidoki_imp(borderStyle, ({
+    if ([view isKindOfClass:[UITextView class]]) {
+        UITextView *textView = (UITextView *)view;
+        if ([borderStyle isKindOfClass:[NSNumber class]] ||
+            [borderStyle isKindOfClass:[NSString class]]) {
+            NSInteger style = [borderStyle integerValue];
+            if (@available(iOS 17.0, *)) {
+                textView.borderStyle = style;
+            }
+        }
+    }
+}))
+
+kOkidoki_imp(attributedText, ({
+    if ([view isKindOfClass:[UITextView class]]) {
+        UITextView *textView = (UITextView *)view;
+        if ([attributedText isKindOfClass:[NSAttributedString class]]) {
+            textView.attributedText = attributedText;
+        }
+    }
+}))
+
+kOkidoki_imp(inputView, ({
+    if ([view isKindOfClass:[UITextView class]]) {
+        UITextView *textView = (UITextView *)view;
+        if ([inputView isKindOfClass:[UIView class]]) {
+            textView.inputView = inputView;
+        }
+    }
+}))
+
+kOkidoki_imp(inputAccessoryView, ({
+    if ([view isKindOfClass:[UITextView class]]) {
+        UITextView *textView = (UITextView *)view;
+        if ([inputAccessoryView isKindOfClass:[UIView class]]) {
+            textView.inputAccessoryView = inputAccessoryView;
+        }
+    }
+}))
+
+kOkidoki_imp(textContainerInset, ({
+    if ([view isKindOfClass:[UITextView class]]) {
+        UITextView *textView = (UITextView *)view;
+        if ([textContainerInset isKindOfClass:[NSValue class]]) {
+            textView.textContainerInset = [textContainerInset UIEdgeInsetsValue];
+        } else if ([textContainerInset isKindOfClass:[NSString class]]) {
+            textView.textContainerInset = UIEdgeInsetsFromString(textContainerInset);
+        }
+    }
+}))
+
 
 #pragma mark - UITableView
 
@@ -2123,7 +2319,254 @@ kOkidoki_imp(selectable, ({
 
 #pragma mark - UICollectionView
 
+// Associated object key for delegate handler
+static const char kOkidokiCollectionViewDelegateHandlerKey = '\0';
 
+- (Okidoki*(^)(NSArray *params))cvRegisterCellClass {
+    return ^id(NSArray *params) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UICollectionView class]] && [params isKindOfClass:[NSArray class]]) {
+            UICollectionView *collectionView = (UICollectionView *)view;
+            if (params.count >= 2) {
+                Class cellClass = params[0];
+                NSString *identifier = params[1];
+                if (cellClass && [identifier isKindOfClass:[NSString class]]) {
+                    [collectionView registerClass:cellClass forCellWithReuseIdentifier:identifier];
+                }
+            }
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(NSArray *params))cvRegisterCellNib {
+    return ^id(NSArray *params) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UICollectionView class]] && [params isKindOfClass:[NSArray class]]) {
+            UICollectionView *collectionView = (UICollectionView *)view;
+            if (params.count >= 2) {
+                id nibOrString = params[0];
+                NSString *identifier = params[1];
+                
+                UINib *nib = nil;
+                if ([nibOrString isKindOfClass:[UINib class]]) {
+                    nib = nibOrString;
+                } else if ([nibOrString isKindOfClass:[NSString class]]) {
+                    nib = [UINib nibWithNibName:nibOrString bundle:nil];
+                }
+                
+                if (nib && [identifier isKindOfClass:[NSString class]]) {
+                    [collectionView registerNib:nib forCellWithReuseIdentifier:identifier];
+                }
+            }
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(NSArray *params))cvRegisterSupplementaryViewClass {
+    return ^id(NSArray *params) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UICollectionView class]] && [params isKindOfClass:[NSArray class]]) {
+            UICollectionView *collectionView = (UICollectionView *)view;
+            if (params.count >= 3) {
+                Class viewClass = params[0];
+                NSString *kind = params[1];
+                NSString *identifier = params[2];
+                if (viewClass && [kind isKindOfClass:[NSString class]] && [identifier isKindOfClass:[NSString class]]) {
+                    [collectionView registerClass:viewClass forSupplementaryViewOfKind:kind withReuseIdentifier:identifier];
+                }
+            }
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(NSArray *params))cvRegisterSupplementaryViewNib {
+    return ^id(NSArray *params) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UICollectionView class]] && [params isKindOfClass:[NSArray class]]) {
+            UICollectionView *collectionView = (UICollectionView *)view;
+            if (params.count >= 3) {
+                id nibOrString = params[0];
+                NSString *kind = params[1];
+                NSString *identifier = params[2];
+                
+                UINib *nib = nil;
+                if ([nibOrString isKindOfClass:[UINib class]]) {
+                    nib = nibOrString;
+                } else if ([nibOrString isKindOfClass:[NSString class]]) {
+                    nib = [UINib nibWithNibName:nibOrString bundle:nil];
+                }
+                
+                if (nib && [kind isKindOfClass:[NSString class]] && [identifier isKindOfClass:[NSString class]]) {
+                    [collectionView registerNib:nib forSupplementaryViewOfKind:kind withReuseIdentifier:identifier];
+                }
+            }
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiCollectionViewNumberOfSectionsBlock block))cvNumberOfSections {
+    return ^id(OkidokiCollectionViewNumberOfSectionsBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UICollectionView class]]) {
+            UICollectionView *collectionView = (UICollectionView *)view;
+            _OkidokiCollectionViewDelegateHandler *handler = [self _collectionViewDelegateHandlerForCollectionView:collectionView];
+            handler.numberOfSectionsBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiCollectionViewNumberOfItemsInSectionBlock block))cvNumberOfItemsInSection {
+    return ^id(OkidokiCollectionViewNumberOfItemsInSectionBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UICollectionView class]]) {
+            UICollectionView *collectionView = (UICollectionView *)view;
+            _OkidokiCollectionViewDelegateHandler *handler = [self _collectionViewDelegateHandlerForCollectionView:collectionView];
+            handler.numberOfItemsInSectionBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiCollectionViewCellForItemAtIndexPathBlock block))cvCellForItemAtIndexPath {
+    return ^id(OkidokiCollectionViewCellForItemAtIndexPathBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UICollectionView class]]) {
+            UICollectionView *collectionView = (UICollectionView *)view;
+            _OkidokiCollectionViewDelegateHandler *handler = [self _collectionViewDelegateHandlerForCollectionView:collectionView];
+            handler.cellForItemAtIndexPathBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiCollectionViewViewForSupplementaryElementBlock block))cvViewForSupplementaryElement {
+    return ^id(OkidokiCollectionViewViewForSupplementaryElementBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UICollectionView class]]) {
+            UICollectionView *collectionView = (UICollectionView *)view;
+            _OkidokiCollectionViewDelegateHandler *handler = [self _collectionViewDelegateHandlerForCollectionView:collectionView];
+            handler.viewForSupplementaryElementBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiCollectionViewDidSelectItemBlock block))cvDidSelectItemAtIndexPath {
+    return ^id(OkidokiCollectionViewDidSelectItemBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UICollectionView class]]) {
+            UICollectionView *collectionView = (UICollectionView *)view;
+            _OkidokiCollectionViewDelegateHandler *handler = [self _collectionViewDelegateHandlerForCollectionView:collectionView];
+            handler.didSelectItemAtIndexPathBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiCollectionViewDidDeselectItemBlock block))cvDidDeselectItemAtIndexPath {
+    return ^id(OkidokiCollectionViewDidDeselectItemBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UICollectionView class]]) {
+            UICollectionView *collectionView = (UICollectionView *)view;
+            _OkidokiCollectionViewDelegateHandler *handler = [self _collectionViewDelegateHandlerForCollectionView:collectionView];
+            handler.didDeselectItemAtIndexPathBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiCollectionViewWillDisplayCellBlock block))cvWillDisplayCell {
+    return ^id(OkidokiCollectionViewWillDisplayCellBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UICollectionView class]]) {
+            UICollectionView *collectionView = (UICollectionView *)view;
+            _OkidokiCollectionViewDelegateHandler *handler = [self _collectionViewDelegateHandlerForCollectionView:collectionView];
+            handler.willDisplayCellBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiCollectionViewDidEndDisplayingCellBlock block))cvDidEndDisplayingCell {
+    return ^id(OkidokiCollectionViewDidEndDisplayingCellBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UICollectionView class]]) {
+            UICollectionView *collectionView = (UICollectionView *)view;
+            _OkidokiCollectionViewDelegateHandler *handler = [self _collectionViewDelegateHandlerForCollectionView:collectionView];
+            handler.didEndDisplayingCellBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiCollectionViewSizeForItemBlock block))cvSizeForItemAtIndexPath {
+    return ^id(OkidokiCollectionViewSizeForItemBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UICollectionView class]]) {
+            UICollectionView *collectionView = (UICollectionView *)view;
+            _OkidokiCollectionViewDelegateHandler *handler = [self _collectionViewDelegateHandlerForCollectionView:collectionView];
+            handler.sizeForItemAtIndexPathBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiCollectionViewInsetForSectionBlock block))cvInsetForSectionAtIndex {
+    return ^id(OkidokiCollectionViewInsetForSectionBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UICollectionView class]]) {
+            UICollectionView *collectionView = (UICollectionView *)view;
+            _OkidokiCollectionViewDelegateHandler *handler = [self _collectionViewDelegateHandlerForCollectionView:collectionView];
+            handler.insetForSectionAtIndexBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiCollectionViewMinimumLineSpacingBlock block))cvMinimumLineSpacing {
+    return ^id(OkidokiCollectionViewMinimumLineSpacingBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UICollectionView class]]) {
+            UICollectionView *collectionView = (UICollectionView *)view;
+            _OkidokiCollectionViewDelegateHandler *handler = [self _collectionViewDelegateHandlerForCollectionView:collectionView];
+            handler.minimumLineSpacingBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiCollectionViewMinimumInteritemSpacingBlock block))cvMinimumInteritemSpacing {
+    return ^id(OkidokiCollectionViewMinimumInteritemSpacingBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UICollectionView class]]) {
+            UICollectionView *collectionView = (UICollectionView *)view;
+            _OkidokiCollectionViewDelegateHandler *handler = [self _collectionViewDelegateHandlerForCollectionView:collectionView];
+            handler.minimumInteritemSpacingBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+// Helper method to get or create delegate handler
+- (_OkidokiCollectionViewDelegateHandler *)_collectionViewDelegateHandlerForCollectionView:(UICollectionView *)collectionView {
+    if (!collectionView) return nil;
+    
+    _OkidokiCollectionViewDelegateHandler *handler = objc_getAssociatedObject(collectionView, &kOkidokiCollectionViewDelegateHandlerKey);
+    if (!handler) {
+        handler = [[_OkidokiCollectionViewDelegateHandler alloc] init];
+        objc_setAssociatedObject(collectionView, &kOkidokiCollectionViewDelegateHandlerKey, handler, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        
+        // Set the handler as delegate and dataSource
+        collectionView.delegate = handler;
+        collectionView.dataSource = handler;
+    }
+    return handler;
+}
 
 
 #pragma mark - AutoLayout Anchors

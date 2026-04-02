@@ -9,8 +9,9 @@
 #import "ViewController.h"
 #import "Okidoki.h"
 
-@interface ViewController () //<UITableViewDelegate,UITableViewDataSource>
+@interface ViewController ()
 @property (nonatomic,  strong) UITableView *tableView;
+@property (nonatomic,  strong) UICollectionView *collectionView;
 @end
 
 @implementation ViewController
@@ -28,7 +29,9 @@
     
 //    [self panAnimation_Example];
     
-    [self tableView_Example];
+//    [self tableView_Example];
+    
+    [self collectionView_Example];
 }
 
 - (void)refreshAction
@@ -37,6 +40,7 @@
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self.tableView.refreshControl endRefreshing];
+        [self.collectionView.refreshControl endRefreshing];
     });
 }
 
@@ -407,10 +411,8 @@
 - (UITableView *)tableView{
     if (!_tableView) {
         UITableView *tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:0];
-        tableView.rowHeight = 50;
         tableView.tableFooterView = [[UIView alloc] init];
         tableView.showsVerticalScrollIndicator = NO;
-        tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         _tableView = tableView;
         
         tableView.okidoki
@@ -437,7 +439,28 @@
             })
             .cellForRowAtIndexPath(^UITableViewCell *(UITableView *tableView, NSIndexPath *indexPath) {
                 UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
-                cell.textLabel.text = [NSString stringWithFormat:@"Row %ld", indexPath.row];
+                
+                UILabel *label = [cell.contentView viewWithTag:100];
+                if (!label) {
+                    label = UILabel.new;
+                    cell.contentView.okidoki
+                    .addSubviewWithConfig(UIView.new, ^(Okidoki *ok) {
+                        ok.tag(@10)
+                        .bdColor(UIColor.systemOrangeColor)
+                        .bdWidth(@1)
+                        .edgeToSuperView(@10)
+                        .addSubviewWithConfig(label, ^(Okidoki *ok) {
+                            ok.tag(@100)
+                            .align(@1)
+                            .font(@20)
+                            .bdColor(UIColor.systemOrangeColor)
+                            .bdWidth(@2)
+                            .color(@"00FF00")
+                            .edgeToSuperView(@20);
+                        });
+                    });
+                }
+                label.text = [NSString stringWithFormat:@"Row %ld", indexPath.row];
                 return cell;
             })
             .didDeselectRowAtIndexPath(^(UITableView *tableView, NSIndexPath *indexPath) {
@@ -451,28 +474,73 @@
     return _tableView;
 }
 
+
+- (void)collectionView_Example
+{
+    [self.view addSubview:self.collectionView];
+    
+    UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
+    [refresh addTarget:self action:@selector(refreshAction) forControlEvents:UIControlEventValueChanged];
+    
+    self.collectionView.refreshControl = refresh;
+    
+    NSLog(@"view2.tag = %@", @(UIView.new.okidoki.tag(@200).view.tag));
+}
+
+- (UICollectionView *)collectionView {
+    if (!_collectionView) {
+        UICollectionViewFlowLayout *collectionLayout = [[UICollectionViewFlowLayout alloc]init];
+        UICollectionView *view = [[UICollectionView alloc] initWithFrame:self.view.bounds collectionViewLayout:collectionLayout];
+        view.backgroundColor = [UIColor whiteColor];
+        _collectionView = view;
+        
+        view.okidoki
+        .cvRegisterCellClass(@[[UICollectionViewCell class], @"Cell"])
+        .cvNumberOfItemsInSection(^NSInteger(UICollectionView *collectionView, NSInteger section) {
+            return 10;
+        })
+        .cvCellForItemAtIndexPath(^UICollectionViewCell *(UICollectionView *collectionView, NSIndexPath *indexPath) {
+            UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"Cell" forIndexPath:indexPath];
+            
+            UILabel *textLabel = [cell.contentView viewWithTag:100];
+            if (!textLabel) {
+                textLabel = UILabel.new;
+                cell.contentView.okidoki
+                .addSubviewWithConfig(textLabel, ^(Okidoki *ok) {
+                    ok.tag(@100)
+                    .align(@1)
+                    .font(@20)
+                    .bdColor(UIColor.systemOrangeColor)
+                    .bdWidth(@2)
+                    .color(@"00FF00")
+                    .edgeToSuperView(nil);
+                });
+            }
+            
+            textLabel.text = [NSString stringWithFormat:@"Item %ld", indexPath.row + 1];
+            return cell;
+        })
+        .cvSizeForItemAtIndexPath(^CGSize(UICollectionView *collectionView, UICollectionViewLayout *layout, NSIndexPath *indexPath) {
+            CGFloat w = (CGRectGetWidth(collectionView.bounds) - 30)*0.5;
+            return CGSizeMake(w, 100);
+        })
+        .cvInsetForSectionAtIndex(^UIEdgeInsets(UICollectionView *collectionView, UICollectionViewLayout *layout, NSInteger section) {
+            return UIEdgeInsetsMake(10, 10, 10, 10);
+        })
+        .cvDidSelectItemAtIndexPath(^(UICollectionView *collectionView, NSIndexPath *indexPath) {
+            NSLog(@"Selected = %@", @(indexPath.item));
+        });
+
+    }
+    return _collectionView;
+}
+
 @end
 
 
 /*
  
- 添加 UITableView 相关的代理方法 UITableViewDataSource, UITableViewDelegate，内部使用内部类：_OkidokiTableViewDelegateHanlder, 来处理代理方法，内部类绑定到当前 tableView 上。
- 
- 添加 delegate 方法，内部使用内部类：_OkidokiScrollViewDelegateHanlder, 来处理代理方法，内部类绑定到当前 scrollView 上。
- 
- 把以下代理方法，改成 block 方法，并设置到内部类处理。
- - (void)scrollViewDidScroll:(UIScrollView *)scrollView;
- - (void)scrollViewDidZoom:(UIScrollView *)scrollView;
- - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView;
- - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity;
- - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate;
- - (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView;
- - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView;
- - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView;
- - (nullable UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView;
- - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(nullable UIView *)view;
- - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(nullable UIView *)view atScale:(CGFloat)scale;
- - (BOOL)scrollViewShouldScrollToTop:(UIScrollView *)scrollView;
- - (void)scrollViewDidScrollToTop:(UIScrollView *)scrollView;
- - (void)scrollViewDidChangeAdjustedContentInset:(UIScrollView *)scrollView;
+ 添加 UICollectionView 相关的代理方法 UICollectionViewDataSource, UICollectionViewDelegate，内部使用内部类：_OkidokiCollectionViewDelegateHanlder, 来处理代理方法，内部类绑定到当前 collectionView 上。
+ .h 文件，在 @interface Okidoki (UICollectionView) xxx @end 添加方法
+ .m 文件，在 #pragma mark - UICollectionView 后面实现相关方法
  */
