@@ -27,8 +27,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-// version: 0.0.6
-// 2026-04-01 11:46:14
+// version: 0.0.7
+// 2026-04-02 12:02:44
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
@@ -36,6 +36,24 @@
 #define kNumberAdaptor(x) Okidoki_NumberAdaptor(x)
 
 CGFloat Okidoki_NumberAdaptor(CGFloat number);
+
+NS_ASSUME_NONNULL_BEGIN
+
+// UIScrollView Delegate Block Types
+typedef void(^OkidokiScrollViewDidScrollBlock)(UIScrollView *scrollView);
+typedef void(^OkidokiScrollViewDidZoomBlock)(UIScrollView *scrollView);
+typedef void(^OkidokiScrollViewWillBeginDraggingBlock)(UIScrollView *scrollView);
+typedef void(^OkidokiScrollViewWillEndDraggingBlock)(UIScrollView *scrollView, CGPoint velocity);
+typedef void(^OkidokiScrollViewDidEndDraggingBlock)(UIScrollView *scrollView, BOOL decelerate);
+typedef void(^OkidokiScrollViewWillBeginDeceleratingBlock)(UIScrollView *scrollView);
+typedef void(^OkidokiScrollViewDidEndDeceleratingBlock)(UIScrollView *scrollView);
+typedef void(^OkidokiScrollViewDidEndScrollingAnimationBlock)(UIScrollView *scrollView);
+typedef UIView * _Nullable (^OkidokiScrollViewViewForZoomingBlock)(UIScrollView *scrollView);
+typedef void(^OkidokiScrollViewWillBeginZoomingBlock)(UIScrollView *scrollView, UIView * _Nullable view);
+typedef void(^OkidokiScrollViewDidEndZoomingBlock)(UIScrollView *scrollView, UIView * _Nullable view, CGFloat scale);
+typedef BOOL(^OkidokiScrollViewShouldScrollToTopBlock)(UIScrollView *scrollView);
+typedef void(^OkidokiScrollViewDidScrollToTopBlock)(UIScrollView *scrollView);
+typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView *scrollView);
 
 @interface Okidoki : NSObject
 
@@ -228,10 +246,195 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number);
 
 #pragma mark - UIScrollView
 
+/** NSValue(CGPoint), NSString */
+- (Okidoki*(^)(id))contentOffset;
+/** NSValue(CGSize), NSString */
+- (Okidoki*(^)(id))contentSize;
+/** NSValue(UIEdgeInsets), NSString */
+- (Okidoki*(^)(id))contentInset;
+/** @(YES) or @(NO), NSString */
+- (Okidoki*(^)(id))directionalLockEnabled;
+/** @(YES) or @(NO), NSString */
+- (Okidoki*(^)(id))alwaysBounceVertical;
+/** @(YES) or @(NO), NSString */
+- (Okidoki*(^)(id))alwaysBounceHorizontal;
+/** @(YES) or @(NO), NSString */
+- (Okidoki*(^)(id))scrollEnabled;
+/** NSNumber: @0,@1,@2, NSString */
+- (Okidoki*(^)(id))indicatorStyle;
+/** @(YES) or @(NO), NSString */
+- (Okidoki*(^)(id))delaysContentTouches;
+/** @(YES) or @(NO), NSString */
+- (Okidoki*(^)(id))canCancelContentTouches;
+/** NSNumber, NSString */
+- (Okidoki*(^)(id))minimumZoomScale;
+/** NSNumber, NSString */
+- (Okidoki*(^)(id))maximumZoomScale;
+/** @(YES) or @(NO), NSString */
+- (Okidoki*(^)(id))bouncesZoom;
+/** @(YES) or @(NO), NSString */
+- (Okidoki*(^)(id))scrollsToTop;
+/** NSNumber, NSString */
+- (Okidoki*(^)(id))decelerationRate;
+/** NSNumber, NSString */
+- (Okidoki*(^)(id))zoomScale;
+/** NSNumber: @0,@1,@2, NSString */
+- (Okidoki*(^)(id))keyboardDismissMode;
+/** NSNumber: @0,@1,@2,@3,@4, NSString (iOS 11+) */
+- (Okidoki*(^)(id))contentInsetAdjustmentBehavior;
+/** NSValue(UIEdgeInsets), NSString (iOS 11.1+) */
+- (Okidoki*(^)(id))verticalScrollIndicatorInsets;
+/** NSValue(UIEdgeInsets), NSString (iOS 11.1+) */
+- (Okidoki*(^)(id))horizontalScrollIndicatorInsets;
+/** showsVerticalScrollIndicator: @(YES) or @(NO), NSString */
 - (Okidoki*(^)(id))verInd;
+/** showsHorizontalScrollIndicator: @(YES) or @(NO), NSString */
 - (Okidoki*(^)(id))horInd;
+/** pagingEnabled: @(YES) or @(NO), NSString */
 - (Okidoki*(^)(id))paging;
+/** bounces: @(YES) or @(NO), NSString */
 - (Okidoki*(^)(id))bounces;
+
+// UIScrollView Delegate Blocks
+/**
+ scrollViewDidScroll delegate block
+ @code
+ scrollView.okidoki.didScroll(^(UIScrollView *scrollView) {
+     NSLog(@"offset: %@", NSStringFromCGPoint(scrollView.contentOffset));
+ });
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiScrollViewDidScrollBlock block))didScroll;
+
+/**
+ scrollViewDidZoom delegate block
+ @code
+ scrollView.okidoki.didZoom(^(UIScrollView *scrollView) {
+     NSLog(@"zoom scale: %f", scrollView.zoomScale);
+ });
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiScrollViewDidZoomBlock block))didZoom;
+
+/**
+ scrollViewWillBeginDragging delegate block
+ @code
+ scrollView.okidoki.willBeginDragging(^(UIScrollView *scrollView) {
+     NSLog(@"will begin dragging");
+ });
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiScrollViewWillBeginDraggingBlock block))willBeginDragging;
+
+/**
+ scrollViewWillEndDragging:withVelocity: delegate block
+ @code
+ scrollView.okidoki.willEndDragging(^(UIScrollView *scrollView, CGPoint velocity) {
+     NSLog(@"velocity: %@", NSStringFromCGPoint(velocity));
+ });
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiScrollViewWillEndDraggingBlock block))willEndDragging;
+
+/**
+ scrollViewDidEndDragging:willDecelerate: delegate block
+ @code
+ scrollView.okidoki.didEndDragging(^(UIScrollView *scrollView, BOOL decelerate) {
+     NSLog(@"will decelerate: %d", decelerate);
+ });
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiScrollViewDidEndDraggingBlock block))didEndDragging;
+
+/**
+ scrollViewWillBeginDecelerating delegate block
+ @code
+ scrollView.okidoki.willBeginDecelerating(^(UIScrollView *scrollView) {
+     NSLog(@"will begin decelerating");
+ });
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiScrollViewWillBeginDeceleratingBlock block))willBeginDecelerating;
+
+/**
+ scrollViewDidEndDecelerating delegate block
+ @code
+ scrollView.okidoki.didEndDecelerating(^(UIScrollView *scrollView) {
+     NSLog(@"did end decelerating");
+ });
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiScrollViewDidEndDeceleratingBlock block))didEndDecelerating;
+
+/**
+ scrollViewDidEndScrollingAnimation delegate block
+ @code
+ scrollView.okidoki.didEndScrollingAnimation(^(UIScrollView *scrollView) {
+     NSLog(@"animation ended");
+ });
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiScrollViewDidEndScrollingAnimationBlock block))didEndScrollingAnimation;
+
+/**
+ viewForZoomingInScrollView delegate block
+ @code
+ scrollView.okidoki.viewForZooming(^UIView *(UIScrollView *scrollView) {
+     return imageView;
+ });
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiScrollViewViewForZoomingBlock block))viewForZooming;
+
+/**
+ scrollViewWillBeginZooming:withView: delegate block
+ @code
+ scrollView.okidoki.willBeginZooming(^(UIScrollView *scrollView, UIView *view) {
+     NSLog(@"will begin zooming view: %@", view);
+ });
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiScrollViewWillBeginZoomingBlock block))willBeginZooming;
+
+/**
+ scrollViewDidEndZooming:withView:atScale: delegate block
+ @code
+ scrollView.okidoki.didEndZooming(^(UIScrollView *scrollView, UIView *view, CGFloat scale) {
+     NSLog(@"did end zooming at scale: %f", scale);
+ });
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiScrollViewDidEndZoomingBlock block))didEndZooming;
+
+/**
+ scrollViewShouldScrollToTop delegate block
+ @code
+ scrollView.okidoki.shouldScrollToTop(^BOOL(UIScrollView *scrollView) {
+     return YES;
+ });
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiScrollViewShouldScrollToTopBlock block))shouldScrollToTop;
+
+/**
+ scrollViewDidScrollToTop delegate block
+ @code
+ scrollView.okidoki.didScrollToTop(^(UIScrollView *scrollView) {
+     NSLog(@"did scroll to top");
+ });
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiScrollViewDidScrollToTopBlock block))didScrollToTop;
+
+/**
+ scrollViewDidChangeAdjustedContentInset delegate block (iOS 11+)
+ @code
+ scrollView.okidoki.didChangeAdjustedContentInset(^(UIScrollView *scrollView) {
+     NSLog(@"content inset changed");
+ });
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiScrollViewDidChangeAdjustedContentInsetBlock block))didChangeAdjustedContentInset;
 
 
 #pragma mark - UITextView
@@ -335,9 +538,9 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number);
         NSArray: @[@(top), @(left), @(bottom), @(right)]
         NSValue: UIEdgeInsets
         nil: all edges = 0
- Example: .edgeToSuperView(@20) or .edgeToSuperView(@[@10, @20, @10, @20])
+ Example: .edgeToSuperView(@20) or .edgeToSuperView(@[@10, @20, @10, @20]) or .edgeToSuperView(nil)
  */
-- (Okidoki*(^)(id params))edgeToSuperView;
+- (Okidoki*(^)(id _Nullable params))edgeToSuperView;
 
 @end
 
@@ -370,3 +573,5 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number);
 /** color: UIFont,NSString(eg.@"17",@"s17",@"b17",@"i17") */
 + (UIFont *)okidokiFont:(id)font;
 @end
+
+NS_ASSUME_NONNULL_END

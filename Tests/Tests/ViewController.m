@@ -9,8 +9,8 @@
 #import "ViewController.h"
 #import "Okidoki.h"
 
-@interface ViewController ()
-
+@interface ViewController ()<UITableViewDelegate,UITableViewDataSource>
+@property (nonatomic,  strong) UITableView *tableView;
 @end
 
 @implementation ViewController
@@ -26,7 +26,18 @@
     
 //    [self layout_Example:self.view];
     
-    [self panAnimation_Example];
+//    [self panAnimation_Example];
+    
+    [self tableView_Example];
+}
+
+- (void)refreshAction
+{
+    NSLog(@"模拟网络请求");
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.tableView.refreshControl endRefreshing];
+    });
 }
 
 - (void)viewDidLayoutSubviews
@@ -317,7 +328,7 @@
     .addSubviewWithConfig(UIView.new, ^(Okidoki *ok){
         ok.bgColor(@"#00B894")
         .cnRadius(@20)
-        .edgeToSuperView(nil); // 完全填充，四边距离都为 0
+        .edgeToSuperView(@0); // 完全填充，四边距离都为 0
     })
     .addSubviewWithConfig(UIView.new, ^(Okidoki *ok){
         ok.bgColor(@"#E17055")
@@ -379,4 +390,93 @@
     .bottomAnchor(@[self.view, @(-20)]);
 }
 
+
+- (void)tableView_Example
+{
+    [self.view addSubview:self.tableView];
+    
+    UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
+    [refresh addTarget:self action:@selector(refreshAction) forControlEvents:UIControlEventValueChanged];
+    
+    self.tableView.refreshControl = refresh;
+}
+
+#pragma mark ---UITableViewDataSource
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return 10;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *ID = @"resueID";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:ID];
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ID];
+    }
+    cell.textLabel.text = [NSString stringWithFormat:@"Row %@", @(indexPath.row + 1)];
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+}
+
+- (UITableView *)tableView{
+    if (!_tableView) {
+        UITableView *tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:0];
+        tableView.delegate = self;
+        tableView.dataSource = self;
+        tableView.rowHeight = 50;
+        tableView.tableFooterView = [[UIView alloc] init];
+        tableView.showsVerticalScrollIndicator = NO;
+        tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+//        [tableView registerClass:UITableViewCell.class forCellReuseIdentifier:@"resueID"];
+        _tableView = tableView;
+        
+        tableView.okidoki
+        .didScroll(^(UIScrollView *scrollView) {
+            NSLog(@"contentOffset: %@", NSStringFromCGPoint(scrollView.contentOffset));
+        })
+        .willBeginDragging(^(UIScrollView *scrollView) {
+            NSLog(@"开始拖拽");
+        })
+        .willEndDragging(^(UIScrollView *scrollView, CGPoint velocity) {
+            NSLog(@"结束拖拽，速度: %@", NSStringFromCGPoint(velocity));
+        })
+        .didEndDecelerating(^(UIScrollView *scrollView) {
+            NSLog(@"减速结束");
+        })
+        ;
+    }
+    return _tableView;
+}
+
 @end
+
+
+/*
+ 添加 delegate 方法，内部使用内部类：_OkidokiScrollViewDelegateHanlder, 来处理代理方法，内部类绑定到当前 scrollView 上。
+ 
+ 把以下代理方法，改成 block 方法，并设置到内部类处理。
+ - (void)scrollViewDidScroll:(UIScrollView *)scrollView;
+ - (void)scrollViewDidZoom:(UIScrollView *)scrollView;
+ - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView;
+ - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity;
+ - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate;
+ - (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView;
+ - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView;
+ - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView;
+ - (nullable UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView;
+ - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(nullable UIView *)view;
+ - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(nullable UIView *)view atScale:(CGFloat)scale;
+ - (BOOL)scrollViewShouldScrollToTop:(UIScrollView *)scrollView;
+ - (void)scrollViewDidScrollToTop:(UIScrollView *)scrollView;
+ - (void)scrollViewDidChangeAdjustedContentInset:(UIScrollView *)scrollView;
+ */

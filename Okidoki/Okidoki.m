@@ -90,6 +90,114 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number)
 }
 @end
 
+// 内部 Delegate Handler 类，用于处理 UIScrollView 代理回调
+@interface _OkidokiScrollViewDelegateHandler : NSObject <UIScrollViewDelegate>
+@property (nonatomic, copy) void (^didScrollBlock)(UIScrollView *scrollView);
+@property (nonatomic, copy) void (^didZoomBlock)(UIScrollView *scrollView);
+@property (nonatomic, copy) void (^willBeginDraggingBlock)(UIScrollView *scrollView);
+@property (nonatomic, copy) void (^willEndDraggingBlock)(UIScrollView *scrollView, CGPoint velocity);
+@property (nonatomic, copy) void (^didEndDraggingBlock)(UIScrollView *scrollView, BOOL decelerate);
+@property (nonatomic, copy) void (^willBeginDeceleratingBlock)(UIScrollView *scrollView);
+@property (nonatomic, copy) void (^didEndDeceleratingBlock)(UIScrollView *scrollView);
+@property (nonatomic, copy) void (^didEndScrollingAnimationBlock)(UIScrollView *scrollView);
+@property (nonatomic, copy) UIView * (^viewForZoomingBlock)(UIScrollView *scrollView);
+@property (nonatomic, copy) void (^willBeginZoomingBlock)(UIScrollView *scrollView, UIView *view);
+@property (nonatomic, copy) void (^didEndZoomingBlock)(UIScrollView *scrollView, UIView *view, CGFloat scale);
+@property (nonatomic, copy) BOOL (^shouldScrollToTopBlock)(UIScrollView *scrollView);
+@property (nonatomic, copy) void (^didScrollToTopBlock)(UIScrollView *scrollView);
+@property (nonatomic, copy) void (^didChangeAdjustedContentInsetBlock)(UIScrollView *scrollView);
+@end
+
+@implementation _OkidokiScrollViewDelegateHandler
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    if (self.didScrollBlock) {
+        self.didScrollBlock(scrollView);
+    }
+}
+
+- (void)scrollViewDidZoom:(UIScrollView *)scrollView {
+    if (self.didZoomBlock) {
+        self.didZoomBlock(scrollView);
+    }
+}
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    if (self.willBeginDraggingBlock) {
+        self.willBeginDraggingBlock(scrollView);
+    }
+}
+
+- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity {
+    if (self.willEndDraggingBlock) {
+        self.willEndDraggingBlock(scrollView, velocity);
+    }
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    if (self.didEndDraggingBlock) {
+        self.didEndDraggingBlock(scrollView, decelerate);
+    }
+}
+
+- (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView {
+    if (self.willBeginDeceleratingBlock) {
+        self.willBeginDeceleratingBlock(scrollView);
+    }
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    if (self.didEndDeceleratingBlock) {
+        self.didEndDeceleratingBlock(scrollView);
+    }
+}
+
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
+    if (self.didEndScrollingAnimationBlock) {
+        self.didEndScrollingAnimationBlock(scrollView);
+    }
+}
+
+- (nullable UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
+    if (self.viewForZoomingBlock) {
+        return self.viewForZoomingBlock(scrollView);
+    }
+    return nil;
+}
+
+- (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(nullable UIView *)view {
+    if (self.willBeginZoomingBlock) {
+        self.willBeginZoomingBlock(scrollView, view);
+    }
+}
+
+- (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(nullable UIView *)view atScale:(CGFloat)scale {
+    if (self.didEndZoomingBlock) {
+        self.didEndZoomingBlock(scrollView, view, scale);
+    }
+}
+
+- (BOOL)scrollViewShouldScrollToTop:(UIScrollView *)scrollView {
+    if (self.shouldScrollToTopBlock) {
+        return self.shouldScrollToTopBlock(scrollView);
+    }
+    return YES;
+}
+
+- (void)scrollViewDidScrollToTop:(UIScrollView *)scrollView {
+    if (self.didScrollToTopBlock) {
+        self.didScrollToTopBlock(scrollView);
+    }
+}
+
+- (void)scrollViewDidChangeAdjustedContentInset:(UIScrollView *)scrollView {
+    if (self.didChangeAdjustedContentInsetBlock) {
+        self.didChangeAdjustedContentInsetBlock(scrollView);
+    }
+}
+
+@end
+
 @interface Okidoki ()
 @property (nonatomic,    weak) UIView *view;
 @end
@@ -1185,6 +1293,166 @@ kOkidoki_imp(secure, ({
 
 #pragma mark - UIScrollView
 
+kOkidoki_imp(contentOffset, ({
+    if ([view isKindOfClass:[UIScrollView class]]) {
+        if ([contentOffset isKindOfClass:[NSValue class]]) {
+            [(UIScrollView *)view setContentOffset:[contentOffset CGPointValue]];
+        } else if ([contentOffset isKindOfClass:[NSString class]]) {
+            [(UIScrollView *)view setContentOffset:CGPointFromString(contentOffset)];
+        }
+    }
+}))
+
+kOkidoki_imp(contentSize, ({
+    if ([view isKindOfClass:[UIScrollView class]]) {
+        if ([contentSize isKindOfClass:[NSValue class]]) {
+            [(UIScrollView *)view setContentSize:[contentSize CGSizeValue]];
+        } else if ([contentSize isKindOfClass:[NSString class]]) {
+            [(UIScrollView *)view setContentSize:CGSizeFromString(contentSize)];
+        }
+    }
+}))
+
+kOkidoki_imp(contentInset, ({
+    if ([view isKindOfClass:[UIScrollView class]]) {
+        if ([contentInset isKindOfClass:[NSValue class]]) {
+            [(UIScrollView *)view setContentInset:[contentInset UIEdgeInsetsValue]];
+        } else if ([contentInset isKindOfClass:[NSString class]]) {
+            [(UIScrollView *)view setContentInset:UIEdgeInsetsFromString(contentInset)];
+        }
+    }
+}))
+
+kOkidoki_imp(directionalLockEnabled, ({
+    if ([view isKindOfClass:[UIScrollView class]]) {
+        [(UIScrollView *)view setDirectionalLockEnabled:[directionalLockEnabled boolValue]];
+    }
+}))
+
+kOkidoki_imp(alwaysBounceVertical, ({
+    if ([view isKindOfClass:[UIScrollView class]]) {
+        [(UIScrollView *)view setAlwaysBounceVertical:[alwaysBounceVertical boolValue]];
+    }
+}))
+
+kOkidoki_imp(alwaysBounceHorizontal, ({
+    if ([view isKindOfClass:[UIScrollView class]]) {
+        [(UIScrollView *)view setAlwaysBounceHorizontal:[alwaysBounceHorizontal boolValue]];
+    }
+}))
+
+kOkidoki_imp(scrollEnabled, ({
+    if ([view isKindOfClass:[UIScrollView class]]) {
+        [(UIScrollView *)view setScrollEnabled:[scrollEnabled boolValue]];
+    }
+}))
+
+kOkidoki_imp(indicatorStyle, ({
+    if ([view isKindOfClass:[UIScrollView class]] &&
+        ([indicatorStyle isKindOfClass:[NSNumber class]] ||
+         [indicatorStyle isKindOfClass:[NSString class]])) {
+        [(UIScrollView *)view setIndicatorStyle:[indicatorStyle integerValue]];
+    }
+}))
+
+kOkidoki_imp(delaysContentTouches, ({
+    if ([view isKindOfClass:[UIScrollView class]]) {
+        [(UIScrollView *)view setDelaysContentTouches:[delaysContentTouches boolValue]];
+    }
+}))
+
+kOkidoki_imp(canCancelContentTouches, ({
+    if ([view isKindOfClass:[UIScrollView class]]) {
+        [(UIScrollView *)view setCanCancelContentTouches:[canCancelContentTouches boolValue]];
+    }
+}))
+
+kOkidoki_imp(minimumZoomScale, ({
+    if ([view isKindOfClass:[UIScrollView class]] &&
+        ([minimumZoomScale isKindOfClass:[NSNumber class]] ||
+         [minimumZoomScale isKindOfClass:[NSString class]])) {
+        [(UIScrollView *)view setMinimumZoomScale:[minimumZoomScale floatValue]];
+    }
+}))
+
+kOkidoki_imp(maximumZoomScale, ({
+    if ([view isKindOfClass:[UIScrollView class]] &&
+        ([maximumZoomScale isKindOfClass:[NSNumber class]] ||
+         [maximumZoomScale isKindOfClass:[NSString class]])) {
+        [(UIScrollView *)view setMaximumZoomScale:[maximumZoomScale floatValue]];
+    }
+}))
+
+kOkidoki_imp(bouncesZoom, ({
+    if ([view isKindOfClass:[UIScrollView class]]) {
+        [(UIScrollView *)view setBouncesZoom:[bouncesZoom boolValue]];
+    }
+}))
+
+kOkidoki_imp(scrollsToTop, ({
+    if ([view isKindOfClass:[UIScrollView class]]) {
+        [(UIScrollView *)view setScrollsToTop:[scrollsToTop boolValue]];
+    }
+}))
+
+kOkidoki_imp(decelerationRate, ({
+    if ([view isKindOfClass:[UIScrollView class]] &&
+        ([decelerationRate isKindOfClass:[NSNumber class]] ||
+         [decelerationRate isKindOfClass:[NSString class]])) {
+        [(UIScrollView *)view setDecelerationRate:[decelerationRate floatValue]];
+    }
+}))
+
+kOkidoki_imp(zoomScale, ({
+    if ([view isKindOfClass:[UIScrollView class]] &&
+        ([zoomScale isKindOfClass:[NSNumber class]] ||
+         [zoomScale isKindOfClass:[NSString class]])) {
+        [(UIScrollView *)view setZoomScale:[zoomScale floatValue]];
+    }
+}))
+
+kOkidoki_imp(keyboardDismissMode, ({
+    if ([view isKindOfClass:[UIScrollView class]] &&
+        ([keyboardDismissMode isKindOfClass:[NSNumber class]] ||
+         [keyboardDismissMode isKindOfClass:[NSString class]])) {
+        [(UIScrollView *)view setKeyboardDismissMode:[keyboardDismissMode integerValue]];
+    }
+}))
+
+kOkidoki_imp(contentInsetAdjustmentBehavior, ({
+    if ([view isKindOfClass:[UIScrollView class]] &&
+        ([contentInsetAdjustmentBehavior isKindOfClass:[NSNumber class]] ||
+         [contentInsetAdjustmentBehavior isKindOfClass:[NSString class]])) {
+        if (@available(iOS 11.0, *)) {
+            [(UIScrollView *)view setContentInsetAdjustmentBehavior:[contentInsetAdjustmentBehavior integerValue]];
+        }
+    }
+}))
+
+kOkidoki_imp(verticalScrollIndicatorInsets, ({
+    if ([view isKindOfClass:[UIScrollView class]]) {
+        if (@available(iOS 11.1, *)) {
+            if ([verticalScrollIndicatorInsets isKindOfClass:[NSValue class]]) {
+                [(UIScrollView *)view setVerticalScrollIndicatorInsets:[verticalScrollIndicatorInsets UIEdgeInsetsValue]];
+            } else if ([verticalScrollIndicatorInsets isKindOfClass:[NSString class]]) {
+                [(UIScrollView *)view setVerticalScrollIndicatorInsets:UIEdgeInsetsFromString(verticalScrollIndicatorInsets)];
+            }
+        }
+    }
+}))
+
+kOkidoki_imp(horizontalScrollIndicatorInsets, ({
+    if ([view isKindOfClass:[UIScrollView class]]) {
+        if (@available(iOS 11.1, *)) {
+            if ([horizontalScrollIndicatorInsets isKindOfClass:[NSValue class]]) {
+                [(UIScrollView *)view setHorizontalScrollIndicatorInsets:[horizontalScrollIndicatorInsets UIEdgeInsetsValue]];
+            } else if ([horizontalScrollIndicatorInsets isKindOfClass:[NSString class]]) {
+                [(UIScrollView *)view setHorizontalScrollIndicatorInsets:UIEdgeInsetsFromString(horizontalScrollIndicatorInsets)];
+            }
+        }
+    }
+}))
+
 kOkidoki_imp(verInd, ({
     if ([view isKindOfClass:[UIScrollView class]]) {
         [(UIScrollView *)view setShowsVerticalScrollIndicator:[verInd boolValue]];
@@ -1208,6 +1476,189 @@ kOkidoki_imp(bounces, ({
         [(UIScrollView *)view setBounces:[bounces boolValue]];
     }
 }))
+
+// UIScrollView Delegate Block Methods
+
+- (Okidoki*(^)(OkidokiScrollViewDidScrollBlock block))didScroll {
+    return ^id(OkidokiScrollViewDidScrollBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UIScrollView class]]) {
+            UIScrollView *scrollView = (UIScrollView *)view;
+            _OkidokiScrollViewDelegateHandler *handler = [self _scrollViewDelegateHandlerForScrollView:scrollView];
+            handler.didScrollBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiScrollViewDidZoomBlock block))didZoom {
+    return ^id(OkidokiScrollViewDidZoomBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UIScrollView class]]) {
+            UIScrollView *scrollView = (UIScrollView *)view;
+            _OkidokiScrollViewDelegateHandler *handler = [self _scrollViewDelegateHandlerForScrollView:scrollView];
+            handler.didZoomBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiScrollViewWillBeginDraggingBlock block))willBeginDragging {
+    return ^id(OkidokiScrollViewWillBeginDraggingBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UIScrollView class]]) {
+            UIScrollView *scrollView = (UIScrollView *)view;
+            _OkidokiScrollViewDelegateHandler *handler = [self _scrollViewDelegateHandlerForScrollView:scrollView];
+            handler.willBeginDraggingBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiScrollViewWillEndDraggingBlock block))willEndDragging {
+    return ^id(OkidokiScrollViewWillEndDraggingBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UIScrollView class]]) {
+            UIScrollView *scrollView = (UIScrollView *)view;
+            _OkidokiScrollViewDelegateHandler *handler = [self _scrollViewDelegateHandlerForScrollView:scrollView];
+            handler.willEndDraggingBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiScrollViewDidEndDraggingBlock block))didEndDragging {
+    return ^id(OkidokiScrollViewDidEndDraggingBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UIScrollView class]]) {
+            UIScrollView *scrollView = (UIScrollView *)view;
+            _OkidokiScrollViewDelegateHandler *handler = [self _scrollViewDelegateHandlerForScrollView:scrollView];
+            handler.didEndDraggingBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiScrollViewWillBeginDeceleratingBlock block))willBeginDecelerating {
+    return ^id(OkidokiScrollViewWillBeginDeceleratingBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UIScrollView class]]) {
+            UIScrollView *scrollView = (UIScrollView *)view;
+            _OkidokiScrollViewDelegateHandler *handler = [self _scrollViewDelegateHandlerForScrollView:scrollView];
+            handler.willBeginDeceleratingBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiScrollViewDidEndDeceleratingBlock block))didEndDecelerating {
+    return ^id(OkidokiScrollViewDidEndDeceleratingBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UIScrollView class]]) {
+            UIScrollView *scrollView = (UIScrollView *)view;
+            _OkidokiScrollViewDelegateHandler *handler = [self _scrollViewDelegateHandlerForScrollView:scrollView];
+            handler.didEndDeceleratingBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiScrollViewDidEndScrollingAnimationBlock block))didEndScrollingAnimation {
+    return ^id(OkidokiScrollViewDidEndScrollingAnimationBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UIScrollView class]]) {
+            UIScrollView *scrollView = (UIScrollView *)view;
+            _OkidokiScrollViewDelegateHandler *handler = [self _scrollViewDelegateHandlerForScrollView:scrollView];
+            handler.didEndScrollingAnimationBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiScrollViewViewForZoomingBlock block))viewForZooming {
+    return ^id(OkidokiScrollViewViewForZoomingBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UIScrollView class]]) {
+            UIScrollView *scrollView = (UIScrollView *)view;
+            _OkidokiScrollViewDelegateHandler *handler = [self _scrollViewDelegateHandlerForScrollView:scrollView];
+            handler.viewForZoomingBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiScrollViewWillBeginZoomingBlock block))willBeginZooming {
+    return ^id(OkidokiScrollViewWillBeginZoomingBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UIScrollView class]]) {
+            UIScrollView *scrollView = (UIScrollView *)view;
+            _OkidokiScrollViewDelegateHandler *handler = [self _scrollViewDelegateHandlerForScrollView:scrollView];
+            handler.willBeginZoomingBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiScrollViewDidEndZoomingBlock block))didEndZooming {
+    return ^id(OkidokiScrollViewDidEndZoomingBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UIScrollView class]]) {
+            UIScrollView *scrollView = (UIScrollView *)view;
+            _OkidokiScrollViewDelegateHandler *handler = [self _scrollViewDelegateHandlerForScrollView:scrollView];
+            handler.didEndZoomingBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiScrollViewShouldScrollToTopBlock block))shouldScrollToTop {
+    return ^id(OkidokiScrollViewShouldScrollToTopBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UIScrollView class]]) {
+            UIScrollView *scrollView = (UIScrollView *)view;
+            _OkidokiScrollViewDelegateHandler *handler = [self _scrollViewDelegateHandlerForScrollView:scrollView];
+            handler.shouldScrollToTopBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiScrollViewDidScrollToTopBlock block))didScrollToTop {
+    return ^id(OkidokiScrollViewDidScrollToTopBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UIScrollView class]]) {
+            UIScrollView *scrollView = (UIScrollView *)view;
+            _OkidokiScrollViewDelegateHandler *handler = [self _scrollViewDelegateHandlerForScrollView:scrollView];
+            handler.didScrollToTopBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiScrollViewDidChangeAdjustedContentInsetBlock block))didChangeAdjustedContentInset {
+    return ^id(OkidokiScrollViewDidChangeAdjustedContentInsetBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UIScrollView class]]) {
+            UIScrollView *scrollView = (UIScrollView *)view;
+            _OkidokiScrollViewDelegateHandler *handler = [self _scrollViewDelegateHandlerForScrollView:scrollView];
+            handler.didChangeAdjustedContentInsetBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+// Helper method to get or create delegate handler
+- (_OkidokiScrollViewDelegateHandler *)_scrollViewDelegateHandlerForScrollView:(UIScrollView *)scrollView {
+    static const void *kOkidokiScrollViewDelegateHandlerKey = &kOkidokiScrollViewDelegateHandlerKey;
+    
+    _OkidokiScrollViewDelegateHandler *handler = objc_getAssociatedObject(scrollView, kOkidokiScrollViewDelegateHandlerKey);
+    if (!handler) {
+        handler = [[_OkidokiScrollViewDelegateHandler alloc] init];
+        objc_setAssociatedObject(scrollView, kOkidokiScrollViewDelegateHandlerKey, handler, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        scrollView.delegate = handler;
+    }
+    return handler;
+}
 
 #pragma mark - UITextView
 
@@ -1519,8 +1970,8 @@ kOkidoki_imp(selectable, ({
 
 #pragma mark - Convenience Methods
 
-- (Okidoki*(^)(id))edgeToSuperView {
-    return ^id(id params) {
+- (Okidoki*(^)(id _Nullable))edgeToSuperView {
+    return ^id(id _Nullable params) {
         UIView *view = self.view;
         UIView *superview = view.superview;
         
