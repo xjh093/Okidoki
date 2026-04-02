@@ -42,6 +42,10 @@ button.okidoki
 
 # Logs:
 
+### 2026-04-02
+- 0.0.11
+  - UIScrollView、UITableView、UICollectionView、UITextField、UITextView  
+
 ### 2026-03-31
 - 0.0.6
   - addSubview、gesture、control
