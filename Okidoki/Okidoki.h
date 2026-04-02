@@ -27,8 +27,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-// version: 0.0.7
-// 2026-04-02 12:02:44
+// version: 0.0.8
+// 2026-04-02 14:14:09
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
@@ -38,6 +38,492 @@
 CGFloat Okidoki_NumberAdaptor(CGFloat number);
 
 NS_ASSUME_NONNULL_BEGIN
+
+@interface Okidoki : NSObject
+
+#pragma mark - UIView
+
+/** 
+ Get the current view being configured
+ @return The UIView instance that this Okidoki object is configuring
+ @code
+ UIView *myView = view.okidoki.bgColor(@"FF0000").view;
+ @endcode
+ */
+- (__kindof UIView *)view;
+
+/** NSNumber,NSString */
+- (Okidoki*(^)(id))tag;
+
+/** NSValue,NSString */
+- (Okidoki*(^)(id))frame;
+
+/** NSNumber,NSString */
+- (Okidoki*(^)(id))alpha;
+
+/** NSNumber,NSString */
+- (Okidoki*(^)(id))hidden;
+
+/** UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
+- (Okidoki*(^)(id))bgColor;
+
+/** UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
+- (Okidoki*(^)(id))bdColor;
+
+/** NSNumber,NSString */
+- (Okidoki*(^)(id))bdWidth;
+
+/** NSNumber,NSString */
+- (Okidoki*(^)(id))cnRadius;
+
+/** NSArray: @[@1,@2,@3,@4] */
+- (Okidoki*(^)(id))mkCorners;
+
+/** @(YES) or @(NO),NSString */
+- (Okidoki*(^)(id))mtBounds;
+
+/** UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
+- (Okidoki*(^)(id))shadowColor;
+
+/** NSNumber,NSString */
+- (Okidoki*(^)(id))shadowOpacity;
+
+/** NSValue,NSString */
+- (Okidoki*(^)(id))shadowOffset;
+
+/** NSNumber,NSString */
+- (Okidoki*(^)(id))shadowRadius;
+
+/** UIBezierPath,CGPathRef */
+- (Okidoki*(^)(id))shadowPath;
+
+/** UIView */
+- (Okidoki*(^)(id))addSubview;
+
+/**
+ UIView, block: void(^)(Okidoki *ok)
+ @code
+ .addSubviewWithConfig(childView, ^(Okidoki *ok) {
+     ok.bgColor(@"FF0000").frame(@"{{0,0},{100,100}}");
+ })
+ @endcode
+ */
+- (Okidoki*(^)(id, void(^)(Okidoki *ok)))addSubviewWithConfig;
+
+/**
+ UIView, block: void(^)(Okidoki *ok, UIView *superView)
+ @code
+ .addSubviewWithConfig_superView(childView, ^(Okidoki *ok, UIView *superView) {
+     ok.bgColor(@"00FF00").frame(CGRectMake(0, 0, superView.bounds.size.width, 50));
+ })
+ @endcode
+ */
+- (Okidoki*(^)(id, void(^)(Okidoki *ok, UIView *superView)))addSubviewWithConfig_superView;
+
+/** UIView */
+- (Okidoki*(^)(id))addToSuperview;
+
+/** @(YES) or @(NO),NSString */
+- (Okidoki*(^)(id))userInteractionEnabled;
+
+
+#pragma mark - Gesture
+
+/** 
+ Tap gesture, block: void(^)(UITapGestureRecognizer *tap)
+ @code
+ .tapGesture(^(UITapGestureRecognizer *tap) {
+     NSLog(@"Tapped");
+ })
+ @endcode
+ */
+- (Okidoki*(^)(void(^)(UITapGestureRecognizer *tap)))tapGesture;
+
+/**
+ LongPress gesture, block: void(^)(UILongPressGestureRecognizer *longPress)
+ @code
+ .longPressGesture(^(UILongPressGestureRecognizer *longPress) {
+     NSLog(@"Long pressed");
+ })
+ @endcode
+ */
+- (Okidoki*(^)(void(^)(UILongPressGestureRecognizer *longPress)))longPressGesture;
+
+/**
+ Swipe gesture, direction: UISwipeGestureRecognizerDirection, block: void(^)(UISwipeGestureRecognizer *swipe)
+ @code
+ .swipeGesture(UISwipeGestureRecognizerDirectionLeft, ^(UISwipeGestureRecognizer *swipe) {
+     NSLog(@"Swiped");
+ })
+ @endcode
+ */
+- (Okidoki*(^)(NSUInteger, void(^)(UISwipeGestureRecognizer *swipe)))swipeGesture;
+
+/**
+ Pan gesture, block: void(^)(UIPanGestureRecognizer *pan)
+ @code
+ .panGesture(^(UIPanGestureRecognizer *pan) {
+     CGPoint translation = [pan translationInView:pan.view];
+     NSLog(@"Pan: %@", NSStringFromCGPoint(translation));
+ })
+ @endcode
+ */
+- (Okidoki*(^)(void(^)(UIPanGestureRecognizer *pan)))panGesture;
+
+/**
+ Pinch gesture, block: void(^)(UIPinchGestureRecognizer *pinch)
+ @code
+ .pinchGesture(^(UIPinchGestureRecognizer *pinch) {
+     NSLog(@"Scale: %f", pinch.scale);
+ })
+ @endcode
+ */
+- (Okidoki*(^)(void(^)(UIPinchGestureRecognizer *pinch)))pinchGesture;
+
+/**
+ Rotation gesture, block: void(^)(UIRotationGestureRecognizer *rotation)
+ @code
+ .rotationGesture(^(UIRotationGestureRecognizer *rotation) {
+     NSLog(@"Rotation: %f", rotation.rotation);
+ })
+ @endcode
+ */
+- (Okidoki*(^)(void(^)(UIRotationGestureRecognizer *rotation)))rotationGesture;
+
+/** Remove gesture by class, example: .removeGesture([UITapGestureRecognizer class]) */
+- (Okidoki*(^)(Class))removeGesture;
+
+/** Remove all gestures */
+- (Okidoki*(^)(void))removeAllGestures;
+
+
+#pragma mark - UILabel & UITextView & UITextField
+
+/** NSString */
+- (Okidoki*(^)(id))text;
+
+/** UIFont,NSString(@"17",@"s17",@"b17",@"i17") */
+- (Okidoki*(^)(id))font;
+
+/** UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
+- (Okidoki*(^)(id))color;
+
+/** NSNumber: @0,@1,@2,NSString */
+- (Okidoki*(^)(id))align;
+
+/**
+ substring: NSString, value:color(UIColor,NSString) or font(UIFont,NSString).
+ @code
+ .text(@"Hello World").attributedSubstring(@"World", @"FF0000")
+ @endcode
+ */
+- (Okidoki*(^)(id,id))attributedSubstring;
+
+/**
+ substring: NSString, value:color(UIColor,NSString) or font(UIFont,NSString), range: NSValue.
+ @code
+ .text(@"Hello World").attributedSubstringInRange(@"World", @"FF0000", [NSValue valueWithRange:NSMakeRange(6, 5)])
+ @endcode
+ */
+- (Okidoki*(^)(id,id,id))attributedSubstringInRange;
+
+/**
+ substring: NSString, key: NSAttributedStringKey, value: color/font/number etc.
+ @code
+ .text(@"Hello World").attributedSubstringKeyValue(@"World", NSForegroundColorAttributeName, [UIColor redColor])
+ @endcode
+ */
+- (Okidoki*(^)(id,id,id))attributedSubstringKeyValue;
+
+/**
+ substring: NSString, key: NSAttributedStringKey, value: color/font/number etc. range: NSValue.
+ @code
+ .attributedSubstringKeyValueInRange(@"World", NSForegroundColorAttributeName, [UIColor redColor], [NSValue valueWithRange:NSMakeRange(6, 5)])
+ @endcode
+ */
+- (Okidoki*(^)(id,id,id,id))attributedSubstringKeyValueInRange;
+
+
+#pragma mark - UILabel
+
+/** NSNumber(NSInteger) ,NSString*/
+- (Okidoki*(^)(id))lines;
+
+/** adjustsFontSizeToFitWidth: @(YES) or @(NO), NSString*/
+- (Okidoki*(^)(id))adjust;
+
+/** NSNumber(CGFloat), NSString*/
+- (Okidoki*(^)(id))lineSpace;
+
+/** NSNumber(CGFloat), 0 means no max width limit. NSString */
+- (Okidoki*(^)(id))autoWidth;
+
+/** NSNumber(CGFloat), 0 means no max height limit. NSString */
+- (Okidoki*(^)(id))autoHeight;
+
+/** UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
+- (Okidoki*(^)(id))highlightedTextColor;
+
+
+#pragma mark - UIControl
+
+/** @(YES) or @(NO),NSString */
+- (Okidoki*(^)(id))enabled;
+
+/** @(YES) or @(NO),NSString */
+- (Okidoki*(^)(id))selected;
+
+/** @(YES) or @(NO),NSString */
+- (Okidoki*(^)(id))highlighted;
+
+/** NSNumber: @0,@1,@2,@3, NSString */
+- (Okidoki*(^)(id))contentVerticalAlignment;
+
+/** NSNumber: @0,@1,@2,@3,@4,@5, NSString */
+- (Okidoki*(^)(id))contentHorizontalAlignment;
+
+/**
+ Add block for control events, controlEvents: UIControlEvents, block: void(^)(__kindof UIControl *sender)
+ @code
+ .addControlEvent(UIControlEventTouchUpInside, ^(UIButton *sender) {
+     NSLog(@"Button tapped");
+ })
+ @endcode
+ */
+- (Okidoki*(^)(UIControlEvents, void(^)(__kindof UIControl *sender)))addControlEvent;
+
+/** Remove all blocks for control events, controlEvents: UIControlEvents */
+- (Okidoki*(^)(UIControlEvents))removeControlEvent;
+
+/** Remove all targets and blocks for all events */
+- (Okidoki*(^)(void))removeAllControlEvents;
+
+
+#pragma mark - UIButton
+
+/** title: NSString state: normal*/
+- (Okidoki*(^)(id))title;
+
+/**
+ title: NSString, state: NSNumber
+ @code
+ .titleForState(@"Highlighted", @(UIControlStateHighlighted))
+ @endcode
+ */
+- (Okidoki*(^)(id,id))titleForState;
+
+/**
+ color: UIColor,NSString(eg.#FFFEEE,0xFFFEEE,0XFFFEEE) , state: NSNumber
+ @code
+ .colorForState(@"FF0000", @(UIControlStateNormal))
+ @endcode
+ */
+- (Okidoki*(^)(id,id))colorForState;
+
+/**
+ image: NSString, UIImage, state: NSNumber
+ @code
+ .imageForState(@"icon_home", @(UIControlStateNormal))
+ @endcode
+ */
+- (Okidoki*(^)(id,id))imageForState;
+
+/**
+ bgImage: NSString, UIImage, state: NSNumber
+ @code
+ .bgImageForState(@"bg_button", @(UIControlStateNormal))
+ @endcode
+ */
+- (Okidoki*(^)(id,id))bgImageForState;
+
+/**
+ lineSpace: NSNumber, state: NSNumber
+ @code
+ .lineSpaceForState(@5, @(UIControlStateNormal))
+ @endcode
+ */
+- (Okidoki*(^)(id,id))lineSpaceForState;
+
+/** space: NSNumber */
+- (Okidoki*(^)(id))imageUpTitleDown;
+
+/** space: NSNumber */
+- (Okidoki*(^)(id))imageDownTitleUp;
+
+/** space: NSNumber */
+- (Okidoki*(^)(id))imageRightTitleLeft;
+
+/** space: NSNumber */
+- (Okidoki*(^)(id))imageLeftTitleRight;
+
+/** all center */
+- (Okidoki*(^)(void))imageCenterTitleCenter;
+
+/**
+ substring: NSString, value:color or font, state: NSNumber
+ @code
+ .titleForState(@"Hello World", @(UIControlStateNormal)).attributedSubstringForState(@"World", @"FF0000", @(UIControlStateNormal))
+ @endcode
+ */
+- (Okidoki*(^)(id,id,id))attributedSubstringForState;
+
+/**
+ substring: NSString, value:color or font, range: NSValue, state: NSNumber
+ @code
+ .attributedSubstringInRangeForState(@"World", @"FF0000", [NSValue valueWithRange:NSMakeRange(6, 5)], @(UIControlStateNormal))
+ @endcode
+ */
+- (Okidoki*(^)(id,id,id,id))attributedSubstringInRangeForState;
+
+/**
+ substring: NSString, key: NSAttributedStringKey, value: color/font/number etc.
+ @code
+ .attributedSubstringKeyValueForState(@"World", NSForegroundColorAttributeName, [UIColor redColor], @(UIControlStateNormal))
+ @endcode
+ */
+- (Okidoki*(^)(id,id,id,id))attributedSubstringKeyValueForState;
+
+/**
+ substring: NSString, key: NSAttributedStringKey, value: color/font/number etc. range: NSValue.
+ @code
+ .attributedSubstringKeyValueInRangeForState(@"World", NSForegroundColorAttributeName, [UIColor redColor], [NSValue valueWithRange:NSMakeRange(6, 5)], @(UIControlStateNormal))
+ @endcode
+ */
+- (Okidoki*(^)(id,id,id,id,id))attributedSubstringKeyValueInRangeForState;
+
+
+#pragma mark - UIImageView
+
+/** image: UIImage, NSString */
+- (Okidoki*(^)(id))image;
+
+/** highlightedImage: UIImage, NSString */
+- (Okidoki*(^)(id))highlightedImage;
+
+/**
+ image: UIImage,NSString, color: UIColor
+ @code
+ .imageForTintColor(@"icon_home", [UIColor redColor])
+ @endcode
+ */
+- (Okidoki*(^)(id,id))imageForTintColor;
+
+
+#pragma mark - UITextField
+
+/** borderStyle, NSString,NSNumber: @1,@2,@3,@4 */
+- (Okidoki*(^)(id))bdStyle;
+
+/** placeholder, NSString */
+- (Okidoki*(^)(id))pHolder;
+
+/** placeholder color, UIColor,NSString(eg.#FFFEEE,0xFFFEEE,0XFFFEEE) */
+- (Okidoki*(^)(id))pHColor;
+
+/** placeholder font, UIFont */
+- (Okidoki*(^)(id))pHFont;
+
+/** clearButtonMode, NSNumber: @1,@2,@3,@4 */
+- (Okidoki*(^)(id))cbMode;
+
+/** leftViewMode, NSNumber: @1,@2,@3,@4 */
+- (Okidoki*(^)(id))lvMode;
+
+/** rightViewMode, NSNumber: @1,@2,@3,@4 */
+- (Okidoki*(^)(id))rvMode;
+
+/** leftView, UIView */
+- (Okidoki*(^)(id))lfView;
+
+/** rightView, UIView */
+- (Okidoki*(^)(id))rtView;
+
+/** secureTextEntry, BOOL: @YES, @NO */
+- (Okidoki*(^)(id))secure;
+
+
+#pragma mark - UIScrollView
+
+/** NSValue(CGPoint), NSString */
+- (Okidoki*(^)(id))contentOffset;
+
+/** NSValue(CGSize), NSString */
+- (Okidoki*(^)(id))contentSize;
+
+/** NSValue(UIEdgeInsets), NSString */
+- (Okidoki*(^)(id))contentInset;
+
+/** @(YES) or @(NO), NSString */
+- (Okidoki*(^)(id))directionalLockEnabled;
+
+/** @(YES) or @(NO), NSString */
+- (Okidoki*(^)(id))alwaysBounceVertical;
+
+/** @(YES) or @(NO), NSString */
+- (Okidoki*(^)(id))alwaysBounceHorizontal;
+
+/** @(YES) or @(NO), NSString */
+- (Okidoki*(^)(id))scrollEnabled;
+
+/** NSNumber: @0,@1,@2, NSString */
+- (Okidoki*(^)(id))indicatorStyle;
+
+/** @(YES) or @(NO), NSString */
+- (Okidoki*(^)(id))delaysContentTouches;
+
+/** @(YES) or @(NO), NSString */
+- (Okidoki*(^)(id))canCancelContentTouches;
+
+/** NSNumber, NSString */
+- (Okidoki*(^)(id))minimumZoomScale;
+
+/** NSNumber, NSString */
+- (Okidoki*(^)(id))maximumZoomScale;
+
+/** @(YES) or @(NO), NSString */
+- (Okidoki*(^)(id))bouncesZoom;
+
+/** @(YES) or @(NO), NSString */
+- (Okidoki*(^)(id))scrollsToTop;
+
+/** NSNumber, NSString */
+- (Okidoki*(^)(id))decelerationRate;
+
+/** NSNumber, NSString */
+- (Okidoki*(^)(id))zoomScale;
+
+/** NSNumber: @0,@1,@2, NSString */
+- (Okidoki*(^)(id))keyboardDismissMode;
+
+/** NSNumber: @0,@1,@2,@3,@4, NSString (iOS 11+) */
+- (Okidoki*(^)(id))contentInsetAdjustmentBehavior;
+
+/** NSValue(UIEdgeInsets), NSString (iOS 11.1+) */
+- (Okidoki*(^)(id))verticalScrollIndicatorInsets;
+
+/** NSValue(UIEdgeInsets), NSString (iOS 11.1+) */
+- (Okidoki*(^)(id))horizontalScrollIndicatorInsets;
+
+/** showsVerticalScrollIndicator: @(YES) or @(NO), NSString */
+- (Okidoki*(^)(id))verInd;
+
+/** showsHorizontalScrollIndicator: @(YES) or @(NO), NSString */
+- (Okidoki*(^)(id))horInd;
+
+/** pagingEnabled: @(YES) or @(NO), NSString */
+- (Okidoki*(^)(id))paging;
+
+/** bounces: @(YES) or @(NO), NSString */
+- (Okidoki*(^)(id))bounces;
+
+
+#pragma mark - UITextView
+
+- (Okidoki*(^)(id))editable;
+- (Okidoki*(^)(id))selectable;
+
+@end
+
 
 // UIScrollView Delegate Block Types
 typedef void(^OkidokiScrollViewDidScrollBlock)(UIScrollView *scrollView);
@@ -55,247 +541,7 @@ typedef BOOL(^OkidokiScrollViewShouldScrollToTopBlock)(UIScrollView *scrollView)
 typedef void(^OkidokiScrollViewDidScrollToTopBlock)(UIScrollView *scrollView);
 typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView *scrollView);
 
-@interface Okidoki : NSObject
-
-#pragma mark - UIView
-
-/** NSNumber,NSString */
-- (Okidoki*(^)(id))tag;
-/** NSValue,NSString */
-- (Okidoki*(^)(id))frame;
-/** NSNumber,NSString */
-- (Okidoki*(^)(id))alpha;
-/** NSNumber,NSString */
-- (Okidoki*(^)(id))hidden;
-/** UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
-- (Okidoki*(^)(id))bgColor;
-/** UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
-- (Okidoki*(^)(id))bdColor;
-/** NSNumber,NSString */
-- (Okidoki*(^)(id))bdWidth;
-/** NSNumber,NSString */
-- (Okidoki*(^)(id))cnRadius;
-/** NSArray: @[@1,@2,@3,@4] */
-- (Okidoki*(^)(id))mkCorners;
-/** @(YES) or @(NO),NSString */
-- (Okidoki*(^)(id))mtBounds;
-/** UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
-- (Okidoki*(^)(id))shadowColor;
-/** NSNumber,NSString */
-- (Okidoki*(^)(id))shadowOpacity;
-/** NSValue,NSString */
-- (Okidoki*(^)(id))shadowOffset;
-/** NSNumber,NSString */
-- (Okidoki*(^)(id))shadowRadius;
-/** UIBezierPath,CGPathRef */
-- (Okidoki*(^)(id))shadowPath;
-/** UIView */
-- (Okidoki*(^)(id))addSubview;
-/** UIView, block: void(^)(Okidoki *ok) */
-- (Okidoki*(^)(id, void(^)(Okidoki *ok)))addSubviewWithConfig;
-/** UIView, block: void(^)(Okidoki *ok, UIView *superView) */
-- (Okidoki*(^)(id, void(^)(Okidoki *ok, UIView *superView)))addSubviewWithConfig_superView;
-/** UIView */
-- (Okidoki*(^)(id))addToSuperview;
-/** @(YES) or @(NO),NSString */
-- (Okidoki*(^)(id))userInteractionEnabled;
-
-
-#pragma mark - Gesture
-
-/** Tap gesture, block: void(^)(UITapGestureRecognizer *tap) */
-- (Okidoki*(^)(void(^)(UITapGestureRecognizer *tap)))tapGesture;
-/** LongPress gesture, block: void(^)(UILongPressGestureRecognizer *longPress) */
-- (Okidoki*(^)(void(^)(UILongPressGestureRecognizer *longPress)))longPressGesture;
-/** Swipe gesture, direction: UISwipeGestureRecognizerDirection, block: void(^)(UISwipeGestureRecognizer *swipe) */
-- (Okidoki*(^)(NSUInteger, void(^)(UISwipeGestureRecognizer *swipe)))swipeGesture;
-/** Pan gesture, block: void(^)(UIPanGestureRecognizer *pan) */
-- (Okidoki*(^)(void(^)(UIPanGestureRecognizer *pan)))panGesture;
-/** Pinch gesture, block: void(^)(UIPinchGestureRecognizer *pinch) */
-- (Okidoki*(^)(void(^)(UIPinchGestureRecognizer *pinch)))pinchGesture;
-/** Rotation gesture, block: void(^)(UIRotationGestureRecognizer *rotation) */
-- (Okidoki*(^)(void(^)(UIRotationGestureRecognizer *rotation)))rotationGesture;
-/** Remove gesture by class, example: .removeGesture([UITapGestureRecognizer class]) */
-- (Okidoki*(^)(Class))removeGesture;
-/** Remove all gestures */
-- (Okidoki*(^)(void))removeAllGestures;
-
-
-#pragma mark - UILabel & UITextView & UITextField
-
-/** NSString */
-- (Okidoki*(^)(id))text;
-/** UIFont,NSString(@"17",@"s17",@"b17",@"i17") */
-- (Okidoki*(^)(id))font;
-/** UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
-- (Okidoki*(^)(id))color;
-/** NSNumber: @0,@1,@2,NSString */
-- (Okidoki*(^)(id))align;
-/** substring: NSString, value:color(UIColor,NSString) or font(UIFont,NSString). */
-- (Okidoki*(^)(id,id))attributedSubstring;
-/** substring: NSString, value:color(UIColor,NSString) or font(UIFont,NSString), range: NSValue. */
-- (Okidoki*(^)(id,id,id))attributedSubstringInRange;
-/** substring: NSString, key: NSAttributedStringKey, value: color/font/number etc. */
-- (Okidoki*(^)(id,id,id))attributedSubstringKeyValue;
-/** substring: NSString, key: NSAttributedStringKey, value: color/font/number etc. range: NSValue. */
-- (Okidoki*(^)(id,id,id,id))attributedSubstringKeyValueInRange;
-
-
-#pragma mark - UILabel
-
-/** NSNumber(NSInteger) ,NSString*/
-- (Okidoki*(^)(id))lines;
-/** adjustsFontSizeToFitWidth: @(YES) or @(NO), NSString*/
-- (Okidoki*(^)(id))adjust;
-/** NSNumber(CGFloat), NSString*/
-- (Okidoki*(^)(id))lineSpace;
-/** NSNumber(CGFloat), 0 means no max width limit. NSString */
-- (Okidoki*(^)(id))autoWidth;
-/** NSNumber(CGFloat), 0 means no max height limit. NSString */
-- (Okidoki*(^)(id))autoHeight;
-/** UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
-- (Okidoki*(^)(id))highlightedTextColor;
-
-
-#pragma mark - UIControl
-
-/** @(YES) or @(NO),NSString */
-- (Okidoki*(^)(id))enabled;
-/** @(YES) or @(NO),NSString */
-- (Okidoki*(^)(id))selected;
-/** @(YES) or @(NO),NSString */
-- (Okidoki*(^)(id))highlighted;
-/** NSNumber: @0,@1,@2,@3, NSString */
-- (Okidoki*(^)(id))contentVerticalAlignment;
-/** NSNumber: @0,@1,@2,@3,@4,@5, NSString */
-- (Okidoki*(^)(id))contentHorizontalAlignment;
-/** Add block for control events, controlEvents: UIControlEvents, block: void(^)(__kindof UIControl *sender) */
-- (Okidoki*(^)(UIControlEvents, void(^)(__kindof UIControl *sender)))addControlEvent;
-/** Remove all blocks for control events, controlEvents: UIControlEvents */
-- (Okidoki*(^)(UIControlEvents))removeControlEvent;
-/** Remove all targets and blocks for all events */
-- (Okidoki*(^)(void))removeAllControlEvents;
-
-#pragma mark - UIButton
-
-/** title: NSString state: normal*/
-- (Okidoki*(^)(id))title;
-/** title: NSString, state: NSNumber */
-- (Okidoki*(^)(id,id))titleForState;
-/** color: UIColor,NSString(eg.#FFFEEE,0xFFFEEE,0XFFFEEE) , state: NSNumber */
-- (Okidoki*(^)(id,id))colorForState;
-/** image: NSString, UIImage, state: NSNumber */
-- (Okidoki*(^)(id,id))imageForState;
-/** bgImage: NSString, UIImage, state: NSNumber */
-- (Okidoki*(^)(id,id))bgImageForState;
-/** lineSpace: NSNumber, state: NSNumber */
-- (Okidoki*(^)(id,id))lineSpaceForState;
-/** space: NSNumber */
-- (Okidoki*(^)(id))imageUpTitleDown;
-/** space: NSNumber */
-- (Okidoki*(^)(id))imageDownTitleUp;
-/** space: NSNumber */
-- (Okidoki*(^)(id))imageRightTitleLeft;
-/** space: NSNumber */
-- (Okidoki*(^)(id))imageLeftTitleRight;
-/** all center */
-- (Okidoki*(^)(void))imageCenterTitleCenter;
-/** substring: NSString, value:color or font, state: NSNumber */
-- (Okidoki*(^)(id,id,id))attributedSubstringForState;
-/** substring: NSString, value:color or font, range: NSValue, state: NSNumber */
-- (Okidoki*(^)(id,id,id,id))attributedSubstringInRangeForState;
-/** substring: NSString, key: NSAttributedStringKey, value: color/font/number etc. */
-- (Okidoki*(^)(id,id,id,id))attributedSubstringKeyValueForState;
-/** substring: NSString, key: NSAttributedStringKey, value: color/font/number etc. range: NSValue. */
-- (Okidoki*(^)(id,id,id,id,id))attributedSubstringKeyValueInRangeForState;
-
-
-#pragma mark - UIImageView
-
-/** image: UIImage, NSString */
-- (Okidoki*(^)(id))image;
-/** highlightedImage: UIImage, NSString */
-- (Okidoki*(^)(id))highlightedImage;
-/** image: UIImage,NSString, color: UIColor */
-- (Okidoki*(^)(id,id))imageForTintColor;
-
-
-#pragma mark - UITextField
-
-/** borderStyle, NSString,NSNumber: @1,@2,@3,@4 */
-- (Okidoki*(^)(id))bdStyle;
-/** placeholder, NSString */
-- (Okidoki*(^)(id))pHolder;
-/** placeholder color, UIColor,NSString(eg.#FFFEEE,0xFFFEEE,0XFFFEEE) */
-- (Okidoki*(^)(id))pHColor;
-/** placeholder font, UIFont */
-- (Okidoki*(^)(id))pHFont;
-/** clearButtonMode, NSNumber: @1,@2,@3,@4 */
-- (Okidoki*(^)(id))cbMode;
-/** leftViewMode, NSNumber: @1,@2,@3,@4 */
-- (Okidoki*(^)(id))lvMode;
-/** rightViewMode, NSNumber: @1,@2,@3,@4 */
-- (Okidoki*(^)(id))rvMode;
-/** leftView, UIView */
-- (Okidoki*(^)(id))lfView;
-/** rightView, UIView */
-- (Okidoki*(^)(id))rtView;
-/** secureTextEntry, BOOL: @YES, @NO */
-- (Okidoki*(^)(id))secure;
-
-
-#pragma mark - UIScrollView
-
-/** NSValue(CGPoint), NSString */
-- (Okidoki*(^)(id))contentOffset;
-/** NSValue(CGSize), NSString */
-- (Okidoki*(^)(id))contentSize;
-/** NSValue(UIEdgeInsets), NSString */
-- (Okidoki*(^)(id))contentInset;
-/** @(YES) or @(NO), NSString */
-- (Okidoki*(^)(id))directionalLockEnabled;
-/** @(YES) or @(NO), NSString */
-- (Okidoki*(^)(id))alwaysBounceVertical;
-/** @(YES) or @(NO), NSString */
-- (Okidoki*(^)(id))alwaysBounceHorizontal;
-/** @(YES) or @(NO), NSString */
-- (Okidoki*(^)(id))scrollEnabled;
-/** NSNumber: @0,@1,@2, NSString */
-- (Okidoki*(^)(id))indicatorStyle;
-/** @(YES) or @(NO), NSString */
-- (Okidoki*(^)(id))delaysContentTouches;
-/** @(YES) or @(NO), NSString */
-- (Okidoki*(^)(id))canCancelContentTouches;
-/** NSNumber, NSString */
-- (Okidoki*(^)(id))minimumZoomScale;
-/** NSNumber, NSString */
-- (Okidoki*(^)(id))maximumZoomScale;
-/** @(YES) or @(NO), NSString */
-- (Okidoki*(^)(id))bouncesZoom;
-/** @(YES) or @(NO), NSString */
-- (Okidoki*(^)(id))scrollsToTop;
-/** NSNumber, NSString */
-- (Okidoki*(^)(id))decelerationRate;
-/** NSNumber, NSString */
-- (Okidoki*(^)(id))zoomScale;
-/** NSNumber: @0,@1,@2, NSString */
-- (Okidoki*(^)(id))keyboardDismissMode;
-/** NSNumber: @0,@1,@2,@3,@4, NSString (iOS 11+) */
-- (Okidoki*(^)(id))contentInsetAdjustmentBehavior;
-/** NSValue(UIEdgeInsets), NSString (iOS 11.1+) */
-- (Okidoki*(^)(id))verticalScrollIndicatorInsets;
-/** NSValue(UIEdgeInsets), NSString (iOS 11.1+) */
-- (Okidoki*(^)(id))horizontalScrollIndicatorInsets;
-/** showsVerticalScrollIndicator: @(YES) or @(NO), NSString */
-- (Okidoki*(^)(id))verInd;
-/** showsHorizontalScrollIndicator: @(YES) or @(NO), NSString */
-- (Okidoki*(^)(id))horInd;
-/** pagingEnabled: @(YES) or @(NO), NSString */
-- (Okidoki*(^)(id))paging;
-/** bounces: @(YES) or @(NO), NSString */
-- (Okidoki*(^)(id))bounces;
-
-// UIScrollView Delegate Blocks
+@interface Okidoki (UIScrollView)
 /**
  scrollViewDidScroll delegate block
  @code
@@ -436,11 +682,231 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
  */
 - (Okidoki*(^)(OkidokiScrollViewDidChangeAdjustedContentInsetBlock block))didChangeAdjustedContentInset;
 
+@end
 
-#pragma mark - UITextView
 
-- (Okidoki*(^)(id))editable;
-- (Okidoki*(^)(id))selectable;
+// UITableView Delegate Block Types
+typedef NSInteger(^OkidokiTableViewNumberOfSectionsBlock)(UITableView *tableView);
+typedef NSInteger(^OkidokiTableViewNumberOfRowsInSectionBlock)(UITableView *tableView, NSInteger section);
+typedef UITableViewCell * _Nonnull(^OkidokiTableViewCellForRowAtIndexPathBlock)(UITableView *tableView, NSIndexPath *indexPath);
+typedef CGFloat(^OkidokiTableViewHeightForRowBlock)(UITableView *tableView, NSIndexPath *indexPath);
+typedef CGFloat(^OkidokiTableViewHeightForHeaderBlock)(UITableView *tableView, NSInteger section);
+typedef CGFloat(^OkidokiTableViewHeightForFooterBlock)(UITableView *tableView, NSInteger section);
+typedef UIView * _Nullable (^OkidokiTableViewViewForHeaderBlock)(UITableView *tableView, NSInteger section);
+typedef UIView * _Nullable (^OkidokiTableViewViewForFooterBlock)(UITableView *tableView, NSInteger section);
+typedef void(^OkidokiTableViewDidSelectRowBlock)(UITableView *tableView, NSIndexPath *indexPath);
+typedef void(^OkidokiTableViewDidDeselectRowBlock)(UITableView *tableView, NSIndexPath *indexPath);
+typedef void(^OkidokiTableViewWillDisplayCellBlock)(UITableView *tableView, UITableViewCell *cell, NSIndexPath *indexPath);
+typedef void(^OkidokiTableViewDidEndDisplayingCellBlock)(UITableView *tableView, UITableViewCell *cell, NSIndexPath *indexPath);
+typedef NSString * _Nullable (^OkidokiTableViewTitleForHeaderBlock)(UITableView *tableView, NSInteger section);
+typedef NSString * _Nullable (^OkidokiTableViewTitleForFooterBlock)(UITableView *tableView, NSInteger section);
+typedef BOOL(^OkidokiTableViewCanEditRowBlock)(UITableView *tableView, NSIndexPath *indexPath);
+typedef void(^OkidokiTableViewCommitEditingStyleBlock)(UITableView *tableView, UITableViewCellEditingStyle editingStyle, NSIndexPath *indexPath);
+typedef UITableViewCellEditingStyle(^OkidokiTableViewEditingStyleBlock)(UITableView *tableView, NSIndexPath *indexPath);
+
+@interface Okidoki (UITableView)
+
+// Register Cell
+/** 
+ Register cell class with identifier
+ params: NSArray: @[cellClass, @"identifier"]
+ @code
+ .registerCellClass(@[[UITableViewCell class], @"Cell"])
+ @endcode
+ */
+- (Okidoki*(^)(NSArray *params))registerCellClass;
+
+/** 
+ Register cell nib with identifier
+ params: NSArray: @[nibName, @"identifier"] or @[UINib, @"identifier"]
+ @code
+ .registerCellNib(@[@"MyCell", @"Cell"])
+ @endcode
+ */
+- (Okidoki*(^)(NSArray *params))registerCellNib;
+
+/** 
+ Register multiple cell classes with identifiers
+ params: NSArray: @[@[cellClass1, @"identifier1"], @[cellClass2, @"identifier2"], ...]
+ @code
+ .registerMultiCellClass(@[@[[MyCell class], @"Cell1"], @[[OtherCell class], @"Cell2"]])
+ @endcode
+ */
+- (Okidoki*(^)(NSArray *params))registerMultiCellClass;
+
+
+// UITableViewDataSource
+/** 
+ numberOfSectionsInTableView: block
+ @code
+ .numberOfSections(^NSInteger(UITableView *tableView) {
+     return 2;
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTableViewNumberOfSectionsBlock block))numberOfSections;
+
+/** 
+ tableView:numberOfRowsInSection: block
+ @code
+ .numberOfRowsInSection(^NSInteger(UITableView *tableView, NSInteger section) {
+     return 10;
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTableViewNumberOfRowsInSectionBlock block))numberOfRowsInSection;
+
+/** 
+ tableView:cellForRowAtIndexPath: block
+ @code
+ .cellForRowAtIndexPath(^UITableViewCell *(UITableView *tableView, NSIndexPath *indexPath) {
+     return cell;
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTableViewCellForRowAtIndexPathBlock block))cellForRowAtIndexPath;
+
+/** 
+ tableView:titleForHeaderInSection: block
+ @code
+ .titleForHeaderInSection(^NSString *(UITableView *tableView, NSInteger section) {
+     return @"Header";
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTableViewTitleForHeaderBlock block))titleForHeaderInSection;
+
+/** 
+ tableView:titleForFooterInSection: block
+ @code
+ .titleForFooterInSection(^NSString *(UITableView *tableView, NSInteger section) {
+     return @"Footer";
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTableViewTitleForFooterBlock block))titleForFooterInSection;
+
+/** 
+ tableView:canEditRowAtIndexPath: block
+ @code
+ .canEditRowAtIndexPath(^BOOL(UITableView *tableView, NSIndexPath *indexPath) {
+     return YES;
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTableViewCanEditRowBlock block))canEditRowAtIndexPath;
+
+/** 
+ tableView:commitEditingStyle:forRowAtIndexPath: block
+ @code
+ .commitEditingStyle(^(UITableView *tableView, UITableViewCellEditingStyle style, NSIndexPath *indexPath) {
+     // Handle editing
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTableViewCommitEditingStyleBlock block))commitEditingStyle;
+
+
+// UITableViewDelegate
+/** 
+ tableView:heightForRowAtIndexPath: block
+ @code
+ .heightForRowAtIndexPath(^CGFloat(UITableView *tableView, NSIndexPath *indexPath) {
+     return 44;
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTableViewHeightForRowBlock block))heightForRowAtIndexPath;
+
+/** 
+ tableView:heightForHeaderInSection: block
+ @code
+ .heightForHeaderInSection(^CGFloat(UITableView *tableView, NSInteger section) {
+     return 30;
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTableViewHeightForHeaderBlock block))heightForHeaderInSection;
+
+/** 
+ tableView:heightForFooterInSection: block
+ @code
+ .heightForFooterInSection(^CGFloat(UITableView *tableView, NSInteger section) {
+     return 20;
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTableViewHeightForFooterBlock block))heightForFooterInSection;
+
+/** 
+ tableView:viewForHeaderInSection: block
+ @code
+ .viewForHeaderInSection(^UIView *(UITableView *tableView, NSInteger section) {
+     return headerView;
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTableViewViewForHeaderBlock block))viewForHeaderInSection;
+
+/** 
+ tableView:viewForFooterInSection: block
+ @code
+ .viewForFooterInSection(^UIView *(UITableView *tableView, NSInteger section) {
+     return footerView;
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTableViewViewForFooterBlock block))viewForFooterInSection;
+
+/** 
+ tableView:didSelectRowAtIndexPath: block
+ @code
+ .didSelectRowAtIndexPath(^(UITableView *tableView, NSIndexPath *indexPath) {
+     NSLog(@"Selected");
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTableViewDidSelectRowBlock block))didSelectRowAtIndexPath;
+
+/** 
+ tableView:didDeselectRowAtIndexPath: block
+ @code
+ .didDeselectRowAtIndexPath(^(UITableView *tableView, NSIndexPath *indexPath) {
+     NSLog(@"Deselected");
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTableViewDidDeselectRowBlock block))didDeselectRowAtIndexPath;
+
+/** 
+ tableView:willDisplayCell:forRowAtIndexPath: block
+ @code
+ .willDisplayCell(^(UITableView *tableView, UITableViewCell *cell, NSIndexPath *indexPath) {
+     // Configure cell display
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTableViewWillDisplayCellBlock block))willDisplayCell;
+
+/** 
+ tableView:didEndDisplayingCell:forRowAtIndexPath: block
+ @code
+ .didEndDisplayingCell(^(UITableView *tableView, UITableViewCell *cell, NSIndexPath *indexPath) {
+     // Cleanup after cell
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTableViewDidEndDisplayingCellBlock block))didEndDisplayingCell;
+
+/** 
+ tableView:editingStyleForRowAtIndexPath: block
+ @code
+ .editingStyleForRowAtIndexPath(^UITableViewCellEditingStyle(UITableView *tableView, NSIndexPath *indexPath) {
+     return UITableViewCellEditingStyleDelete;
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiTableViewEditingStyleBlock block))editingStyleForRowAtIndexPath;
 
 @end
 
@@ -453,7 +919,10 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
  Leading anchor constraint
  params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
         toView can be UIView (use its leadingAnchor) or NSLayoutXAxisAnchor
- Example: .leadingAnchor(@[superview, @20]) or .leadingAnchor(@[superview])
+ @code
+ .leadingAnchor(@[superview, @20])
+ .leadingAnchor(@[superview])
+ @endcode
  */
 - (Okidoki*(^)(id params))leadingAnchor;
 
@@ -461,7 +930,9 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
  Trailing anchor constraint
  params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
         toView can be UIView (use its trailingAnchor) or NSLayoutXAxisAnchor
- Example: .trailingAnchor(@[superview, @(-20)])
+ @code
+ .trailingAnchor(@[superview, @(-20)])
+ @endcode
  */
 - (Okidoki*(^)(id params))trailingAnchor;
 
@@ -469,7 +940,9 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
  Left anchor constraint
  params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
         toView can be UIView (use its leftAnchor) or NSLayoutXAxisAnchor
- Example: .leftAnchor(@[superview, @20])
+ @code
+ .leftAnchor(@[superview, @20])
+ @endcode
  */
 - (Okidoki*(^)(id params))leftAnchor;
 
@@ -477,7 +950,9 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
  Right anchor constraint
  params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
         toView can be UIView (use its rightAnchor) or NSLayoutXAxisAnchor
- Example: .rightAnchor(@[superview, @(-20)])
+ @code
+ .rightAnchor(@[superview, @(-20)])
+ @endcode
  */
 - (Okidoki*(^)(id params))rightAnchor;
 
@@ -485,7 +960,9 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
  Top anchor constraint
  params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
         toView can be UIView (use its topAnchor) or NSLayoutYAxisAnchor
- Example: .topAnchor(@[superview, @10])
+ @code
+ .topAnchor(@[superview, @10])
+ @endcode
  */
 - (Okidoki*(^)(id params))topAnchor;
 
@@ -493,7 +970,9 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
  Bottom anchor constraint
  params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
         toView can be UIView (use its bottomAnchor) or NSLayoutYAxisAnchor
- Example: .bottomAnchor(@[superview, @(-10)])
+ @code
+ .bottomAnchor(@[superview, @(-10)])
+ @endcode
  */
 - (Okidoki*(^)(id params))bottomAnchor;
 
@@ -501,7 +980,10 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
  Width anchor constraint
  params:  NSNumber: @(width) for constant width
         NSArray: @[toView, @(multiplier), @(constant)] for relative width
- Example: .widthAnchor(@100) or .widthAnchor(@[superview, @0.5, @(-20)])
+ @code
+ .widthAnchor(@100)
+ .widthAnchor(@[superview, @0.5, @(-20)])
+ @endcode
  */
 - (Okidoki*(^)(id params))widthAnchor;
 
@@ -509,7 +991,10 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
  Height anchor constraint
  params:  NSNumber: @(height) for constant height
         NSArray: @[toView, @(multiplier), @(constant)] for relative height
- Example: .heightAnchor(@50) or .heightAnchor(@[superview, @0.5, @0])
+ @code
+ .heightAnchor(@50)
+ .heightAnchor(@[superview, @0.5, @0])
+ @endcode
  */
 - (Okidoki*(^)(id params))heightAnchor;
 
@@ -517,7 +1002,9 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
  CenterX anchor constraint
  params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
         toView can be UIView (use its centerXAnchor) or NSLayoutXAxisAnchor
- Example: .centerXAnchor(@[superview, @10])
+ @code
+ .centerXAnchor(@[superview, @10])
+ @endcode
  */
 - (Okidoki*(^)(id params))centerXAnchor;
 
@@ -525,7 +1012,9 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
  CenterY anchor constraint
  params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
         toView can be UIView (use its centerYAnchor) or NSLayoutYAxisAnchor
- Example: .centerYAnchor(@[superview, @0])
+ @code
+ .centerYAnchor(@[superview, @0])
+ @endcode
  */
 - (Okidoki*(^)(id params))centerYAnchor;
 
@@ -538,7 +1027,11 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
         NSArray: @[@(top), @(left), @(bottom), @(right)]
         NSValue: UIEdgeInsets
         nil: all edges = 0
- Example: .edgeToSuperView(@20) or .edgeToSuperView(@[@10, @20, @10, @20]) or .edgeToSuperView(nil)
+ @code
+ .edgeToSuperView(@20)
+ .edgeToSuperView(@[@10, @20, @10, @20])
+ .edgeToSuperView(nil)
+ @endcode
  */
 - (Okidoki*(^)(id _Nullable params))edgeToSuperView;
 
@@ -564,13 +1057,13 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
 
 
 @interface UIColor (Okidoki)
-/** color: UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
+/** color: UIColor, NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
 + (UIColor *)okidokiColor:(id)color;
 @end
 
 
 @interface UIFont (Okidoki)
-/** color: UIFont,NSString(eg.@"17",@"s17",@"b17",@"i17") */
+/** font: UIFont, NSString(eg.@"17",@"s17",@"b17",@"i17") */
 + (UIFont *)okidokiFont:(id)font;
 @end
 

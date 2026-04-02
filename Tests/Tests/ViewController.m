@@ -9,7 +9,7 @@
 #import "ViewController.h"
 #import "Okidoki.h"
 
-@interface ViewController ()<UITableViewDelegate,UITableViewDataSource>
+@interface ViewController () //<UITableViewDelegate,UITableViewDataSource>
 @property (nonatomic,  strong) UITableView *tableView;
 @end
 
@@ -399,45 +399,18 @@
     [refresh addTarget:self action:@selector(refreshAction) forControlEvents:UIControlEventValueChanged];
     
     self.tableView.refreshControl = refresh;
-}
-
-#pragma mark ---UITableViewDataSource
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    return 1;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return 10;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    static NSString *ID = @"resueID";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:ID];
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ID];
-    }
-    cell.textLabel.text = [NSString stringWithFormat:@"Row %@", @(indexPath.row + 1)];
-    return cell;
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
     
+    NSLog(@"view1.tag = %@", @(UIView.new.okidoki.tag(@100).view.tag));
 }
+
 
 - (UITableView *)tableView{
     if (!_tableView) {
         UITableView *tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:0];
-        tableView.delegate = self;
-        tableView.dataSource = self;
         tableView.rowHeight = 50;
         tableView.tableFooterView = [[UIView alloc] init];
         tableView.showsVerticalScrollIndicator = NO;
         tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-//        [tableView registerClass:UITableViewCell.class forCellReuseIdentifier:@"resueID"];
         _tableView = tableView;
         
         tableView.okidoki
@@ -452,8 +425,28 @@
         })
         .didEndDecelerating(^(UIScrollView *scrollView) {
             NSLog(@"减速结束");
-        })
-        ;
+        });
+        
+        tableView.okidoki
+            .registerCellClass(@[[UITableViewCell class], @"Cell"])
+            .numberOfSections(^NSInteger(UITableView *tableView) {
+                return 1;
+            })
+            .numberOfRowsInSection(^NSInteger(UITableView *tableView, NSInteger section) {
+                return 10;
+            })
+            .cellForRowAtIndexPath(^UITableViewCell *(UITableView *tableView, NSIndexPath *indexPath) {
+                UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
+                cell.textLabel.text = [NSString stringWithFormat:@"Row %ld", indexPath.row];
+                return cell;
+            })
+            .didDeselectRowAtIndexPath(^(UITableView *tableView, NSIndexPath *indexPath) {
+                NSLog(@"Deselected");
+            })
+            .didSelectRowAtIndexPath(^(UITableView *tableView, NSIndexPath *indexPath) {
+                NSLog(@"Selected row: %ld", indexPath.row);
+                [tableView deselectRowAtIndexPath:indexPath animated:YES];
+            });
     }
     return _tableView;
 }
@@ -462,6 +455,9 @@
 
 
 /*
+ 
+ 添加 UITableView 相关的代理方法 UITableViewDataSource, UITableViewDelegate，内部使用内部类：_OkidokiTableViewDelegateHanlder, 来处理代理方法，内部类绑定到当前 tableView 上。
+ 
  添加 delegate 方法，内部使用内部类：_OkidokiScrollViewDelegateHanlder, 来处理代理方法，内部类绑定到当前 scrollView 上。
  
  把以下代理方法，改成 block 方法，并设置到内部类处理。

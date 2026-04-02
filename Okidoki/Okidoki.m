@@ -198,6 +198,164 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number)
 
 @end
 
+// 内部 Delegate Handler 类，用于处理 UITableView 代理回调
+@interface _OkidokiTableViewDelegateHandler : NSObject <UITableViewDataSource, UITableViewDelegate>
+// DataSource blocks
+@property (nonatomic, copy) OkidokiTableViewNumberOfSectionsBlock numberOfSectionsBlock;
+@property (nonatomic, copy) OkidokiTableViewNumberOfRowsInSectionBlock numberOfRowsInSectionBlock;
+@property (nonatomic, copy) OkidokiTableViewCellForRowAtIndexPathBlock cellForRowAtIndexPathBlock;
+@property (nonatomic, copy) OkidokiTableViewTitleForHeaderBlock titleForHeaderInSectionBlock;
+@property (nonatomic, copy) OkidokiTableViewTitleForFooterBlock titleForFooterInSectionBlock;
+@property (nonatomic, copy) OkidokiTableViewCanEditRowBlock canEditRowAtIndexPathBlock;
+@property (nonatomic, copy) OkidokiTableViewCommitEditingStyleBlock commitEditingStyleBlock;
+
+// Delegate blocks
+@property (nonatomic, copy) OkidokiTableViewHeightForRowBlock heightForRowAtIndexPathBlock;
+@property (nonatomic, copy) OkidokiTableViewHeightForHeaderBlock heightForHeaderInSectionBlock;
+@property (nonatomic, copy) OkidokiTableViewHeightForFooterBlock heightForFooterInSectionBlock;
+@property (nonatomic, copy) OkidokiTableViewViewForHeaderBlock viewForHeaderInSectionBlock;
+@property (nonatomic, copy) OkidokiTableViewViewForFooterBlock viewForFooterInSectionBlock;
+@property (nonatomic, copy) OkidokiTableViewDidSelectRowBlock didSelectRowAtIndexPathBlock;
+@property (nonatomic, copy) OkidokiTableViewDidDeselectRowBlock didDeselectRowAtIndexPathBlock;
+@property (nonatomic, copy) OkidokiTableViewWillDisplayCellBlock willDisplayCellBlock;
+@property (nonatomic, copy) OkidokiTableViewDidEndDisplayingCellBlock didEndDisplayingCellBlock;
+@property (nonatomic, copy) OkidokiTableViewEditingStyleBlock editingStyleForRowAtIndexPathBlock;
+@end
+
+@implementation _OkidokiTableViewDelegateHandler
+
+#pragma mark - UITableViewDataSource
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    if (self.numberOfSectionsBlock) {
+        return self.numberOfSectionsBlock(tableView);
+    }
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if (self.numberOfRowsInSectionBlock) {
+        return self.numberOfRowsInSectionBlock(tableView, section);
+    }
+    return 0;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = nil;
+    
+    if (self.cellForRowAtIndexPathBlock) {
+        cell = self.cellForRowAtIndexPathBlock(tableView, indexPath);
+    }
+    
+    // 如果 block 没有设置或返回了 nil，使用默认 cell
+    if (!cell) {
+        static NSString *identifier = @"OkidokiDefaultCell";
+        cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+        if (!cell) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+        }
+    }
+    
+    return cell;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    if (self.titleForHeaderInSectionBlock) {
+        return self.titleForHeaderInSectionBlock(tableView, section);
+    }
+    return nil;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
+    if (self.titleForFooterInSectionBlock) {
+        return self.titleForFooterInSectionBlock(tableView, section);
+    }
+    return nil;
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.canEditRowAtIndexPathBlock) {
+        return self.canEditRowAtIndexPathBlock(tableView, indexPath);
+    }
+    return NO;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.commitEditingStyleBlock) {
+        self.commitEditingStyleBlock(tableView, editingStyle, indexPath);
+    }
+}
+
+#pragma mark - UITableViewDelegate
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.heightForRowAtIndexPathBlock) {
+        return self.heightForRowAtIndexPathBlock(tableView, indexPath);
+    }
+    return UITableViewAutomaticDimension;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    if (self.heightForHeaderInSectionBlock) {
+        return self.heightForHeaderInSectionBlock(tableView, section);
+    }
+    return UITableViewAutomaticDimension;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    if (self.heightForFooterInSectionBlock) {
+        return self.heightForFooterInSectionBlock(tableView, section);
+    }
+    return UITableViewAutomaticDimension;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    if (self.viewForHeaderInSectionBlock) {
+        return self.viewForHeaderInSectionBlock(tableView, section);
+    }
+    return nil;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
+    if (self.viewForFooterInSectionBlock) {
+        return self.viewForFooterInSectionBlock(tableView, section);
+    }
+    return nil;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.didSelectRowAtIndexPathBlock) {
+        self.didSelectRowAtIndexPathBlock(tableView, indexPath);
+    }
+}
+
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.didDeselectRowAtIndexPathBlock) {
+        self.didDeselectRowAtIndexPathBlock(tableView, indexPath);
+    }
+}
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.willDisplayCellBlock) {
+        self.willDisplayCellBlock(tableView, cell, indexPath);
+    }
+}
+
+- (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.didEndDisplayingCellBlock) {
+        self.didEndDisplayingCellBlock(tableView, cell, indexPath);
+    }
+}
+
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.editingStyleForRowAtIndexPathBlock) {
+        return self.editingStyleForRowAtIndexPathBlock(tableView, indexPath);
+    }
+    return UITableViewCellEditingStyleNone;
+}
+
+@end
+
 @interface Okidoki ()
 @property (nonatomic,    weak) UIView *view;
 @end
@@ -1674,6 +1832,300 @@ kOkidoki_imp(selectable, ({
     }
 }))
 
+
+#pragma mark - UITableView
+
+- (Okidoki*(^)(NSArray *params))registerCellClass {
+    return ^id(NSArray *params) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITableView class]] && [params isKindOfClass:[NSArray class]]) {
+            UITableView *tableView = (UITableView *)view;
+            if (params.count >= 2) {
+                Class cellClass = params[0];
+                NSString *identifier = params[1];
+                if (cellClass && [identifier isKindOfClass:[NSString class]]) {
+                    [tableView registerClass:cellClass forCellReuseIdentifier:identifier];
+                }
+            }
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(NSArray *params))registerCellNib {
+    return ^id(NSArray *params) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITableView class]] && [params isKindOfClass:[NSArray class]]) {
+            UITableView *tableView = (UITableView *)view;
+            if (params.count >= 2) {
+                id nibOrName = params[0];
+                NSString *identifier = params[1];
+                
+                if ([identifier isKindOfClass:[NSString class]]) {
+                    UINib *nib = nil;
+                    
+                    if ([nibOrName isKindOfClass:[UINib class]]) {
+                        nib = (UINib *)nibOrName;
+                    } else if ([nibOrName isKindOfClass:[NSString class]]) {
+                        nib = [UINib nibWithNibName:nibOrName bundle:nil];
+                    }
+                    
+                    if (nib) {
+                        [tableView registerNib:nib forCellReuseIdentifier:identifier];
+                    }
+                }
+            }
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(NSArray *params))registerMultiCellClass {
+    return ^id(NSArray *params) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITableView class]] && [params isKindOfClass:[NSArray class]]) {
+            UITableView *tableView = (UITableView *)view;
+            
+            for (id item in params) {
+                if ([item isKindOfClass:[NSArray class]]) {
+                    NSArray *cellInfo = (NSArray *)item;
+                    if (cellInfo.count >= 2) {
+                        Class cellClass = cellInfo[0];
+                        NSString *identifier = cellInfo[1];
+                        if (cellClass && [identifier isKindOfClass:[NSString class]]) {
+                            [tableView registerClass:cellClass forCellReuseIdentifier:identifier];
+                        }
+                    }
+                }
+            }
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTableViewNumberOfSectionsBlock block))numberOfSections {
+    return ^id(OkidokiTableViewNumberOfSectionsBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITableView class]]) {
+            UITableView *tableView = (UITableView *)view;
+            _OkidokiTableViewDelegateHandler *handler = [self _tableViewDelegateHandlerForTableView:tableView];
+            handler.numberOfSectionsBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTableViewNumberOfRowsInSectionBlock block))numberOfRowsInSection {
+    return ^id(OkidokiTableViewNumberOfRowsInSectionBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITableView class]]) {
+            UITableView *tableView = (UITableView *)view;
+            _OkidokiTableViewDelegateHandler *handler = [self _tableViewDelegateHandlerForTableView:tableView];
+            handler.numberOfRowsInSectionBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTableViewCellForRowAtIndexPathBlock block))cellForRowAtIndexPath {
+    return ^id(OkidokiTableViewCellForRowAtIndexPathBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITableView class]]) {
+            UITableView *tableView = (UITableView *)view;
+            _OkidokiTableViewDelegateHandler *handler = [self _tableViewDelegateHandlerForTableView:tableView];
+            handler.cellForRowAtIndexPathBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTableViewTitleForHeaderBlock block))titleForHeaderInSection {
+    return ^id(OkidokiTableViewTitleForHeaderBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITableView class]]) {
+            UITableView *tableView = (UITableView *)view;
+            _OkidokiTableViewDelegateHandler *handler = [self _tableViewDelegateHandlerForTableView:tableView];
+            handler.titleForHeaderInSectionBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTableViewTitleForFooterBlock block))titleForFooterInSection {
+    return ^id(OkidokiTableViewTitleForFooterBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITableView class]]) {
+            UITableView *tableView = (UITableView *)view;
+            _OkidokiTableViewDelegateHandler *handler = [self _tableViewDelegateHandlerForTableView:tableView];
+            handler.titleForFooterInSectionBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTableViewCanEditRowBlock block))canEditRowAtIndexPath {
+    return ^id(OkidokiTableViewCanEditRowBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITableView class]]) {
+            UITableView *tableView = (UITableView *)view;
+            _OkidokiTableViewDelegateHandler *handler = [self _tableViewDelegateHandlerForTableView:tableView];
+            handler.canEditRowAtIndexPathBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTableViewCommitEditingStyleBlock block))commitEditingStyle {
+    return ^id(OkidokiTableViewCommitEditingStyleBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITableView class]]) {
+            UITableView *tableView = (UITableView *)view;
+            _OkidokiTableViewDelegateHandler *handler = [self _tableViewDelegateHandlerForTableView:tableView];
+            handler.commitEditingStyleBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTableViewHeightForRowBlock block))heightForRowAtIndexPath {
+    return ^id(OkidokiTableViewHeightForRowBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITableView class]]) {
+            UITableView *tableView = (UITableView *)view;
+            _OkidokiTableViewDelegateHandler *handler = [self _tableViewDelegateHandlerForTableView:tableView];
+            handler.heightForRowAtIndexPathBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTableViewHeightForHeaderBlock block))heightForHeaderInSection {
+    return ^id(OkidokiTableViewHeightForHeaderBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITableView class]]) {
+            UITableView *tableView = (UITableView *)view;
+            _OkidokiTableViewDelegateHandler *handler = [self _tableViewDelegateHandlerForTableView:tableView];
+            handler.heightForHeaderInSectionBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTableViewHeightForFooterBlock block))heightForFooterInSection {
+    return ^id(OkidokiTableViewHeightForFooterBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITableView class]]) {
+            UITableView *tableView = (UITableView *)view;
+            _OkidokiTableViewDelegateHandler *handler = [self _tableViewDelegateHandlerForTableView:tableView];
+            handler.heightForFooterInSectionBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTableViewViewForHeaderBlock block))viewForHeaderInSection {
+    return ^id(OkidokiTableViewViewForHeaderBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITableView class]]) {
+            UITableView *tableView = (UITableView *)view;
+            _OkidokiTableViewDelegateHandler *handler = [self _tableViewDelegateHandlerForTableView:tableView];
+            handler.viewForHeaderInSectionBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTableViewViewForFooterBlock block))viewForFooterInSection {
+    return ^id(OkidokiTableViewViewForFooterBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITableView class]]) {
+            UITableView *tableView = (UITableView *)view;
+            _OkidokiTableViewDelegateHandler *handler = [self _tableViewDelegateHandlerForTableView:tableView];
+            handler.viewForFooterInSectionBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTableViewDidSelectRowBlock block))didSelectRowAtIndexPath {
+    return ^id(OkidokiTableViewDidSelectRowBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITableView class]]) {
+            UITableView *tableView = (UITableView *)view;
+            _OkidokiTableViewDelegateHandler *handler = [self _tableViewDelegateHandlerForTableView:tableView];
+            handler.didSelectRowAtIndexPathBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTableViewDidDeselectRowBlock block))didDeselectRowAtIndexPath {
+    return ^id(OkidokiTableViewDidDeselectRowBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITableView class]]) {
+            UITableView *tableView = (UITableView *)view;
+            _OkidokiTableViewDelegateHandler *handler = [self _tableViewDelegateHandlerForTableView:tableView];
+            handler.didDeselectRowAtIndexPathBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTableViewWillDisplayCellBlock block))willDisplayCell {
+    return ^id(OkidokiTableViewWillDisplayCellBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITableView class]]) {
+            UITableView *tableView = (UITableView *)view;
+            _OkidokiTableViewDelegateHandler *handler = [self _tableViewDelegateHandlerForTableView:tableView];
+            handler.willDisplayCellBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTableViewDidEndDisplayingCellBlock block))didEndDisplayingCell {
+    return ^id(OkidokiTableViewDidEndDisplayingCellBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITableView class]]) {
+            UITableView *tableView = (UITableView *)view;
+            _OkidokiTableViewDelegateHandler *handler = [self _tableViewDelegateHandlerForTableView:tableView];
+            handler.didEndDisplayingCellBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+- (Okidoki*(^)(OkidokiTableViewEditingStyleBlock block))editingStyleForRowAtIndexPath {
+    return ^id(OkidokiTableViewEditingStyleBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITableView class]]) {
+            UITableView *tableView = (UITableView *)view;
+            _OkidokiTableViewDelegateHandler *handler = [self _tableViewDelegateHandlerForTableView:tableView];
+            handler.editingStyleForRowAtIndexPathBlock = block;
+        }
+        return view.okidoki;
+    };
+}
+
+// Helper method to get or create delegate handler
+- (_OkidokiTableViewDelegateHandler *)_tableViewDelegateHandlerForTableView:(UITableView *)tableView {
+    static const void *kOkidokiTableViewDelegateHandlerKey = &kOkidokiTableViewDelegateHandlerKey;
+    
+    _OkidokiTableViewDelegateHandler *handler = objc_getAssociatedObject(tableView, kOkidokiTableViewDelegateHandlerKey);
+    if (!handler) {
+        handler = [[_OkidokiTableViewDelegateHandler alloc] init];
+        objc_setAssociatedObject(tableView, kOkidokiTableViewDelegateHandlerKey, handler, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        tableView.dataSource = handler;
+        tableView.delegate = handler;
+    }
+    return handler;
+}
+
+#pragma mark - UICollectionView
+
+
+
+
 #pragma mark - AutoLayout Anchors
 
 - (Okidoki*(^)(id))leadingAnchor {
@@ -1968,8 +2420,6 @@ kOkidoki_imp(selectable, ({
     };
 }
 
-#pragma mark - Convenience Methods
-
 - (Okidoki*(^)(id _Nullable))edgeToSuperView {
     return ^id(id _Nullable params) {
         UIView *view = self.view;
@@ -2032,6 +2482,7 @@ kOkidoki_imp(selectable, ({
 }
 
 @end
+
 
 @implementation UIView (Okidoki)
 
