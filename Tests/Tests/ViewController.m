@@ -545,7 +545,7 @@
 
 - (void)textField_Example
 {
-    UITextField *textField = [[UITextField alloc] initWithFrame:CGRectMake(20, 100, 300, 44)];
+    UITextField *textField = [[UITextField alloc] initWithFrame:CGRectMake(20, 700, 300, 44)];
 
     textField.okidoki
     .addToSuperview(self.view)
@@ -572,6 +572,31 @@
     .tfShouldReturn(^BOOL(UITextField *textField) {
         [textField resignFirstResponder];
         return YES;
+    })
+    .keyboardHandler(^(NSNotificationName name, CGRect beginFrame, CGRect endFrame, CGFloat duration, UIViewAnimationCurve curve) {
+        if ([name isEqualToString:UIKeyboardWillShowNotification]) {
+            CGFloat keyboardY = endFrame.origin.y;
+            CGFloat fieldMaxY = CGRectGetMaxY(textField.frame);
+            
+            if (fieldMaxY > keyboardY) {
+                // 输入框被键盘遮挡，需要调整
+                CGFloat offset = fieldMaxY - keyboardY + 10; // 额外留10px间距
+                
+                [UIView animateWithDuration:duration
+                                      delay:0
+                                    options:curve << 16
+                                 animations:^{
+                    textField.transform = CGAffineTransformMakeTranslation(0, -offset);
+                } completion:nil];
+            }
+        } else if ([name isEqualToString:UIKeyboardWillHideNotification]) {
+            [UIView animateWithDuration:duration
+                                  delay:0
+                                options:curve << 16
+                             animations:^{
+                textField.transform = CGAffineTransformIdentity;
+            } completion:nil];
+        }
     });
     
     
@@ -599,7 +624,7 @@
 
 - (void)textView_Example
 {
-    UITextView *textView = [[UITextView alloc] initWithFrame:CGRectMake(20, 100, 300, 200)];
+    UITextView *textView = [[UITextView alloc] initWithFrame:CGRectMake(20, 600, 300, 200)];
     textView.okidoki
     .addToSuperview(self.view)
     .text(@"Hello World")
@@ -648,6 +673,30 @@
             return NO;
         }
         return YES;
+    }).keyboardHandler(^(NSNotificationName name, CGRect beginFrame, CGRect endFrame, CGFloat duration, UIViewAnimationCurve curve) {
+        if ([name isEqualToString:UIKeyboardWillShowNotification]) {
+            CGFloat keyboardY = endFrame.origin.y;
+            CGFloat fieldMaxY = CGRectGetMaxY(textView.frame);
+            
+            if (fieldMaxY > keyboardY) {
+                // 输入框被键盘遮挡，需要调整
+                CGFloat offset = fieldMaxY - keyboardY + 10; // 额外留10px间距
+                
+                [UIView animateWithDuration:duration
+                                      delay:0
+                                    options:curve << 16
+                                 animations:^{
+                    textView.transform = CGAffineTransformMakeTranslation(0, -offset);
+                } completion:nil];
+            }
+        } else if ([name isEqualToString:UIKeyboardWillHideNotification]) {
+            [UIView animateWithDuration:duration
+                                  delay:0
+                                options:curve << 16
+                             animations:^{
+                textView.transform = CGAffineTransformIdentity;
+            } completion:nil];
+        }
     });
 
 

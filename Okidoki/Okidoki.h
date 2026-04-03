@@ -27,8 +27,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-// version: 0.0.12
-// 2026-04-03 10:42:05
+// version: 0.0.13
+// 2026-04-03 11:58:41
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
@@ -1145,6 +1145,9 @@ typedef void(^OkidokiCollectionViewDidEndDisplayingCellBlock)(UICollectionView *
 @end
 
 
+// Keyboard Handler Block Type
+typedef void(^OkidokiKeyboardHandlerBlock)(NSNotificationName name, CGRect beginFrame, CGRect endFrame, CGFloat duration, UIViewAnimationCurve curve);
+
 // UITextField Delegate Block Types
 typedef BOOL(^OkidokiTextFieldShouldBeginEditingBlock)(UITextField *textField);
 typedef void(^OkidokiTextFieldDidBeginEditingBlock)(UITextField *textField);
@@ -1226,6 +1229,18 @@ typedef BOOL(^OkidokiTextFieldShouldReturnBlock)(UITextField *textField);
  @endcode
  */
 - (Okidoki*(^)(OkidokiTextFieldShouldReturnBlock block))tfShouldReturn;
+
+/** 
+ Keyboard notification handler for UITextField
+ @code
+ .keyboardHandler(^(NSNotificationName name, CGRect beginFrame, CGRect endFrame, CGFloat duration, UIViewAnimationCurve curve) {
+     if ([name isEqualToString:UIKeyboardWillShowNotification]) {
+         NSLog(@"Keyboard will show");
+     }
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiKeyboardHandlerBlock block))keyboardHandler;
 
 @end
 
@@ -1322,6 +1337,18 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  @endcode
  */
 - (Okidoki*(^)(OkidokiTextViewShouldChangeTextInRangesBlock block))tvShouldChangeTextInRanges API_AVAILABLE(ios(26.0), tvos(26.0), visionos(26.0), watchos(26.0));
+
+/** 
+ Keyboard notification handler for UITextView
+ @code
+ .keyboardHandler(^(NSNotificationName name, CGRect beginFrame, CGRect endFrame, CGFloat duration, UIViewAnimationCurve curve) {
+     if ([name isEqualToString:UIKeyboardWillShowNotification]) {
+         NSLog(@"Keyboard will show");
+     }
+ })
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiKeyboardHandlerBlock block))keyboardHandler;
 
 @end
 

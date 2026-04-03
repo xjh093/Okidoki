@@ -643,6 +643,77 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number)
 
 @end
 
+// 内部 Keyboard Handler 类，用于处理键盘通知
+@interface _OkidokiKeyboardHandler : NSObject
+@property (nonatomic,    weak) UITextView *textView;
+@property (nonatomic,    weak) UITextField *textField;
+@property (nonatomic,    weak) UIResponder *activeResponder;
+@property (nonatomic,    copy) OkidokiKeyboardHandlerBlock changeBlock;
+@end
+
+@implementation _OkidokiKeyboardHandler
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        [self addNotification];
+    }
+    return self;
+}
+
+- (void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)addNotification
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardNoti:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardNoti:) name:UIKeyboardDidShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardNoti:) name:UIKeyboardWillHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardNoti:) name:UIKeyboardDidHideNotification object:nil];
+}
+
+- (void)keyboardNoti:(NSNotification *)notification
+{
+    // 如果没有回调，不处理
+    if (!_changeBlock) {
+        return;
+    }
+    
+    // 提取键盘信息
+    NSDictionary *userInfo = notification.userInfo;
+    CGRect beginFrame = [userInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue];
+    CGRect endFrame = [userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    CGFloat duration = [userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    UIViewAnimationCurve curve = [userInfo[UIKeyboardAnimationCurveUserInfoKey] integerValue];
+    
+    NSNotificationName name = notification.name;
+    BOOL isShowNotification = [name isEqualToString:UIKeyboardWillShowNotification] ||
+                              [name isEqualToString:UIKeyboardDidShowNotification];
+    
+    if (isShowNotification) {
+        // 键盘显示：检查谁是第一响应者
+        if (_textView.isFirstResponder) {
+            _activeResponder = _textView;
+            _changeBlock(name, beginFrame, endFrame, duration, curve);
+        } else if (_textField.isFirstResponder) {
+            _activeResponder = _textField;
+            _changeBlock(name, beginFrame, endFrame, duration, curve);
+        }
+    } else if (_activeResponder) {
+        // 键盘隐藏：只有当前有激活的响应者时才处理
+        _changeBlock(name, beginFrame, endFrame, duration, curve);
+        
+        // 键盘完全隐藏后清除激活状态
+        if ([name isEqualToString:UIKeyboardDidHideNotification]) {
+            _activeResponder = nil;
+        }
+    }
+}
+
+@end
+
 
 @interface Okidoki ()
 @property (nonatomic,    weak) UIView *view;
@@ -2816,6 +2887,21 @@ static const char kOkidokiTextFieldDelegateHandlerKey = '\0';
     return handler;
 }
 
+static const char kOkidokiTextFieldKeyboardHandlerKey;
+
+// Helper method to get or create keyboard handler
+- (_OkidokiKeyboardHandler *)_keyboardHandlerForTextField:(UITextField *)textField {
+    if (!textField) return nil;
+    
+    _OkidokiKeyboardHandler *handler = objc_getAssociatedObject(textField, &kOkidokiTextFieldKeyboardHandlerKey);
+    if (!handler) {
+        handler = [[_OkidokiKeyboardHandler alloc] init];
+        handler.textField = textField;
+        objc_setAssociatedObject(textField, &kOkidokiTextFieldKeyboardHandlerKey, handler, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    return handler;
+}
+
 
 #pragma mark - UITextView
 
@@ -2927,6 +3013,40 @@ static _OkidokiTextViewDelegateHandler* _textViewDelegateHandlerForTextView(UITe
             if (@available(iOS 26.0, tvOS 26.0, visionOS 26.0, watchOS 26.0, *)) {
                 handler.shouldChangeTextInRangesBlock = block;
             }
+        }
+        return self;
+    };
+}
+
+static const char kOkidokiTextViewKeyboardHandlerKey;
+
+// Helper method to get or create keyboard handler for UITextView
+static _OkidokiKeyboardHandler* _keyboardHandlerForTextView(UITextView *textView) {
+    if (!textView) return nil;
+    
+    _OkidokiKeyboardHandler *handler = objc_getAssociatedObject(textView, &kOkidokiTextViewKeyboardHandlerKey);
+    if (!handler) {
+        handler = [[_OkidokiKeyboardHandler alloc] init];
+        handler.textView = textView;
+        objc_setAssociatedObject(textView, &kOkidokiTextViewKeyboardHandlerKey, handler, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    return handler;
+}
+
+
+#pragma mark - Keyboard Handler (UITextField & UITextView)
+
+- (Okidoki*(^)(OkidokiKeyboardHandlerBlock))keyboardHandler {
+    return ^id(OkidokiKeyboardHandlerBlock block) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITextField class]]) {
+            UITextField *textField = (UITextField *)view;
+            _OkidokiKeyboardHandler *handler = [self _keyboardHandlerForTextField:textField];
+            handler.changeBlock = block;
+        } else if ([view isKindOfClass:[UITextView class]]) {
+            UITextView *textView = (UITextView *)view;
+            _OkidokiKeyboardHandler *handler = _keyboardHandlerForTextView(textView);
+            handler.changeBlock = block;
         }
         return self;
     };
