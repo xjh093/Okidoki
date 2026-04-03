@@ -27,8 +27,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-// version: 0.0.14
-// 2026-04-03 15:26:14
+// version: 0.0.15
+// 2026-04-03 19:11:55
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
@@ -36,6 +36,38 @@
 #define kNumberAdaptor(x) Okidoki_NumberAdaptor(x)
 
 CGFloat Okidoki_NumberAdaptor(CGFloat number);
+
+// AutoLayout constraint identifiers
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintLeading;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintLeadingGTE;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintLeadingLTE;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintTrailing;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintTrailingGTE;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintTrailingLTE;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintLeft;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintLeftGTE;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintLeftLTE;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintRight;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintRightGTE;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintRightLTE;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintTop;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintTopGTE;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintTopLTE;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintBottom;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintBottomGTE;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintBottomLTE;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintWidth;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintWidthGTE;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintWidthLTE;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintHeight;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintHeightGTE;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintHeightLTE;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintCenterX;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintCenterXGTE;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintCenterXLTE;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintCenterY;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintCenterYGTE;
+FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintCenterYLTE;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -1422,6 +1454,24 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
 - (Okidoki*(^)(id params))leadingAnchor;
 
 /**
+ Leading anchor constraint (greater than or equal)
+ params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
+ @code
+ .leadingAnchorGreaterOrEqual(@[superview, @20])
+ @endcode
+ */
+- (Okidoki*(^)(id params))leadingAnchorGreaterOrEqual;
+
+/**
+ Leading anchor constraint (less than or equal)
+ params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
+ @code
+ .leadingAnchorLessOrEqual(@[superview, @20])
+ @endcode
+ */
+- (Okidoki*(^)(id params))leadingAnchorLessOrEqual;
+
+/**
  Trailing anchor constraint
  params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
         toView can be UIView (use its trailingAnchor) or NSLayoutXAxisAnchor
@@ -1430,6 +1480,24 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  @endcode
  */
 - (Okidoki*(^)(id params))trailingAnchor;
+
+/**
+ Trailing anchor constraint (greater than or equal)
+ params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
+ @code
+ .trailingAnchorGreaterOrEqual(@[superview, @(-20)])
+ @endcode
+ */
+- (Okidoki*(^)(id params))trailingAnchorGreaterOrEqual;
+
+/**
+ Trailing anchor constraint (less than or equal)
+ params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
+ @code
+ .trailingAnchorLessOrEqual(@[superview, @(-20)])
+ @endcode
+ */
+- (Okidoki*(^)(id params))trailingAnchorLessOrEqual;
 
 /**
  Left anchor constraint
@@ -1442,6 +1510,24 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
 - (Okidoki*(^)(id params))leftAnchor;
 
 /**
+ Left anchor constraint (greater than or equal)
+ params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
+ @code
+ .leftAnchorGreaterOrEqual(@[superview, @20])
+ @endcode
+ */
+- (Okidoki*(^)(id params))leftAnchorGreaterOrEqual;
+
+/**
+ Left anchor constraint (less than or equal)
+ params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
+ @code
+ .leftAnchorLessOrEqual(@[superview, @20])
+ @endcode
+ */
+- (Okidoki*(^)(id params))leftAnchorLessOrEqual;
+
+/**
  Right anchor constraint
  params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
         toView can be UIView (use its rightAnchor) or NSLayoutXAxisAnchor
@@ -1450,6 +1536,24 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  @endcode
  */
 - (Okidoki*(^)(id params))rightAnchor;
+
+/**
+ Right anchor constraint (greater than or equal)
+ params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
+ @code
+ .rightAnchorGreaterOrEqual(@[superview, @(-20)])
+ @endcode
+ */
+- (Okidoki*(^)(id params))rightAnchorGreaterOrEqual;
+
+/**
+ Right anchor constraint (less than or equal)
+ params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
+ @code
+ .rightAnchorLessOrEqual(@[superview, @(-20)])
+ @endcode
+ */
+- (Okidoki*(^)(id params))rightAnchorLessOrEqual;
 
 /**
  Top anchor constraint
@@ -1462,6 +1566,24 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
 - (Okidoki*(^)(id params))topAnchor;
 
 /**
+ Top anchor constraint (greater than or equal)
+ params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
+ @code
+ .topAnchorGreaterOrEqual(@[superview, @10])
+ @endcode
+ */
+- (Okidoki*(^)(id params))topAnchorGreaterOrEqual;
+
+/**
+ Top anchor constraint (less than or equal)
+ params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
+ @code
+ .topAnchorLessOrEqual(@[superview, @10])
+ @endcode
+ */
+- (Okidoki*(^)(id params))topAnchorLessOrEqual;
+
+/**
  Bottom anchor constraint
  params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
         toView can be UIView (use its bottomAnchor) or NSLayoutYAxisAnchor
@@ -1470,6 +1592,24 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  @endcode
  */
 - (Okidoki*(^)(id params))bottomAnchor;
+
+/**
+ Bottom anchor constraint (greater than or equal)
+ params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
+ @code
+ .bottomAnchorGreaterOrEqual(@[superview, @(-10)])
+ @endcode
+ */
+- (Okidoki*(^)(id params))bottomAnchorGreaterOrEqual;
+
+/**
+ Bottom anchor constraint (less than or equal)
+ params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
+ @code
+ .bottomAnchorLessOrEqual(@[superview, @(-10)])
+ @endcode
+ */
+- (Okidoki*(^)(id params))bottomAnchorLessOrEqual;
 
 /**
  Width anchor constraint
@@ -1483,6 +1623,28 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
 - (Okidoki*(^)(id params))widthAnchor;
 
 /**
+ Width anchor constraint (greater than or equal)
+ params:  NSNumber: @(width) for constant minimum width
+        NSArray: @[toView, @(multiplier), @(constant)] for relative minimum width
+ @code
+ .widthAnchorGreaterOrEqual(@100)
+ .widthAnchorGreaterOrEqual(@[superview, @0.5, @0])
+ @endcode
+ */
+- (Okidoki*(^)(id params))widthAnchorGreaterOrEqual;
+
+/**
+ Width anchor constraint (less than or equal)
+ params:  NSNumber: @(width) for constant maximum width
+        NSArray: @[toView, @(multiplier), @(constant)] for relative maximum width
+ @code
+ .widthAnchorLessOrEqual(@200)
+ .widthAnchorLessOrEqual(@[superview, @1.0, @(-20)])
+ @endcode
+ */
+- (Okidoki*(^)(id params))widthAnchorLessOrEqual;
+
+/**
  Height anchor constraint
  params:  NSNumber: @(height) for constant height
         NSArray: @[toView, @(multiplier), @(constant)] for relative height
@@ -1492,6 +1654,28 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  @endcode
  */
 - (Okidoki*(^)(id params))heightAnchor;
+
+/**
+ Height anchor constraint (greater than or equal)
+ params:  NSNumber: @(height) for constant minimum height
+        NSArray: @[toView, @(multiplier), @(constant)] for relative minimum height
+ @code
+ .heightAnchorGreaterOrEqual(@50)
+ .heightAnchorGreaterOrEqual(@[superview, @0.5, @0])
+ @endcode
+ */
+- (Okidoki*(^)(id params))heightAnchorGreaterOrEqual;
+
+/**
+ Height anchor constraint (less than or equal)
+ params:  NSNumber: @(height) for constant maximum height
+        NSArray: @[toView, @(multiplier), @(constant)] for relative maximum height
+ @code
+ .heightAnchorLessOrEqual(@300)
+ .heightAnchorLessOrEqual(@[superview, @1.0, @0])
+ @endcode
+ */
+- (Okidoki*(^)(id params))heightAnchorLessOrEqual;
 
 /**
  CenterX anchor constraint
@@ -1504,6 +1688,24 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
 - (Okidoki*(^)(id params))centerXAnchor;
 
 /**
+ CenterX anchor constraint (greater than or equal)
+ params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
+ @code
+ .centerXAnchorGreaterOrEqual(@[superview, @10])
+ @endcode
+ */
+- (Okidoki*(^)(id params))centerXAnchorGreaterOrEqual;
+
+/**
+ CenterX anchor constraint (less than or equal)
+ params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
+ @code
+ .centerXAnchorLessOrEqual(@[superview, @10])
+ @endcode
+ */
+- (Okidoki*(^)(id params))centerXAnchorLessOrEqual;
+
+/**
  CenterY anchor constraint
  params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
         toView can be UIView (use its centerYAnchor) or NSLayoutYAxisAnchor
@@ -1512,6 +1714,24 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  @endcode
  */
 - (Okidoki*(^)(id params))centerYAnchor;
+
+/**
+ CenterY anchor constraint (greater than or equal)
+ params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
+ @code
+ .centerYAnchorGreaterOrEqual(@[superview, @0])
+ @endcode
+ */
+- (Okidoki*(^)(id params))centerYAnchorGreaterOrEqual;
+
+/**
+ CenterY anchor constraint (less than or equal)
+ params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
+ @code
+ .centerYAnchorLessOrEqual(@[superview, @0])
+ @endcode
+ */
+- (Okidoki*(^)(id params))centerYAnchorLessOrEqual;
 
 /**
  Edge to superview with insets

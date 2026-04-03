@@ -27,7 +27,7 @@
     
 //    [self layout_Example:self.view];
     
-//    [self panAnimation_Example];
+    [self panAnimation_Example];
     
 //    [self tableView_Example];
     
@@ -35,7 +35,7 @@
     
 //    [self textField_Example];
     
-    [self textView_Example];
+//    [self textView_Example];
     
 
 }
@@ -371,6 +371,47 @@
 
 - (void)panAnimation_Example
 {
+#if 0
+    UIView *box1 = UIView.new;
+    UIView *box2 = UIView.new;
+    
+    __block NSLayoutConstraint *box1LeadingConstraint;
+    __block NSLayoutConstraint *box1TopConstraint;
+
+    box1.okidoki
+    .addToSuperview(self.view)
+    .bgColor(@"FF0000")
+//    .leadingAnchorWithConstraint(@[self.view, @30], ^(NSLayoutConstraint *constraint) {
+//        box1LeadingConstraint = constraint;
+//    })
+//    .topAnchorWithConstraint(@[self.view, @70], ^(NSLayoutConstraint *constraint) {
+//        box1TopConstraint = constraint;
+//    })
+    .widthAnchor(@100)
+    .heightAnchor(@100)
+    .panGesture(^(UIPanGestureRecognizer *pan) {
+        CGPoint translation = [pan translationInView:pan.view.superview];
+        box1LeadingConstraint.constant += translation.x;
+        box1TopConstraint.constant += translation.y;
+        [pan setTranslation:CGPointZero inView:pan.view.superview];
+    });
+    
+    box1LeadingConstraint = [box1.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:30];
+    box1TopConstraint = [box1.topAnchor constraintEqualToAnchor:self.view.topAnchor constant:70];
+    box1LeadingConstraint.active = YES;
+    box1TopConstraint.active = YES;
+
+    // box2 现在会正确跟随了！
+    box2.okidoki
+    .addToSuperview(self.view)
+    .bgColor(UIColor.systemGreenColor)
+    .leadingAnchor(@[box1, @10])
+    .topAnchor(@[box1.bottomAnchor, @20])
+    .rightAnchor(@[self.view, @(-20)])
+    .bottomAnchor(@[self.view, @(-20)])
+    .widthAnchorGreaterOrEqual(@100)   // 现在会生效！
+    .heightAnchorGreaterOrEqual(@100);  // 现在会生效！
+#else
     UIView *box1 = UIView.new;
     UIView *box2 = UIView.new;
     
@@ -389,6 +430,12 @@
         // 不重置：每次获取的是从手势开始的总偏移量（越来越大）
         // 重置后：每次获取的是上次重置后的增量偏移（准确跟随手指）
         [pan setTranslation:CGPointZero inView:pan.view.superview];
+        
+        // 打印 box1 的实际 frame
+        NSLog(@"box1 frame: %@", NSStringFromCGRect(box1.frame));
+        
+        // 打印 box2 的实际高度
+        NSLog(@"box2 frame: %@", NSStringFromCGRect(box2.frame));
     });
     
     box2.okidoki
@@ -396,8 +443,33 @@
     .bgColor(UIColor.systemGreenColor)
     .leadingAnchor(@[box1, @10])
     .topAnchor(@[box1.bottomAnchor, @20])
-    .rightAnchor(@[self.view, @(-20)])
-    .bottomAnchor(@[self.view, @(-20)]);
+    .rightAnchor(@[self.view, @(-120)])
+    .bottomAnchor(@[self.view, @(-120)])
+    .widthAnchorGreaterOrEqual(@100)
+    .heightAnchorGreaterOrEqual(@[@100]);
+    
+    NSLog(@"box2.constraints = %@", box2.constraints);
+    NSLog(@"self.view.constraints = %@", box2.superview.constraints);
+    
+    // box2 的 height 约束
+//    for (NSLayoutConstraint *c in box2.constraints) {
+//        if ([c.identifier isEqualToString:@"okidoki_height"]) {
+//            c.priority = 999;
+//        }
+//    }
+    
+    // box2 的 bottom, right 约束, 调低优先级
+    for (NSLayoutConstraint *c in self.view.constraints) {
+        if (c.firstItem == box2){ // 关键：检查是哪个视图的约束
+            if ([c.identifier isEqualToString:@"okidoki_bottom"]) {
+                c.priority = 900;
+            } else if ([c.identifier isEqualToString:@"okidoki_right"]) {
+                c.priority = 900;
+            }
+        }
+    }
+    
+#endif
 }
 
 
