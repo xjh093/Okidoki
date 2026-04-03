@@ -3533,3 +3533,60 @@ static _OkidokiTextViewDelegateHandler* _textViewDelegateHandlerForTextView(UITe
 }
 
 @end
+
+
+@implementation UIAlertController (Okidoki)
+
+/// 只展示图片的
++ (instancetype)okidoki_alertWithTitle:(nullable NSString *)title image:(NSString *_Nonnull)image imageSize:(CGSize)imageSize viewOffset:(CGPoint)viewOffset preferredStyle:(UIAlertControllerStyle)preferredStyle
+{
+    UIImageView *imageView = [[UIImageView alloc] init];
+    imageView.image = [UIImage imageNamed:image];
+    
+    UIAlertController *alertCtrl = [UIAlertController okidoki_alertWithTitle:title customView:imageView viewSize:imageSize viewOffset:viewOffset preferredStyle:preferredStyle];
+    
+    return alertCtrl;
+}
+
+/// 展示自定义视图
++ (instancetype)okidoki_alertWithTitle:(nullable NSString *)title customView:(UIView *_Nonnull)customView viewSize:(CGSize)viewSize viewOffset:(CGPoint)viewOffset preferredStyle:(UIAlertControllerStyle)preferredStyle
+{
+    /*
+     6p - scale: 3
+     \n       - 31.67
+     \n\n     - 47.67 (16)
+     \n\n\n   - 63.67 (16)
+     
+     x - scale: 3
+     \n       - 31.67
+     \n\n     - 47.67 (16)
+     \n\n\n   - 63.67 (16)
+     
+     xr - scale: 2
+     \n       - 36
+     \n\n     - 54 (18)
+     \n\n\n   - 72 (18)
+     */
+    
+    CGFloat scale = [UIScreen mainScreen].scale;
+    CGFloat lineHeight = scale == 2 ? 18 : 16;
+    
+    NSInteger count = ceilf(viewSize.height / lineHeight);
+    NSMutableString *msg = @"".mutableCopy;
+    for (NSInteger i = 0; i < count; i++) {
+        [msg appendString:@"\n"];
+    }
+
+    UIAlertController *alertCtrl = [UIAlertController alertControllerWithTitle:title message:msg preferredStyle:UIAlertControllerStyleAlert];
+    customView.translatesAutoresizingMaskIntoConstraints = NO;
+    [alertCtrl.view addSubview:customView];
+    
+    [customView.centerXAnchor constraintEqualToAnchor:alertCtrl.view.centerXAnchor constant:viewOffset.x].active = YES;
+    [customView.centerYAnchor constraintEqualToAnchor:alertCtrl.view.centerYAnchor constant:viewOffset.y].active = YES;
+    [customView.widthAnchor constraintEqualToConstant:viewSize.width].active = YES;
+    [customView.heightAnchor constraintEqualToConstant:viewSize.height].active = YES;
+    
+    return alertCtrl;
+}
+
+@end

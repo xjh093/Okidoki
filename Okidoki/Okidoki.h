@@ -27,8 +27,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-// version: 0.0.11
-// 2026-04-02 17:53:11
+// version: 0.0.12
+// 2026-04-03 10:42:05
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
@@ -1477,6 +1477,17 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
 @interface UIFont (Okidoki)
 /** font: UIFont, NSString(eg.@"17",@"s17",@"b17",@"i17") */
 + (UIFont *)okidokiFont:(id)font;
+@end
+
+
+@interface UIAlertController (Okidoki)
+
+/// 只展示图片的
++ (instancetype)okidoki_alertWithTitle:(nullable NSString *)title image:(NSString *_Nonnull)image imageSize:(CGSize)imageSize viewOffset:(CGPoint)viewOffset preferredStyle:(UIAlertControllerStyle)preferredStyle;
+
+/// 展示自定义视图
++ (instancetype)okidoki_alertWithTitle:(nullable NSString *)title customView:(UIView *_Nonnull)customView viewSize:(CGSize)viewSize viewOffset:(CGPoint)viewOffset preferredStyle:(UIAlertControllerStyle)preferredStyle;
+
 @end
 
 NS_ASSUME_NONNULL_END
