@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "Okidoki"
-  spec.version      = "0.0.13"
+  spec.version      = "0.0.14"
   spec.summary      = "Object-C UI Chaining Syntax."
 
   spec.description  = <<-DESC

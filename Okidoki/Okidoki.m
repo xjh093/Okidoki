@@ -714,6 +714,197 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number)
 
 @end
 
+// 内部 Input Limit Handler 类，用于处理输入限制
+@interface _OkidokiInputLimitHandler : NSObject
+@property (nonatomic,    weak) UITextField *textField;
+@property (nonatomic,    weak) UITextView *textView;
+@property (nonatomic,  assign) OkidokiInputLimitType limitType;
+@property (nonatomic,  assign) NSUInteger maxLength;
+@property (nonatomic,    copy) NSString *customCharacters;
+@property (nonatomic,    copy) OkidokiInputLimitDidChangeBlock changeBlock;
+@end
+
+@implementation _OkidokiInputLimitHandler
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        [self addNotification];
+    }
+    return self;
+}
+
+- (void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)addNotification
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textDidChange:) name:UITextFieldTextDidChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textDidChange:) name:UITextViewTextDidChangeNotification object:nil];
+}
+
+- (void)textDidChange:(NSNotification *)notification
+{
+    id input = nil;
+    NSString *primaryLanguage = nil;
+    UITextRange *markedTextRange = nil;
+    
+    // 判断是 TextField 还是 TextView
+    if ([notification.object isKindOfClass:[UITextField class]] && notification.object == _textField) {
+        UITextField *textField = (UITextField *)notification.object;
+        input = textField;
+        primaryLanguage = textField.textInputMode.primaryLanguage;
+        markedTextRange = textField.markedTextRange;
+    } else if ([notification.object isKindOfClass:[UITextView class]] && notification.object == _textView) {
+        UITextView *textView = (UITextView *)notification.object;
+        input = textView;
+        primaryLanguage = textView.textInputMode.primaryLanguage;
+        markedTextRange = textView.markedTextRange;
+    }
+    
+    if (!input) {
+        return;
+    }
+    
+    // 检查是否正在使用输入法（如中文拼音输入）
+    // 如果正在输入法高亮状态，不进行限制处理
+    BOOL isInputting = NO;
+    if ([primaryLanguage isEqualToString:@"zh-Hans"]) {
+        UITextPosition *position = [input positionFromPosition:markedTextRange.start offset:0];
+        if (position) {
+            isInputting = YES;
+        }
+    }
+    
+    if (isInputting) {
+        return;
+    }
+    
+    // 获取原始文本
+    NSString *originalText = [input text];
+    if (!originalText) {
+        originalText = @"";
+    }
+    
+    // 处理文本
+    NSString *matchedText = [self filterText:originalText];
+    
+    // 更新文本
+    if (![originalText isEqualToString:matchedText]) {
+        [input setText:matchedText];
+        
+        // 回调
+        if (_changeBlock) {
+            _changeBlock(originalText, matchedText);
+        }
+    } else if (_changeBlock) {
+        // 即使文本没变，也回调（用户可能需要知道）
+        _changeBlock(originalText, matchedText);
+    }
+}
+
+- (NSString *)filterText:(NSString *)text
+{
+    if (_limitType == OkidokiInputLimitTypeNone) {
+        return text;
+    }
+    
+    // 预先判断需要检查的类型，避免循环内重复位运算判断（性能优化）
+    BOOL checkDigital = (_limitType & OkidokiInputLimitTypeDigital) != 0;
+    BOOL checkAlphabet = (_limitType & OkidokiInputLimitTypeAlphabet) != 0;
+    BOOL checkAlphabetUpper = (_limitType & OkidokiInputLimitTypeAlphabetUpper) != 0;
+    BOOL checkAlphabetLower = (_limitType & OkidokiInputLimitTypeAlphabetLower) != 0;
+    BOOL checkChinese = (_limitType & OkidokiInputLimitTypeChinese) != 0;
+    BOOL checkCustom = (_limitType & OkidokiInputLimitTypeCustom) != 0 && _customCharacters.length > 0;
+    
+    NSMutableString *result = [NSMutableString string];
+    NSUInteger textLength = text.length;
+    
+    // 使用for循环遍历组合字符序列（与JHInputLimit保持一致）
+    for (NSUInteger i = 0; i < textLength; ) {
+        NSRange range = [text rangeOfComposedCharacterSequenceAtIndex:i];
+        NSString *substring = [text substringWithRange:range];
+        
+        if (substring.length == 0) {
+            i = range.location + range.length;
+            continue;
+        }
+        
+        unichar firstChar = [substring characterAtIndex:0];
+        BOOL shouldAppend = NO;
+        
+        // 合并字母检查逻辑，优先检查常用类型
+        if ((checkAlphabet || checkAlphabetUpper) && (firstChar >= 'A' && firstChar <= 'Z')) {
+            shouldAppend = YES;
+        } else if ((checkAlphabet || checkAlphabetLower) && (firstChar >= 'a' && firstChar <= 'z')) {
+            shouldAppend = YES;
+        } else if (checkDigital && (firstChar >= '0' && firstChar <= '9')) {
+            shouldAppend = YES;
+        } else if (checkChinese && [self isChineseCharacter:substring]) {
+            shouldAppend = YES;
+        } else if (checkCustom && [_customCharacters rangeOfString:substring].location != NSNotFound) {
+            shouldAppend = YES;
+        }
+        
+        if (shouldAppend) {
+            // 先检查长度限制，避免不必要的字符串拼接
+            if (_maxLength > 0 && result.length >= _maxLength) {
+                break;
+            }
+            [result appendString:substring];
+        }
+        
+        i = range.location + range.length;
+    }
+    
+    // 最终长度限制检查（处理组合字符可能超出的情况）
+    if (_maxLength > 0 && result.length > _maxLength) {
+        return [result substringToIndex:[result rangeOfComposedCharacterSequenceAtIndex:_maxLength].location];
+    }
+    
+    return result;
+}
+
+- (BOOL)isChineseCharacter:(NSString *)character
+{
+    if (character.length == 0) {
+        return NO;
+    }
+    
+    unichar ch = [character characterAtIndex:0];
+    
+    // 中文字符的Unicode范围
+    // 基本汉字：0x4E00-0x9FFF
+    // 扩展A：0x3400-0x4DBF
+    // 扩展B：0x20000-0x2A6DF
+    // 扩展C：0x2A700-0x2B73F
+    // 扩展D：0x2B740-0x2B81F
+    // 扩展E：0x2B820-0x2CEAF
+    if ((ch >= 0x4E00 && ch <= 0x9FFF) ||
+        (ch >= 0x3400 && ch <= 0x4DBF) ||
+        (ch >= 0xF900 && ch <= 0xFAFF)) {
+        return YES;
+    }
+    
+    // 对于扩展B-E，需要检查代理对
+    if (character.length >= 2) {
+        UTF32Char utf32 = 0;
+        [character getBytes:&utf32 maxLength:4 usedLength:NULL encoding:NSUTF32LittleEndianStringEncoding options:0 range:NSMakeRange(0, character.length) remainingRange:NULL];
+        if ((utf32 >= 0x20000 && utf32 <= 0x2A6DF) ||
+            (utf32 >= 0x2A700 && utf32 <= 0x2B73F) ||
+            (utf32 >= 0x2B740 && utf32 <= 0x2B81F) ||
+            (utf32 >= 0x2B820 && utf32 <= 0x2CEAF)) {
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+
+@end
+
 
 @interface Okidoki ()
 @property (nonatomic,    weak) UIView *view;
@@ -3047,6 +3238,69 @@ static _OkidokiKeyboardHandler* _keyboardHandlerForTextView(UITextView *textView
             UITextView *textView = (UITextView *)view;
             _OkidokiKeyboardHandler *handler = _keyboardHandlerForTextView(textView);
             handler.changeBlock = block;
+        }
+        return self;
+    };
+}
+
+
+#pragma mark - Input Limit (UITextField & UITextView)
+
+// Associated object keys for input limit handler
+static const char kOkidokiTextFieldInputLimitHandlerKey;
+static const char kOkidokiTextViewInputLimitHandlerKey;
+
+// Helper method to get or create input limit handler for TextField
+- (_OkidokiInputLimitHandler *)_inputLimitHandlerForTextField:(UITextField *)textField {
+    if (!textField) return nil;
+    
+    _OkidokiInputLimitHandler *handler = objc_getAssociatedObject(textField, &kOkidokiTextFieldInputLimitHandlerKey);
+    if (!handler) {
+        handler = [[_OkidokiInputLimitHandler alloc] init];
+        handler.textField = textField;
+        objc_setAssociatedObject(textField, &kOkidokiTextFieldInputLimitHandlerKey, handler, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    return handler;
+}
+
+// Helper method to get or create input limit handler for TextView
+- (_OkidokiInputLimitHandler *)_inputLimitHandlerForTextView:(UITextView *)textView {
+    if (!textView) return nil;
+    
+    _OkidokiInputLimitHandler *handler = objc_getAssociatedObject(textView, &kOkidokiTextViewInputLimitHandlerKey);
+    if (!handler) {
+        handler = [[_OkidokiInputLimitHandler alloc] init];
+        handler.textView = textView;
+        objc_setAssociatedObject(textView, &kOkidokiTextViewInputLimitHandlerKey, handler, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    return handler;
+}
+
+- (Okidoki*(^)(OkidokiInputLimitType, NSUInteger, NSString *, OkidokiInputLimitDidChangeBlock))tfInputLimit {
+    return ^id(OkidokiInputLimitType type, NSUInteger length, NSString *customCharacters, OkidokiInputLimitDidChangeBlock changeBlock) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITextField class]]) {
+            UITextField *textField = (UITextField *)view;
+            _OkidokiInputLimitHandler *handler = [self _inputLimitHandlerForTextField:textField];
+            handler.limitType = type;
+            handler.maxLength = length;
+            handler.customCharacters = customCharacters;
+            handler.changeBlock = changeBlock;
+        }
+        return self;
+    };
+}
+
+- (Okidoki*(^)(OkidokiInputLimitType, NSUInteger, NSString *, OkidokiInputLimitDidChangeBlock))tvInputLimit {
+    return ^id(OkidokiInputLimitType type, NSUInteger length, NSString *customCharacters, OkidokiInputLimitDidChangeBlock changeBlock) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[UITextView class]]) {
+            UITextView *textView = (UITextView *)view;
+            _OkidokiInputLimitHandler *handler = [self _inputLimitHandlerForTextView:textView];
+            handler.limitType = type;
+            handler.maxLength = length;
+            handler.customCharacters = customCharacters;
+            handler.changeBlock = changeBlock;
         }
         return self;
     };

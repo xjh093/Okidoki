@@ -561,12 +561,16 @@
     .tfDidBeginEditing(^(UITextField *textField) {
         NSLog(@"已经开始编辑");
     })
+    .tfInputLimit(OkidokiInputLimitTypeDigital, 6, nil, ^(NSString *original, NSString *matched) {
+        // 限制只能输入数字,且最大长度为 6
+        NSLog(@"Input changed: %@ -> %@", original, matched);
+    })
     .tfShouldChangeCharacters(^BOOL(UITextField *textField, NSRange range, NSString *replacementString) {
         // 限制只能输入数字
-        NSCharacterSet *numberSet = [NSCharacterSet decimalDigitCharacterSet];
-        if ([replacementString length] > 0 && ![numberSet isSupersetOfSet:[NSCharacterSet characterSetWithCharactersInString:replacementString]]) {
-            return NO;
-        }
+//        NSCharacterSet *numberSet = [NSCharacterSet decimalDigitCharacterSet];
+//        if ([replacementString length] > 0 && ![numberSet isSupersetOfSet:[NSCharacterSet characterSetWithCharactersInString:replacementString]]) {
+//            return NO;
+//        }
         return YES;
     })
     .tfShouldReturn(^BOOL(UITextField *textField) {
@@ -662,16 +666,20 @@
     .tvDidChangeSelection(^(UITextView *textView) {
         NSLog(@"选择改变");
     })
+    .tvInputLimit(OkidokiInputLimitTypeDigital | OkidokiInputLimitTypeAlphabetUpper, 10, nil, ^(NSString *original, NSString *matched) {
+        // 限制只能输入数字和大写字母,且最大长度为 10
+        NSLog(@"Input changed: %@ -> %@", original, matched);
+    })
     .tvShouldChangeText(^BOOL(UITextView *textView, NSRange range, NSString *replacementText) {
         // 限制输入长度
-        if (replacementText.length > 0 && textView.text.length >= 100) {
-            return NO;
-        }
-        // 禁止输入换行
-        if ([replacementText isEqualToString:@"\n"]) {
-            [textView resignFirstResponder];
-            return NO;
-        }
+//        if (replacementText.length > 0 && textView.text.length >= 100) {
+//            return NO;
+//        }
+//        // 禁止输入换行
+//        if ([replacementText isEqualToString:@"\n"]) {
+//            [textView resignFirstResponder];
+//            return NO;
+//        }
         return YES;
     }).keyboardHandler(^(NSNotificationName name, CGRect beginFrame, CGRect endFrame, CGFloat duration, UIViewAnimationCurve curve) {
         if ([name isEqualToString:UIKeyboardWillShowNotification]) {

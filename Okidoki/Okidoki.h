@@ -27,8 +27,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-// version: 0.0.13
-// 2026-04-03 11:58:41
+// version: 0.0.14
+// 2026-04-03 15:26:14
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
@@ -1148,6 +1148,20 @@ typedef void(^OkidokiCollectionViewDidEndDisplayingCellBlock)(UICollectionView *
 // Keyboard Handler Block Type
 typedef void(^OkidokiKeyboardHandlerBlock)(NSNotificationName name, CGRect beginFrame, CGRect endFrame, CGFloat duration, UIViewAnimationCurve curve);
 
+// Input Limit Types
+typedef NS_OPTIONS(NSUInteger, OkidokiInputLimitType) {
+    OkidokiInputLimitTypeNone           = 0,
+    OkidokiInputLimitTypeDigital        = 1 << 0,  // 数字 0-9
+    OkidokiInputLimitTypeAlphabet       = 1 << 1,  // 字母 a-z A-Z
+    OkidokiInputLimitTypeAlphabetUpper  = 1 << 2,  // 大写字母 A-Z
+    OkidokiInputLimitTypeAlphabetLower  = 1 << 3,  // 小写字母 a-z
+    OkidokiInputLimitTypeChinese        = 1 << 4,  // 中文
+    OkidokiInputLimitTypeCustom         = 1 << 5,  // 自定义字符集
+};
+
+// Input Limit Change Block Type
+typedef void(^OkidokiInputLimitDidChangeBlock)(NSString *originalText, NSString *matchedText);
+
 // UITextField Delegate Block Types
 typedef BOOL(^OkidokiTextFieldShouldBeginEditingBlock)(UITextField *textField);
 typedef void(^OkidokiTextFieldDidBeginEditingBlock)(UITextField *textField);
@@ -1241,6 +1255,27 @@ typedef BOOL(^OkidokiTextFieldShouldReturnBlock)(UITextField *textField);
  @endcode
  */
 - (Okidoki*(^)(OkidokiKeyboardHandlerBlock block))keyboardHandler;
+
+/** 
+ Configure input limit for UITextField
+ param:  type The type(s) of allowed characters (can be combined with | operator)
+ param:  length Maximum length (0 means no limit)
+ param:  customCharacters Custom character set (only used when type includes OkidokiInputLimitTypeCustom)
+ param:  changeBlock Called when text changes with original and matched text
+ @code
+ // Only allow digits, max 6 characters
+ .tfInputLimit(OkidokiInputLimitTypeDigital, 6, nil, ^(NSString *original, NSString *matched) {
+     NSLog(@"Original: %@, Matched: %@", original, matched);
+ })
+ 
+ // Allow digits and lowercase letters
+ .tfInputLimit(OkidokiInputLimitTypeDigital | OkidokiInputLimitTypeAlphabetLower, 10, nil, nil)
+ 
+ // Allow only custom characters
+ .tfInputLimit(OkidokiInputLimitTypeCustom, 0, @"0123456789.-", nil)
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiInputLimitType type, NSUInteger length, NSString * _Nullable customCharacters, OkidokiInputLimitDidChangeBlock _Nullable changeBlock))tfInputLimit;
 
 @end
 
@@ -1349,6 +1384,24 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  @endcode
  */
 - (Okidoki*(^)(OkidokiKeyboardHandlerBlock block))keyboardHandler;
+
+/** 
+ Configure input limit for UITextView
+ param:  type The type(s) of allowed characters (can be combined with | operator)
+ param:  length Maximum length (0 means no limit)
+ param:  customCharacters Custom character set (only used when type includes OkidokiInputLimitTypeCustom)
+ param:  changeBlock Called when text changes with original and matched text
+ @code
+ // Only allow digits, max 100 characters
+ .tvInputLimit(OkidokiInputLimitTypeDigital, 100, nil, ^(NSString *original, NSString *matched) {
+     NSLog(@"Original: %@, Matched: %@", original, matched);
+ })
+ 
+ // Allow Chinese and letters
+ .tvInputLimit(OkidokiInputLimitTypeChinese | OkidokiInputLimitTypeAlphabet, 200, nil, nil)
+ @endcode
+ */
+- (Okidoki*(^)(OkidokiInputLimitType type, NSUInteger length, NSString * _Nullable customCharacters, OkidokiInputLimitDidChangeBlock _Nullable changeBlock))tvInputLimit;
 
 @end
 
