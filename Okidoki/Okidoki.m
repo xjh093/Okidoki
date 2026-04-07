@@ -1233,6 +1233,7 @@ kOkidoki_imp(userInteractionEnabled, ({
         for (UIGestureRecognizer *gesture in gestures) {
             if ([gesture isKindOfClass:gestureClass]) {
                 [view removeGestureRecognizer:gesture];
+                break;
             }
         }
         
@@ -1510,8 +1511,11 @@ kOkidoki_imp(highlighted, ({
         BOOL isHighlighted = [highlighted boolValue];
                 
         if ([view respondsToSelector:@selector(setHighlighted:)]) {
-            // UILabel, UIImageView, UIControl
+            // UILabel, UIImageView, UIControl and subclasses
             [(UIControl *)view setHighlighted:isHighlighted];
+            
+            // Note: On UIControl, highlighted may not work if other state properties
+            // (enabled + selected) were previously set, due to iOS internal state management.
         }
     }
 }))
@@ -1545,14 +1549,14 @@ kOkidoki_imp(contentHorizontalAlignment, ({
             [control addTarget:target action:@selector(invoke:) forControlEvents:events];
             
             // 使用 associated object 持有 target，保证其生命周期
-            // 使用 events 作为 key 的一部分来区分不同事件
-            NSString *key = [NSString stringWithFormat:@"okidoki_control_event_%lu", (unsigned long)events];
+            // 使用 events 数值本身作为 key（转换为指针）
+            const void *key = (const void *)(uintptr_t)events;
             
             // 获取已有的 targets 数组，或创建新数组
-            NSMutableArray *targets = objc_getAssociatedObject(control, (__bridge const void *)(key));
+            NSMutableArray *targets = objc_getAssociatedObject(control, key);
             if (!targets) {
                 targets = [NSMutableArray array];
-                objc_setAssociatedObject(control, (__bridge const void *)(key), targets, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+                objc_setAssociatedObject(control, key, targets, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
             }
             [targets addObject:target];
         }
@@ -1568,8 +1572,9 @@ kOkidoki_imp(contentHorizontalAlignment, ({
         if ([view isKindOfClass:[UIControl class]]) {
             UIControl *control = (UIControl *)view;
             
-            NSString *key = [NSString stringWithFormat:@"okidoki_control_event_%lu", (unsigned long)events];
-            NSMutableArray *targets = objc_getAssociatedObject(control, (__bridge const void *)(key));
+            // 使用 events 数值本身作为 key（转换为指针）
+            const void *key = (const void *)(uintptr_t)events;
+            NSMutableArray *targets = objc_getAssociatedObject(control, key);
             
             // 移除所有相关的 target
             for (_OkidokiGestureTarget *target in targets) {
@@ -1789,14 +1794,29 @@ kOkidoki_imp(title, ({
             
             // color
             if ([value isKindOfClass:[UIColor class]]) {
-                NSAttributedString *attributedString = [button attributedTitleForState:[state integerValue]]?:[[NSAttributedString alloc] initWithString:button.currentTitle];
+                // 获取当前普通 title
+                NSString *plainTitle = [button titleForState:[state integerValue]] ?: @"";
+                
+                // 获取 attributed title，并检查内容是否一致
+                NSAttributedString *attributedString = [button attributedTitleForState:[state integerValue]];
+                if (!attributedString || ![attributedString.string isEqualToString:plainTitle]) {
+                    // attributed title 不存在或内容与 plain title 不一致，用 plain title 重建
+                    attributedString = [[NSAttributedString alloc] initWithString:plainTitle];
+                }
+                
                 NSMutableAttributedString *attStr = [[NSMutableAttributedString alloc] initWithAttributedString:attributedString];
                 [attStr addAttribute:NSForegroundColorAttributeName value:value range:[attributedString.string rangeOfString:substring]];
                 [button setAttributedTitle:attStr forState:[state integerValue]];
             }
             // font
             else if ([value isKindOfClass:[UIFont class]]){
-                NSAttributedString *attributedString = [button attributedTitleForState:[state integerValue]]?:[[NSAttributedString alloc] initWithString:button.currentTitle];
+                NSString *plainTitle = [button titleForState:[state integerValue]] ?: @"";
+                
+                NSAttributedString *attributedString = [button attributedTitleForState:[state integerValue]];
+                if (!attributedString || ![attributedString.string isEqualToString:plainTitle]) {
+                    attributedString = [[NSAttributedString alloc] initWithString:plainTitle];
+                }
+                
                 NSMutableAttributedString *attStr = [[NSMutableAttributedString alloc] initWithAttributedString:attributedString];
                 [attStr addAttribute:NSFontAttributeName value:value range:[attributedString.string rangeOfString:substring]];
                 [button setAttributedTitle:attStr forState:[state integerValue]];
@@ -1817,7 +1837,16 @@ kOkidoki_imp(title, ({
             // color
             if ([value isKindOfClass:[UIColor class]] &&
                 [range isKindOfClass:[NSValue class]]) {
-                NSAttributedString *attributedString = [button attributedTitleForState:[state integerValue]]?:[[NSAttributedString alloc] initWithString:button.currentTitle];
+                // 获取当前普通 title
+                NSString *plainTitle = [button titleForState:[state integerValue]] ?: @"";
+                
+                // 获取 attributed title，并检查内容是否一致
+                NSAttributedString *attributedString = [button attributedTitleForState:[state integerValue]];
+                if (!attributedString || ![attributedString.string isEqualToString:plainTitle]) {
+                    // attributed title 不存在或内容与 plain title 不一致，用 plain title 重建
+                    attributedString = [[NSAttributedString alloc] initWithString:plainTitle];
+                }
+                
                 NSMutableAttributedString *attStr = [[NSMutableAttributedString alloc] initWithAttributedString:attributedString];
                 [attStr addAttribute:NSForegroundColorAttributeName value:value range:[range rangeValue]];
                 [button setAttributedTitle:attStr forState:[state integerValue]];
@@ -1825,7 +1854,13 @@ kOkidoki_imp(title, ({
             // font
             else if ([value isKindOfClass:[UIFont class]] &&
                      [range isKindOfClass:[NSValue class]]){
-                NSAttributedString *attributedString = [button attributedTitleForState:[state integerValue]]?:[[NSAttributedString alloc] initWithString:button.currentTitle];
+                NSString *plainTitle = [button titleForState:[state integerValue]] ?: @"";
+                
+                NSAttributedString *attributedString = [button attributedTitleForState:[state integerValue]];
+                if (!attributedString || ![attributedString.string isEqualToString:plainTitle]) {
+                    attributedString = [[NSAttributedString alloc] initWithString:plainTitle];
+                }
+                
                 NSMutableAttributedString *attStr = [[NSMutableAttributedString alloc] initWithAttributedString:attributedString];
                 [attStr addAttribute:NSFontAttributeName value:value range:[range rangeValue]];
                 [button setAttributedTitle:attStr forState:[state integerValue]];
@@ -1843,9 +1878,14 @@ kOkidoki_imp(title, ({
         if ([view isKindOfClass:[UIButton class]]) {
             UIButton *button = (UIButton *)view;
             
+            // 获取当前普通 title
+            NSString *plainTitle = [button titleForState:[state integerValue]] ?: @"";
+            
+            // 获取 attributed title，并检查内容是否一致
             NSAttributedString *attr = [button attributedTitleForState:[state integerValue]];
-            if (!attr) {
-                attr = [[NSAttributedString alloc] initWithString:button.titleLabel.text];
+            if (!attr || ![attr.string isEqualToString:plainTitle]) {
+                // attributed title 不存在或内容与 plain title 不一致，用 plain title 重建
+                attr = [[NSAttributedString alloc] initWithString:plainTitle];
             }
             
             NSMutableAttributedString *mattr = attr.mutableCopy;
@@ -1865,9 +1905,14 @@ kOkidoki_imp(title, ({
         if ([view isKindOfClass:[UIButton class]]) {
             UIButton *button = (UIButton *)view;
             
+            // 获取当前普通 title
+            NSString *plainTitle = [button titleForState:[state integerValue]] ?: @"";
+            
+            // 获取 attributed title，并检查内容是否一致
             NSAttributedString *attr = [button attributedTitleForState:[state integerValue]];
-            if (!attr) {
-                attr = [[NSAttributedString alloc] initWithString:button.titleLabel.text];
+            if (!attr || ![attr.string isEqualToString:plainTitle]) {
+                // attributed title 不存在或内容与 plain title 不一致，用 plain title 重建
+                attr = [[NSAttributedString alloc] initWithString:plainTitle];
             }
             
             NSMutableAttributedString *mattr = attr.mutableCopy;
@@ -2411,19 +2456,6 @@ kOkidoki_imp(editable, ({
 kOkidoki_imp(selectable, ({
     if ([view isKindOfClass:[UITextView class]]) {
         [(UITextView *)view setSelectable:[selectable boolValue]];
-    }
-}))
-
-kOkidoki_imp(borderStyle, ({
-    if ([view isKindOfClass:[UITextView class]]) {
-        UITextView *textView = (UITextView *)view;
-        if ([borderStyle isKindOfClass:[NSNumber class]] ||
-            [borderStyle isKindOfClass:[NSString class]]) {
-            NSInteger style = [borderStyle integerValue];
-            if (@available(iOS 17.0, *)) {
-                textView.borderStyle = style;
-            }
-        }
     }
 }))
 

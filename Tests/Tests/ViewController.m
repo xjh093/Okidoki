@@ -448,8 +448,8 @@
     .widthAnchorGreaterOrEqual(@100)
     .heightAnchorGreaterOrEqual(@[@100]);
     
-    NSLog(@"box2.constraints = %@", box2.constraints);
-    NSLog(@"self.view.constraints = %@", box2.superview.constraints);
+    //NSLog(@"box2.constraints = %@", box2.constraints);
+    //NSLog(@"self.view.constraints = %@", box2.superview.constraints);
     
     // box2 的 height 约束
 //    for (NSLayoutConstraint *c in box2.constraints) {

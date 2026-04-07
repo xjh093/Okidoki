@@ -27,8 +27,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-// version: 0.0.15
-// 2026-04-03 19:11:55
+// version: 0.0.16
+// 2026-04-07 11:59:27
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
@@ -566,14 +566,6 @@ NS_ASSUME_NONNULL_BEGIN
  @endcode
  */
 - (Okidoki*(^)(id))selectable;
-
-/** 
- borderStyle: NSNumber, NSString: @0 (None), @1 (RoundedRect)
- @code
- textView.borderStyle(@1)
- @endcode
- */
-- (Okidoki*(^)(id))borderStyle;
 
 /**
  attributedText: NSAttributedString
