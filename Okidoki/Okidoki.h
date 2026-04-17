@@ -27,8 +27,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-// version: 0.0.16
-// 2026-04-07 11:59:27
+// version: 0.0.17
+// 2026-04-17 17:22:41
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
@@ -1441,6 +1441,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  @code
  .leadingAnchor(@[superview, @20])
  .leadingAnchor(@[superview])
+ .leadingAnchor(@[brotherView.trailingAnchor, @20])
  @endcode
  */
 - (Okidoki*(^)(id params))leadingAnchor;
@@ -1469,6 +1470,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
         toView can be UIView (use its trailingAnchor) or NSLayoutXAxisAnchor
  @code
  .trailingAnchor(@[superview, @(-20)])
+ .trailingAnchor(@[brotherView.leadingAnchor, @(-20)])
  @endcode
  */
 - (Okidoki*(^)(id params))trailingAnchor;
@@ -1552,7 +1554,9 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  params:  NSArray: @[toView, @(constant)] or @[toView] (constant default 0)
         toView can be UIView (use its topAnchor) or NSLayoutYAxisAnchor
  @code
+ .topAnchor(@[superview])
  .topAnchor(@[superview, @10])
+ .topAnchor(@[brotherView.bottomAnchor, @10])
  @endcode
  */
 - (Okidoki*(^)(id params))topAnchor;
@@ -1581,6 +1585,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
         toView can be UIView (use its bottomAnchor) or NSLayoutYAxisAnchor
  @code
  .bottomAnchor(@[superview, @(-10)])
+ .bottomAnchor(@[brotherView.topAnchor, @(-10)])
  @endcode
  */
 - (Okidoki*(^)(id params))bottomAnchor;
@@ -1763,6 +1768,15 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
 @interface UIColor (Okidoki)
 /** color: UIColor, NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
 + (UIColor *)okidokiColor:(id)color;
+
+/** Return a new color with the specified alpha. eg. [UIColor redColor].okidokiAlpha(0.5) */
+@property (nonatomic,  strong,  readonly) UIColor *(^okidokiAlpha)(CGFloat alphaValue);
+@end
+
+
+@interface NSString (Okidoki)
+/** Convert hex color string to UIColor. eg. @"FF0000".okidokiHexColor */
+@property (nonatomic,  strong,  readonly) UIColor *okidokiHexColor;
 @end
 
 

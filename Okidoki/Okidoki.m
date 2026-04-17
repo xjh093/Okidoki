@@ -4564,6 +4564,13 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
 @end
 
 @implementation UIColor (Okidoki)
+
+- (UIColor *(^)(CGFloat))okidokiAlpha {
+    return ^UIColor *(CGFloat alphaValue) {
+        return [self colorWithAlphaComponent:alphaValue];
+    };
+}
+
 + (UIColor *)okidokiColor:(id)color{
     if ([color isKindOfClass:[NSString class]]){
         return [self colorWithString:color];
@@ -4618,6 +4625,14 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
     UIColor *xxColor = [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:1];
 
     return xxColor;
+}
+
+@end
+
+@implementation NSString (Okidoki)
+
+- (UIColor *)okidokiHexColor {
+    return [UIColor okidokiColor:self];
 }
 
 @end

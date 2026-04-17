@@ -326,7 +326,6 @@
     });
     
     // 示例 9: 使用 edgeToSuperView - 填充父视图（所有边距为 0）
-    
     UIView *view9 = [[UIView alloc] init];
     view9.okidoki
     .addToSuperview(bottomView)
@@ -419,7 +418,7 @@
     .addToSuperview(self.view)
     //.frame(@"{{30, 70}, {100, 100}}")
     .frame([NSValue valueWithCGRect:CGRectMake(30, 70, 100, 100)])
-    .bgColor(@"FF0000")
+    .bgColor(@"FF0000".okidokiHexColor.okidokiAlpha(0.8))
     .panGesture(^(UIPanGestureRecognizer *pan) {
         NSLog(@"拖动视图");
         CGPoint translation = [pan translationInView:pan.view.superview];
@@ -440,7 +439,7 @@
     
     box2.okidoki
     .addToSuperview(self.view)
-    .bgColor(UIColor.systemGreenColor)
+    .bgColor(UIColor.systemGreenColor.okidokiAlpha(0.9))
     .leadingAnchor(@[box1, @10])
     .topAnchor(@[box1.bottomAnchor, @20])
     .rightAnchor(@[self.view, @(-120)])
