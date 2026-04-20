@@ -1070,16 +1070,15 @@ kOkidoki_imp(addSubview, ({
     }
 }))
 
-- (Okidoki*(^)(id, void(^)(Okidoki *ok)))addSubviewWithConfig {
-    return ^id(id subview, void(^config)(Okidoki *ok)) {
+- (Okidoki*(^)(UIView *, void(^)(Okidoki *ok)))addSubviewWithConfig {
+    return ^Okidoki *(UIView *subview, void(^config)(Okidoki *ok)) {
         UIView *view = self.view;
         
         if ([subview isKindOfClass:[UIView class]]) {
-            UIView *subView = (UIView *)subview;
-            [view addSubview:subView];
+            [view addSubview:subview];
             
             if (config) {
-                config(subView.okidoki);
+                config(subview.okidoki);
             }
         }
         
@@ -1087,16 +1086,15 @@ kOkidoki_imp(addSubview, ({
     };
 }
 
-- (Okidoki*(^)(id, void(^)(Okidoki *ok, UIView *superView)))addSubviewWithConfig_superView {
-    return ^id(id subview, void(^config)(Okidoki *ok, UIView *superView)) {
+- (Okidoki*(^)(UIView *, void(^)(Okidoki *ok, UIView *superView)))addSubviewWithConfig_superView {
+    return ^Okidoki *(UIView *subview, void(^config)(Okidoki *ok, UIView *superView)) {
         UIView *view = self.view;
         
         if ([subview isKindOfClass:[UIView class]]) {
-            UIView *subView = (UIView *)subview;
-            [view addSubview:subView];
+            [view addSubview:subview];
             
             if (config) {
-                config(subView.okidoki, view);
+                config(subview.okidoki, view);
             }
         }
         
@@ -1104,11 +1102,15 @@ kOkidoki_imp(addSubview, ({
     };
 }
 
-kOkidoki_imp(addToSuperview, ({
-    if ([addToSuperview isKindOfClass:[UIView class]]) {
-        [(UIView *)addToSuperview addSubview:view];
-    }
-}))
+- (Okidoki*(^)(UIView *))addToSuperview {
+    return ^Okidoki *(UIView *superView) {
+        UIView *view = self.view;
+        if ([superView isKindOfClass:[UIView class]]) {
+            [superView addSubview:view];
+        }
+        return view.okidoki;
+    };
+}
 
 kOkidoki_imp(userInteractionEnabled, ({
     if ([userInteractionEnabled isKindOfClass:[NSNumber class]] ||

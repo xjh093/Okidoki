@@ -27,8 +27,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-// version: 0.0.17
-// 2026-04-17 17:22:41
+// version: 0.1.0
+// 2026-04-20 11:08:14
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
@@ -85,52 +85,52 @@ NS_ASSUME_NONNULL_BEGIN
 - (__kindof UIView *)view;
 
 /** NSNumber,NSString */
-- (Okidoki*(^)(id))tag;
+@property (nonatomic, strong, readonly) Okidoki *(^tag)(id tag);
 
 /** NSValue,NSString */
-- (Okidoki*(^)(id))frame;
+@property (nonatomic, strong, readonly) Okidoki *(^frame)(id frame);
 
 /** NSNumber,NSString */
-- (Okidoki*(^)(id))alpha;
+@property (nonatomic, strong, readonly) Okidoki *(^alpha)(id alpha);
 
 /** NSNumber,NSString */
-- (Okidoki*(^)(id))hidden;
+@property (nonatomic, strong, readonly) Okidoki *(^hidden)(id hidden);
 
 /** UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
-- (Okidoki*(^)(id))bgColor;
+@property (nonatomic, strong, readonly) Okidoki *(^bgColor)(id bgColor);
 
 /** UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
-- (Okidoki*(^)(id))bdColor;
+@property (nonatomic, strong, readonly) Okidoki *(^bdColor)(id bdColor);
 
 /** NSNumber,NSString */
-- (Okidoki*(^)(id))bdWidth;
+@property (nonatomic, strong, readonly) Okidoki *(^bdWidth)(id bdWidth);
 
 /** NSNumber,NSString */
-- (Okidoki*(^)(id))cnRadius;
+@property (nonatomic, strong, readonly) Okidoki *(^cnRadius)(id cnRadius);
 
 /** NSArray: @[@1,@2,@3,@4] */
-- (Okidoki*(^)(id))mkCorners;
+@property (nonatomic, strong, readonly) Okidoki *(^mkCorners)(id mkCorners);
 
 /** @(YES) or @(NO),NSString */
-- (Okidoki*(^)(id))mtBounds;
+@property (nonatomic, strong, readonly) Okidoki *(^mtBounds)(id mtBounds);
 
 /** UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
-- (Okidoki*(^)(id))shadowColor;
+@property (nonatomic, strong, readonly) Okidoki *(^shadowColor)(id shadowColor);
 
 /** NSNumber,NSString */
-- (Okidoki*(^)(id))shadowOpacity;
+@property (nonatomic, strong, readonly) Okidoki *(^shadowOpacity)(id shadowOpacity);
 
 /** NSValue,NSString */
-- (Okidoki*(^)(id))shadowOffset;
+@property (nonatomic, strong, readonly) Okidoki *(^shadowOffset)(id shadowOffset);
 
 /** NSNumber,NSString */
-- (Okidoki*(^)(id))shadowRadius;
+@property (nonatomic, strong, readonly) Okidoki *(^shadowRadius)(id shadowRadius);
 
 /** UIBezierPath,CGPathRef */
-- (Okidoki*(^)(id))shadowPath;
+@property (nonatomic, strong, readonly) Okidoki *(^shadowPath)(id shadowPath);
 
 /** UIView */
-- (Okidoki*(^)(id))addSubview;
+@property (nonatomic, strong, readonly) Okidoki *(^addSubview)(id addSubview);
 
 /**
  UIView, block: void(^)(Okidoki *ok)
@@ -140,7 +140,7 @@ NS_ASSUME_NONNULL_BEGIN
  })
  @endcode
  */
-- (Okidoki*(^)(id, void(^)(Okidoki *ok)))addSubviewWithConfig;
+@property (nonatomic, strong, readonly) Okidoki *(^addSubviewWithConfig)(UIView *subview, void(^config)(Okidoki *ok));
 
 /**
  UIView, block: void(^)(Okidoki *ok, UIView *superView)
@@ -150,13 +150,13 @@ NS_ASSUME_NONNULL_BEGIN
  })
  @endcode
  */
-- (Okidoki*(^)(id, void(^)(Okidoki *ok, UIView *superView)))addSubviewWithConfig_superView;
+@property (nonatomic, strong, readonly) Okidoki *(^addSubviewWithConfig_superView)(UIView *subview, void(^config)(Okidoki *ok, UIView *superView));
 
 /** UIView */
-- (Okidoki*(^)(id))addToSuperview;
+@property (nonatomic, strong, readonly) Okidoki *(^addToSuperview)(UIView *superView);
 
 /** @(YES) or @(NO),NSString */
-- (Okidoki*(^)(id))userInteractionEnabled;
+@property (nonatomic, strong, readonly) Okidoki *(^userInteractionEnabled)(id userInteractionEnabled);
 
 
 #pragma mark - Gesture
@@ -169,7 +169,7 @@ NS_ASSUME_NONNULL_BEGIN
  })
  @endcode
  */
-- (Okidoki*(^)(void(^)(UITapGestureRecognizer *tap)))tapGesture;
+@property (nonatomic, strong, readonly) Okidoki *(^tapGesture)(void(^block)(UITapGestureRecognizer *tap));
 
 /**
  LongPress gesture, block: void(^)(UILongPressGestureRecognizer *longPress)
@@ -179,7 +179,7 @@ NS_ASSUME_NONNULL_BEGIN
  })
  @endcode
  */
-- (Okidoki*(^)(void(^)(UILongPressGestureRecognizer *longPress)))longPressGesture;
+@property (nonatomic, strong, readonly) Okidoki *(^longPressGesture)(void(^block)(UILongPressGestureRecognizer *longPress));
 
 /**
  Swipe gesture, direction: UISwipeGestureRecognizerDirection, block: void(^)(UISwipeGestureRecognizer *swipe)
@@ -189,7 +189,7 @@ NS_ASSUME_NONNULL_BEGIN
  })
  @endcode
  */
-- (Okidoki*(^)(NSUInteger, void(^)(UISwipeGestureRecognizer *swipe)))swipeGesture;
+@property (nonatomic, strong, readonly) Okidoki *(^swipeGesture)(NSUInteger direction, void(^block)(UISwipeGestureRecognizer *swipe));
 
 /**
  Pan gesture, block: void(^)(UIPanGestureRecognizer *pan)
@@ -200,7 +200,7 @@ NS_ASSUME_NONNULL_BEGIN
  })
  @endcode
  */
-- (Okidoki*(^)(void(^)(UIPanGestureRecognizer *pan)))panGesture;
+@property (nonatomic, strong, readonly) Okidoki *(^panGesture)(void(^block)(UIPanGestureRecognizer *pan));
 
 /**
  Pinch gesture, block: void(^)(UIPinchGestureRecognizer *pinch)
@@ -210,7 +210,7 @@ NS_ASSUME_NONNULL_BEGIN
  })
  @endcode
  */
-- (Okidoki*(^)(void(^)(UIPinchGestureRecognizer *pinch)))pinchGesture;
+@property (nonatomic, strong, readonly) Okidoki *(^pinchGesture)(void(^block)(UIPinchGestureRecognizer *pinch));
 
 /**
  Rotation gesture, block: void(^)(UIRotationGestureRecognizer *rotation)
@@ -220,28 +220,28 @@ NS_ASSUME_NONNULL_BEGIN
  })
  @endcode
  */
-- (Okidoki*(^)(void(^)(UIRotationGestureRecognizer *rotation)))rotationGesture;
+@property (nonatomic, strong, readonly) Okidoki *(^rotationGesture)(void(^block)(UIRotationGestureRecognizer *rotation));
 
 /** Remove gesture by class, example: .removeGesture([UITapGestureRecognizer class]) */
-- (Okidoki*(^)(Class))removeGesture;
+@property (nonatomic, strong, readonly) Okidoki *(^removeGesture)(Class gestureClass);
 
 /** Remove all gestures */
-- (Okidoki*(^)(void))removeAllGestures;
+@property (nonatomic, strong, readonly) Okidoki *(^removeAllGestures)(void);
 
 
 #pragma mark - UILabel & UITextView & UITextField
 
 /** NSString */
-- (Okidoki*(^)(id))text;
+@property (nonatomic, strong, readonly) Okidoki *(^text)(id text);
 
 /** UIFont,NSString(@"17",@"s17",@"b17",@"i17") */
-- (Okidoki*(^)(id))font;
+@property (nonatomic, strong, readonly) Okidoki *(^font)(id font);
 
 /** UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
-- (Okidoki*(^)(id))color;
+@property (nonatomic, strong, readonly) Okidoki *(^color)(id color);
 
 /** NSNumber: @0,@1,@2,NSString */
-- (Okidoki*(^)(id))align;
+@property (nonatomic, strong, readonly) Okidoki *(^align)(id align);
 
 /**
  substring: NSString, value:color(UIColor,NSString) or font(UIFont,NSString).
@@ -249,7 +249,7 @@ NS_ASSUME_NONNULL_BEGIN
  .text(@"Hello World").attributedSubstring(@"World", @"FF0000")
  @endcode
  */
-- (Okidoki*(^)(id,id))attributedSubstring;
+@property (nonatomic, strong, readonly) Okidoki *(^attributedSubstring)(id substring, id value);
 
 /**
  substring: NSString, value:color(UIColor,NSString) or font(UIFont,NSString), range: NSValue.
@@ -257,7 +257,7 @@ NS_ASSUME_NONNULL_BEGIN
  .text(@"Hello World").attributedSubstringInRange(@"World", @"FF0000", [NSValue valueWithRange:NSMakeRange(6, 5)])
  @endcode
  */
-- (Okidoki*(^)(id,id,id))attributedSubstringInRange;
+@property (nonatomic, strong, readonly) Okidoki *(^attributedSubstringInRange)(id substring, id value, id range);
 
 /**
  substring: NSString, key: NSAttributedStringKey, value: color/font/number etc.
@@ -265,7 +265,7 @@ NS_ASSUME_NONNULL_BEGIN
  .text(@"Hello World").attributedSubstringKeyValue(@"World", NSForegroundColorAttributeName, [UIColor redColor])
  @endcode
  */
-- (Okidoki*(^)(id,id,id))attributedSubstringKeyValue;
+@property (nonatomic, strong, readonly) Okidoki *(^attributedSubstringKeyValue)(id substring, id key, id value);
 
 /**
  substring: NSString, key: NSAttributedStringKey, value: color/font/number etc. range: NSValue.
@@ -273,46 +273,46 @@ NS_ASSUME_NONNULL_BEGIN
  .attributedSubstringKeyValueInRange(@"World", NSForegroundColorAttributeName, [UIColor redColor], [NSValue valueWithRange:NSMakeRange(6, 5)])
  @endcode
  */
-- (Okidoki*(^)(id,id,id,id))attributedSubstringKeyValueInRange;
+@property (nonatomic, strong, readonly) Okidoki *(^attributedSubstringKeyValueInRange)(id substring, id key, id value, id range);
 
 
 #pragma mark - UILabel
 
 /** NSNumber(NSInteger) ,NSString*/
-- (Okidoki*(^)(id))lines;
+@property (nonatomic, strong, readonly) Okidoki *(^lines)(id lines);
 
 /** adjustsFontSizeToFitWidth: @(YES) or @(NO), NSString*/
-- (Okidoki*(^)(id))adjust;
+@property (nonatomic, strong, readonly) Okidoki *(^adjust)(id adjust);
 
 /** NSNumber(CGFloat), NSString*/
-- (Okidoki*(^)(id))lineSpace;
+@property (nonatomic, strong, readonly) Okidoki *(^lineSpace)(id lineSpace);
 
 /** NSNumber(CGFloat), 0 means no max width limit. NSString */
-- (Okidoki*(^)(id))autoWidth;
+@property (nonatomic, strong, readonly) Okidoki *(^autoWidth)(id autoWidth);
 
 /** NSNumber(CGFloat), 0 means no max height limit. NSString */
-- (Okidoki*(^)(id))autoHeight;
+@property (nonatomic, strong, readonly) Okidoki *(^autoHeight)(id autoHeight);
 
 /** UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
-- (Okidoki*(^)(id))highlightedTextColor;
+@property (nonatomic, strong, readonly) Okidoki *(^highlightedTextColor)(id highlightedTextColor);
 
 
 #pragma mark - UIControl
 
 /** @(YES) or @(NO),NSString */
-- (Okidoki*(^)(id))enabled;
+@property (nonatomic, strong, readonly) Okidoki *(^enabled)(id enabled);
 
 /** @(YES) or @(NO),NSString */
-- (Okidoki*(^)(id))selected;
+@property (nonatomic, strong, readonly) Okidoki *(^selected)(id selected);
 
 /** @(YES) or @(NO),NSString */
-- (Okidoki*(^)(id))highlighted;
+@property (nonatomic, strong, readonly) Okidoki *(^highlighted)(id highlighted);
 
 /** NSNumber: @0,@1,@2,@3, NSString */
-- (Okidoki*(^)(id))contentVerticalAlignment;
+@property (nonatomic, strong, readonly) Okidoki *(^contentVerticalAlignment)(id contentVerticalAlignment);
 
 /** NSNumber: @0,@1,@2,@3,@4,@5, NSString */
-- (Okidoki*(^)(id))contentHorizontalAlignment;
+@property (nonatomic, strong, readonly) Okidoki *(^contentHorizontalAlignment)(id contentHorizontalAlignment);
 
 /**
  Add block for control events, controlEvents: UIControlEvents, block: void(^)(__kindof UIControl *sender)
@@ -322,19 +322,19 @@ NS_ASSUME_NONNULL_BEGIN
  })
  @endcode
  */
-- (Okidoki*(^)(UIControlEvents, void(^)(__kindof UIControl *sender)))addControlEvent;
+@property (nonatomic, strong, readonly) Okidoki *(^addControlEvent)(UIControlEvents controlEvents, void(^block)(__kindof UIControl *sender));
 
 /** Remove all blocks for control events, controlEvents: UIControlEvents */
-- (Okidoki*(^)(UIControlEvents))removeControlEvent;
+@property (nonatomic, strong, readonly) Okidoki *(^removeControlEvent)(UIControlEvents controlEvents);
 
 /** Remove all targets and blocks for all events */
-- (Okidoki*(^)(void))removeAllControlEvents;
+@property (nonatomic, strong, readonly) Okidoki *(^removeAllControlEvents)(void);
 
 
 #pragma mark - UIButton
 
 /** title: NSString state: normal*/
-- (Okidoki*(^)(id))title;
+@property (nonatomic, strong, readonly) Okidoki *(^title)(id title);
 
 /**
  title: NSString, state: NSNumber
@@ -342,7 +342,7 @@ NS_ASSUME_NONNULL_BEGIN
  .titleForState(@"Highlighted", @(UIControlStateHighlighted))
  @endcode
  */
-- (Okidoki*(^)(id,id))titleForState;
+@property (nonatomic, strong, readonly) Okidoki *(^titleForState)(id title, id state);
 
 /**
  color: UIColor,NSString(eg.#FFFEEE,0xFFFEEE,0XFFFEEE) , state: NSNumber
@@ -350,7 +350,7 @@ NS_ASSUME_NONNULL_BEGIN
  .colorForState(@"FF0000", @(UIControlStateNormal))
  @endcode
  */
-- (Okidoki*(^)(id,id))colorForState;
+@property (nonatomic, strong, readonly) Okidoki *(^colorForState)(id color, id state);
 
 /**
  image: NSString, UIImage, state: NSNumber
@@ -358,7 +358,7 @@ NS_ASSUME_NONNULL_BEGIN
  .imageForState(@"icon_home", @(UIControlStateNormal))
  @endcode
  */
-- (Okidoki*(^)(id,id))imageForState;
+@property (nonatomic, strong, readonly) Okidoki *(^imageForState)(id image, id state);
 
 /**
  bgImage: NSString, UIImage, state: NSNumber
@@ -366,7 +366,7 @@ NS_ASSUME_NONNULL_BEGIN
  .bgImageForState(@"bg_button", @(UIControlStateNormal))
  @endcode
  */
-- (Okidoki*(^)(id,id))bgImageForState;
+@property (nonatomic, strong, readonly) Okidoki *(^bgImageForState)(id bgImage, id state);
 
 /**
  lineSpace: NSNumber, state: NSNumber
@@ -374,22 +374,22 @@ NS_ASSUME_NONNULL_BEGIN
  .lineSpaceForState(@5, @(UIControlStateNormal))
  @endcode
  */
-- (Okidoki*(^)(id,id))lineSpaceForState;
+@property (nonatomic, strong, readonly) Okidoki *(^lineSpaceForState)(id lineSpace, id state);
 
 /** space: NSNumber */
-- (Okidoki*(^)(id))imageUpTitleDown;
+@property (nonatomic, strong, readonly) Okidoki *(^imageUpTitleDown)(id imageUpTitleDown);
 
 /** space: NSNumber */
-- (Okidoki*(^)(id))imageDownTitleUp;
+@property (nonatomic, strong, readonly) Okidoki *(^imageDownTitleUp)(id imageDownTitleUp);
 
 /** space: NSNumber */
-- (Okidoki*(^)(id))imageRightTitleLeft;
+@property (nonatomic, strong, readonly) Okidoki *(^imageRightTitleLeft)(id imageRightTitleLeft);
 
 /** space: NSNumber */
-- (Okidoki*(^)(id))imageLeftTitleRight;
+@property (nonatomic, strong, readonly) Okidoki *(^imageLeftTitleRight)(id imageLeftTitleRight);
 
 /** all center */
-- (Okidoki*(^)(void))imageCenterTitleCenter;
+@property (nonatomic, strong, readonly) Okidoki *(^imageCenterTitleCenter)(void);
 
 /**
  substring: NSString, value:color or font, state: NSNumber
@@ -397,7 +397,7 @@ NS_ASSUME_NONNULL_BEGIN
  .titleForState(@"Hello World", @(UIControlStateNormal)).attributedSubstringForState(@"World", @"FF0000", @(UIControlStateNormal))
  @endcode
  */
-- (Okidoki*(^)(id,id,id))attributedSubstringForState;
+@property (nonatomic, strong, readonly) Okidoki *(^attributedSubstringForState)(id substring, id value, id state);
 
 /**
  substring: NSString, value:color or font, range: NSValue, state: NSNumber
@@ -405,7 +405,7 @@ NS_ASSUME_NONNULL_BEGIN
  .attributedSubstringInRangeForState(@"World", @"FF0000", [NSValue valueWithRange:NSMakeRange(6, 5)], @(UIControlStateNormal))
  @endcode
  */
-- (Okidoki*(^)(id,id,id,id))attributedSubstringInRangeForState;
+@property (nonatomic, strong, readonly) Okidoki *(^attributedSubstringInRangeForState)(id substring, id value, id range, id state);
 
 /**
  substring: NSString, key: NSAttributedStringKey, value: color/font/number etc.
@@ -413,7 +413,7 @@ NS_ASSUME_NONNULL_BEGIN
  .attributedSubstringKeyValueForState(@"World", NSForegroundColorAttributeName, [UIColor redColor], @(UIControlStateNormal))
  @endcode
  */
-- (Okidoki*(^)(id,id,id,id))attributedSubstringKeyValueForState;
+@property (nonatomic, strong, readonly) Okidoki *(^attributedSubstringKeyValueForState)(id substring, id key, id value, id state);
 
 /**
  substring: NSString, key: NSAttributedStringKey, value: color/font/number etc. range: NSValue.
@@ -421,16 +421,16 @@ NS_ASSUME_NONNULL_BEGIN
  .attributedSubstringKeyValueInRangeForState(@"World", NSForegroundColorAttributeName, [UIColor redColor], [NSValue valueWithRange:NSMakeRange(6, 5)], @(UIControlStateNormal))
  @endcode
  */
-- (Okidoki*(^)(id,id,id,id,id))attributedSubstringKeyValueInRangeForState;
+@property (nonatomic, strong, readonly) Okidoki *(^attributedSubstringKeyValueInRangeForState)(id substring, id key, id value, id range, id state);
 
 
 #pragma mark - UIImageView
 
 /** image: UIImage, NSString */
-- (Okidoki*(^)(id))image;
+@property (nonatomic, strong, readonly) Okidoki *(^image)(id image);
 
 /** highlightedImage: UIImage, NSString */
-- (Okidoki*(^)(id))highlightedImage;
+@property (nonatomic, strong, readonly) Okidoki *(^highlightedImage)(id highlightedImage);
 
 /**
  image: UIImage,NSString, color: UIColor
@@ -438,115 +438,115 @@ NS_ASSUME_NONNULL_BEGIN
  .imageForTintColor(@"icon_home", [UIColor redColor])
  @endcode
  */
-- (Okidoki*(^)(id,id))imageForTintColor;
+@property (nonatomic, strong, readonly) Okidoki *(^imageForTintColor)(id image, id color);
 
 
 #pragma mark - UITextField
 
 /** borderStyle, NSString,NSNumber: @1,@2,@3,@4 */
-- (Okidoki*(^)(id))bdStyle;
+@property (nonatomic, strong, readonly) Okidoki *(^bdStyle)(id bdStyle);
 
 /** placeholder, NSString */
-- (Okidoki*(^)(id))pHolder;
+@property (nonatomic, strong, readonly) Okidoki *(^pHolder)(id pHolder);
 
 /** placeholder color, UIColor,NSString(eg.#FFFEEE,0xFFFEEE,0XFFFEEE) */
-- (Okidoki*(^)(id))pHColor;
+@property (nonatomic, strong, readonly) Okidoki *(^pHColor)(id pHColor);
 
 /** placeholder font, UIFont */
-- (Okidoki*(^)(id))pHFont;
+@property (nonatomic, strong, readonly) Okidoki *(^pHFont)(id pHFont);
 
 /** clearButtonMode, NSNumber: @1,@2,@3,@4 */
-- (Okidoki*(^)(id))cbMode;
+@property (nonatomic, strong, readonly) Okidoki *(^cbMode)(id cbMode);
 
 /** leftViewMode, NSNumber: @1,@2,@3,@4 */
-- (Okidoki*(^)(id))lvMode;
+@property (nonatomic, strong, readonly) Okidoki *(^lvMode)(id lvMode);
 
 /** rightViewMode, NSNumber: @1,@2,@3,@4 */
-- (Okidoki*(^)(id))rvMode;
+@property (nonatomic, strong, readonly) Okidoki *(^rvMode)(id rvMode);
 
 /** leftView, UIView */
-- (Okidoki*(^)(id))lfView;
+@property (nonatomic, strong, readonly) Okidoki *(^lfView)(id lfView);
 
 /** rightView, UIView */
-- (Okidoki*(^)(id))rtView;
+@property (nonatomic, strong, readonly) Okidoki *(^rtView)(id rtView);
 
 /** secureTextEntry, BOOL: @YES, @NO */
-- (Okidoki*(^)(id))secure;
+@property (nonatomic, strong, readonly) Okidoki *(^secure)(id secure);
 
 
 #pragma mark - UIScrollView
 
 /** NSValue(CGPoint), NSString */
-- (Okidoki*(^)(id))contentOffset;
+@property (nonatomic, strong, readonly) Okidoki *(^contentOffset)(id contentOffset);
 
 /** NSValue(CGSize), NSString */
-- (Okidoki*(^)(id))contentSize;
+@property (nonatomic, strong, readonly) Okidoki *(^contentSize)(id contentSize);
 
 /** NSValue(UIEdgeInsets), NSString */
-- (Okidoki*(^)(id))contentInset;
+@property (nonatomic, strong, readonly) Okidoki *(^contentInset)(id contentInset);
 
 /** @(YES) or @(NO), NSString */
-- (Okidoki*(^)(id))directionalLockEnabled;
+@property (nonatomic, strong, readonly) Okidoki *(^directionalLockEnabled)(id directionalLockEnabled);
 
 /** @(YES) or @(NO), NSString */
-- (Okidoki*(^)(id))alwaysBounceVertical;
+@property (nonatomic, strong, readonly) Okidoki *(^alwaysBounceVertical)(id alwaysBounceVertical);
 
 /** @(YES) or @(NO), NSString */
-- (Okidoki*(^)(id))alwaysBounceHorizontal;
+@property (nonatomic, strong, readonly) Okidoki *(^alwaysBounceHorizontal)(id alwaysBounceHorizontal);
 
 /** @(YES) or @(NO), NSString */
-- (Okidoki*(^)(id))scrollEnabled;
+@property (nonatomic, strong, readonly) Okidoki *(^scrollEnabled)(id scrollEnabled);
 
 /** NSNumber: @0,@1,@2, NSString */
-- (Okidoki*(^)(id))indicatorStyle;
+@property (nonatomic, strong, readonly) Okidoki *(^indicatorStyle)(id indicatorStyle);
 
 /** @(YES) or @(NO), NSString */
-- (Okidoki*(^)(id))delaysContentTouches;
+@property (nonatomic, strong, readonly) Okidoki *(^delaysContentTouches)(id delaysContentTouches);
 
 /** @(YES) or @(NO), NSString */
-- (Okidoki*(^)(id))canCancelContentTouches;
+@property (nonatomic, strong, readonly) Okidoki *(^canCancelContentTouches)(id canCancelContentTouches);
 
 /** NSNumber, NSString */
-- (Okidoki*(^)(id))minimumZoomScale;
+@property (nonatomic, strong, readonly) Okidoki *(^minimumZoomScale)(id minimumZoomScale);
 
 /** NSNumber, NSString */
-- (Okidoki*(^)(id))maximumZoomScale;
+@property (nonatomic, strong, readonly) Okidoki *(^maximumZoomScale)(id maximumZoomScale);
 
 /** @(YES) or @(NO), NSString */
-- (Okidoki*(^)(id))bouncesZoom;
+@property (nonatomic, strong, readonly) Okidoki *(^bouncesZoom)(id bouncesZoom);
 
 /** @(YES) or @(NO), NSString */
-- (Okidoki*(^)(id))scrollsToTop;
+@property (nonatomic, strong, readonly) Okidoki *(^scrollsToTop)(id scrollsToTop);
 
 /** NSNumber, NSString */
-- (Okidoki*(^)(id))decelerationRate;
+@property (nonatomic, strong, readonly) Okidoki *(^decelerationRate)(id decelerationRate);
 
 /** NSNumber, NSString */
-- (Okidoki*(^)(id))zoomScale;
+@property (nonatomic, strong, readonly) Okidoki *(^zoomScale)(id zoomScale);
 
 /** NSNumber: @0,@1,@2, NSString */
-- (Okidoki*(^)(id))keyboardDismissMode;
+@property (nonatomic, strong, readonly) Okidoki *(^keyboardDismissMode)(id keyboardDismissMode);
 
 /** NSNumber: @0,@1,@2,@3,@4, NSString (iOS 11+) */
-- (Okidoki*(^)(id))contentInsetAdjustmentBehavior;
+@property (nonatomic, strong, readonly) Okidoki *(^contentInsetAdjustmentBehavior)(id contentInsetAdjustmentBehavior);
 
 /** NSValue(UIEdgeInsets), NSString (iOS 11.1+) */
-- (Okidoki*(^)(id))verticalScrollIndicatorInsets;
+@property (nonatomic, strong, readonly) Okidoki *(^verticalScrollIndicatorInsets)(id verticalScrollIndicatorInsets);
 
 /** NSValue(UIEdgeInsets), NSString (iOS 11.1+) */
-- (Okidoki*(^)(id))horizontalScrollIndicatorInsets;
+@property (nonatomic, strong, readonly) Okidoki *(^horizontalScrollIndicatorInsets)(id horizontalScrollIndicatorInsets);
 
 /** showsVerticalScrollIndicator: @(YES) or @(NO), NSString */
-- (Okidoki*(^)(id))verInd;
+@property (nonatomic, strong, readonly) Okidoki *(^verInd)(id verInd);
 
 /** showsHorizontalScrollIndicator: @(YES) or @(NO), NSString */
-- (Okidoki*(^)(id))horInd;
+@property (nonatomic, strong, readonly) Okidoki *(^horInd)(id horInd);
 
 /** pagingEnabled: @(YES) or @(NO), NSString */
-- (Okidoki*(^)(id))paging;
+@property (nonatomic, strong, readonly) Okidoki *(^paging)(id paging);
 
 /** bounces: @(YES) or @(NO), NSString */
-- (Okidoki*(^)(id))bounces;
+@property (nonatomic, strong, readonly) Okidoki *(^bounces)(id bounces);
 
 
 #pragma mark - UITextView
@@ -557,7 +557,7 @@ NS_ASSUME_NONNULL_BEGIN
  .editable(@YES)
  @endcode
  */
-- (Okidoki*(^)(id))editable;
+@property (nonatomic, strong, readonly) Okidoki *(^editable)(id editable);
 
 /**
  selectable: @(YES) or @(NO), NSString
@@ -565,7 +565,7 @@ NS_ASSUME_NONNULL_BEGIN
  .selectable(@YES)
  @endcode
  */
-- (Okidoki*(^)(id))selectable;
+@property (nonatomic, strong, readonly) Okidoki *(^selectable)(id selectable);
 
 /**
  attributedText: NSAttributedString
@@ -573,7 +573,7 @@ NS_ASSUME_NONNULL_BEGIN
  .attributedText(attributedString)
  @endcode
  */
-- (Okidoki*(^)(id))attributedText;
+@property (nonatomic, strong, readonly) Okidoki *(^attributedText)(id attributedText);
 
 /**
  inputView: UIView
@@ -581,7 +581,7 @@ NS_ASSUME_NONNULL_BEGIN
  .inputView(customInputView)
  @endcode
  */
-- (Okidoki*(^)(id))inputView;
+@property (nonatomic, strong, readonly) Okidoki *(^inputView)(id inputView);
 
 /**
  inputAccessoryView: UIView
@@ -589,7 +589,7 @@ NS_ASSUME_NONNULL_BEGIN
  .inputAccessoryView(accessoryView)
  @endcode
  */
-- (Okidoki*(^)(id))inputAccessoryView;
+@property (nonatomic, strong, readonly) Okidoki *(^inputAccessoryView)(id inputAccessoryView);
 
 /**
  textContainerInset: NSValue(UIEdgeInsets), NSString
@@ -597,7 +597,7 @@ NS_ASSUME_NONNULL_BEGIN
  .textContainerInset([NSValue valueWithUIEdgeInsets:UIEdgeInsetsMake(10, 10, 10, 10)])
  @endcode
  */
-- (Okidoki*(^)(id))textContainerInset;
+@property (nonatomic, strong, readonly) Okidoki *(^textContainerInset)(id textContainerInset);
 
 @end
 
@@ -628,7 +628,7 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
  });
  @endcode
  */
-- (Okidoki*(^)(OkidokiScrollViewDidScrollBlock block))didScroll;
+@property (nonatomic, strong, readonly) Okidoki *(^didScroll)(OkidokiScrollViewDidScrollBlock block);
 
 /**
  scrollViewDidZoom delegate block
@@ -638,7 +638,7 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
  });
  @endcode
  */
-- (Okidoki*(^)(OkidokiScrollViewDidZoomBlock block))didZoom;
+@property (nonatomic, strong, readonly) Okidoki *(^didZoom)(OkidokiScrollViewDidZoomBlock block);
 
 /**
  scrollViewWillBeginDragging delegate block
@@ -648,7 +648,7 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
  });
  @endcode
  */
-- (Okidoki*(^)(OkidokiScrollViewWillBeginDraggingBlock block))willBeginDragging;
+@property (nonatomic, strong, readonly) Okidoki *(^willBeginDragging)(OkidokiScrollViewWillBeginDraggingBlock block);
 
 /**
  scrollViewWillEndDragging:withVelocity: delegate block
@@ -658,7 +658,7 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
  });
  @endcode
  */
-- (Okidoki*(^)(OkidokiScrollViewWillEndDraggingBlock block))willEndDragging;
+@property (nonatomic, strong, readonly) Okidoki *(^willEndDragging)(OkidokiScrollViewWillEndDraggingBlock block);
 
 /**
  scrollViewDidEndDragging:willDecelerate: delegate block
@@ -668,7 +668,7 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
  });
  @endcode
  */
-- (Okidoki*(^)(OkidokiScrollViewDidEndDraggingBlock block))didEndDragging;
+@property (nonatomic, strong, readonly) Okidoki *(^didEndDragging)(OkidokiScrollViewDidEndDraggingBlock block);
 
 /**
  scrollViewWillBeginDecelerating delegate block
@@ -678,7 +678,7 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
  });
  @endcode
  */
-- (Okidoki*(^)(OkidokiScrollViewWillBeginDeceleratingBlock block))willBeginDecelerating;
+@property (nonatomic, strong, readonly) Okidoki *(^willBeginDecelerating)(OkidokiScrollViewWillBeginDeceleratingBlock block);
 
 /**
  scrollViewDidEndDecelerating delegate block
@@ -688,7 +688,7 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
  });
  @endcode
  */
-- (Okidoki*(^)(OkidokiScrollViewDidEndDeceleratingBlock block))didEndDecelerating;
+@property (nonatomic, strong, readonly) Okidoki *(^didEndDecelerating)(OkidokiScrollViewDidEndDeceleratingBlock block);
 
 /**
  scrollViewDidEndScrollingAnimation delegate block
@@ -698,7 +698,7 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
  });
  @endcode
  */
-- (Okidoki*(^)(OkidokiScrollViewDidEndScrollingAnimationBlock block))didEndScrollingAnimation;
+@property (nonatomic, strong, readonly) Okidoki *(^didEndScrollingAnimation)(OkidokiScrollViewDidEndScrollingAnimationBlock block);
 
 /**
  viewForZoomingInScrollView delegate block
@@ -708,7 +708,7 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
  });
  @endcode
  */
-- (Okidoki*(^)(OkidokiScrollViewViewForZoomingBlock block))viewForZooming;
+@property (nonatomic, strong, readonly) Okidoki *(^viewForZooming)(OkidokiScrollViewViewForZoomingBlock block);
 
 /**
  scrollViewWillBeginZooming:withView: delegate block
@@ -718,7 +718,7 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
  });
  @endcode
  */
-- (Okidoki*(^)(OkidokiScrollViewWillBeginZoomingBlock block))willBeginZooming;
+@property (nonatomic, strong, readonly) Okidoki *(^willBeginZooming)(OkidokiScrollViewWillBeginZoomingBlock block);
 
 /**
  scrollViewDidEndZooming:withView:atScale: delegate block
@@ -728,7 +728,7 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
  });
  @endcode
  */
-- (Okidoki*(^)(OkidokiScrollViewDidEndZoomingBlock block))didEndZooming;
+@property (nonatomic, strong, readonly) Okidoki *(^didEndZooming)(OkidokiScrollViewDidEndZoomingBlock block);
 
 /**
  scrollViewShouldScrollToTop delegate block
@@ -738,7 +738,7 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
  });
  @endcode
  */
-- (Okidoki*(^)(OkidokiScrollViewShouldScrollToTopBlock block))shouldScrollToTop;
+@property (nonatomic, strong, readonly) Okidoki *(^shouldScrollToTop)(OkidokiScrollViewShouldScrollToTopBlock block);
 
 /**
  scrollViewDidScrollToTop delegate block
@@ -748,7 +748,7 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
  });
  @endcode
  */
-- (Okidoki*(^)(OkidokiScrollViewDidScrollToTopBlock block))didScrollToTop;
+@property (nonatomic, strong, readonly) Okidoki *(^didScrollToTop)(OkidokiScrollViewDidScrollToTopBlock block);
 
 /**
  scrollViewDidChangeAdjustedContentInset delegate block (iOS 11+)
@@ -758,7 +758,7 @@ typedef void(^OkidokiScrollViewDidChangeAdjustedContentInsetBlock)(UIScrollView 
  });
  @endcode
  */
-- (Okidoki*(^)(OkidokiScrollViewDidChangeAdjustedContentInsetBlock block))didChangeAdjustedContentInset;
+@property (nonatomic, strong, readonly) Okidoki *(^didChangeAdjustedContentInset)(OkidokiScrollViewDidChangeAdjustedContentInsetBlock block);
 
 @end
 
@@ -793,7 +793,7 @@ typedef UITableViewCellEditingStyle(^OkidokiTableViewEditingStyleBlock)(UITableV
  .registerCellClass(@[[UITableViewCell class], @"Cell"])
  @endcode
  */
-- (Okidoki*(^)(NSArray *params))registerCellClass;
+@property (nonatomic, strong, readonly) Okidoki *(^registerCellClass)(NSArray *params);
 
 /** 
  Register cell nib with identifier
@@ -802,7 +802,7 @@ typedef UITableViewCellEditingStyle(^OkidokiTableViewEditingStyleBlock)(UITableV
  .registerCellNib(@[@"MyCell", @"Cell"])
  @endcode
  */
-- (Okidoki*(^)(NSArray *params))registerCellNib;
+@property (nonatomic, strong, readonly) Okidoki *(^registerCellNib)(NSArray *params);
 
 /** 
  Register multiple cell classes with identifiers
@@ -811,7 +811,7 @@ typedef UITableViewCellEditingStyle(^OkidokiTableViewEditingStyleBlock)(UITableV
  .registerMultiCellClass(@[@[[MyCell class], @"Cell1"], @[[OtherCell class], @"Cell2"]])
  @endcode
  */
-- (Okidoki*(^)(NSArray *params))registerMultiCellClass;
+@property (nonatomic, strong, readonly) Okidoki *(^registerMultiCellClass)(NSArray *params);
 
 
 // UITableViewDataSource
@@ -823,7 +823,7 @@ typedef UITableViewCellEditingStyle(^OkidokiTableViewEditingStyleBlock)(UITableV
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTableViewNumberOfSectionsBlock block))numberOfSections;
+@property (nonatomic, strong, readonly) Okidoki *(^numberOfSections)(OkidokiTableViewNumberOfSectionsBlock block);
 
 /** 
  tableView:numberOfRowsInSection: block
@@ -833,7 +833,7 @@ typedef UITableViewCellEditingStyle(^OkidokiTableViewEditingStyleBlock)(UITableV
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTableViewNumberOfRowsInSectionBlock block))numberOfRowsInSection;
+@property (nonatomic, strong, readonly) Okidoki *(^numberOfRowsInSection)(OkidokiTableViewNumberOfRowsInSectionBlock block);
 
 /** 
  tableView:cellForRowAtIndexPath: block
@@ -843,7 +843,7 @@ typedef UITableViewCellEditingStyle(^OkidokiTableViewEditingStyleBlock)(UITableV
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTableViewCellForRowAtIndexPathBlock block))cellForRowAtIndexPath;
+@property (nonatomic, strong, readonly) Okidoki *(^cellForRowAtIndexPath)(OkidokiTableViewCellForRowAtIndexPathBlock block);
 
 /** 
  tableView:titleForHeaderInSection: block
@@ -853,7 +853,7 @@ typedef UITableViewCellEditingStyle(^OkidokiTableViewEditingStyleBlock)(UITableV
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTableViewTitleForHeaderBlock block))titleForHeaderInSection;
+@property (nonatomic, strong, readonly) Okidoki *(^titleForHeaderInSection)(OkidokiTableViewTitleForHeaderBlock block);
 
 /** 
  tableView:titleForFooterInSection: block
@@ -863,7 +863,7 @@ typedef UITableViewCellEditingStyle(^OkidokiTableViewEditingStyleBlock)(UITableV
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTableViewTitleForFooterBlock block))titleForFooterInSection;
+@property (nonatomic, strong, readonly) Okidoki *(^titleForFooterInSection)(OkidokiTableViewTitleForFooterBlock block);
 
 /** 
  tableView:canEditRowAtIndexPath: block
@@ -873,7 +873,7 @@ typedef UITableViewCellEditingStyle(^OkidokiTableViewEditingStyleBlock)(UITableV
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTableViewCanEditRowBlock block))canEditRowAtIndexPath;
+@property (nonatomic, strong, readonly) Okidoki *(^canEditRowAtIndexPath)(OkidokiTableViewCanEditRowBlock block);
 
 /** 
  tableView:commitEditingStyle:forRowAtIndexPath: block
@@ -883,7 +883,7 @@ typedef UITableViewCellEditingStyle(^OkidokiTableViewEditingStyleBlock)(UITableV
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTableViewCommitEditingStyleBlock block))commitEditingStyle;
+@property (nonatomic, strong, readonly) Okidoki *(^commitEditingStyle)(OkidokiTableViewCommitEditingStyleBlock block);
 
 
 // UITableViewDelegate
@@ -895,7 +895,7 @@ typedef UITableViewCellEditingStyle(^OkidokiTableViewEditingStyleBlock)(UITableV
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTableViewHeightForRowBlock block))heightForRowAtIndexPath;
+@property (nonatomic, strong, readonly) Okidoki *(^heightForRowAtIndexPath)(OkidokiTableViewHeightForRowBlock block);
 
 /** 
  tableView:heightForHeaderInSection: block
@@ -905,7 +905,7 @@ typedef UITableViewCellEditingStyle(^OkidokiTableViewEditingStyleBlock)(UITableV
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTableViewHeightForHeaderBlock block))heightForHeaderInSection;
+@property (nonatomic, strong, readonly) Okidoki *(^heightForHeaderInSection)(OkidokiTableViewHeightForHeaderBlock block);
 
 /** 
  tableView:heightForFooterInSection: block
@@ -915,7 +915,7 @@ typedef UITableViewCellEditingStyle(^OkidokiTableViewEditingStyleBlock)(UITableV
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTableViewHeightForFooterBlock block))heightForFooterInSection;
+@property (nonatomic, strong, readonly) Okidoki *(^heightForFooterInSection)(OkidokiTableViewHeightForFooterBlock block);
 
 /** 
  tableView:viewForHeaderInSection: block
@@ -925,7 +925,7 @@ typedef UITableViewCellEditingStyle(^OkidokiTableViewEditingStyleBlock)(UITableV
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTableViewViewForHeaderBlock block))viewForHeaderInSection;
+@property (nonatomic, strong, readonly) Okidoki *(^viewForHeaderInSection)(OkidokiTableViewViewForHeaderBlock block);
 
 /** 
  tableView:viewForFooterInSection: block
@@ -935,7 +935,7 @@ typedef UITableViewCellEditingStyle(^OkidokiTableViewEditingStyleBlock)(UITableV
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTableViewViewForFooterBlock block))viewForFooterInSection;
+@property (nonatomic, strong, readonly) Okidoki *(^viewForFooterInSection)(OkidokiTableViewViewForFooterBlock block);
 
 /** 
  tableView:didSelectRowAtIndexPath: block
@@ -945,7 +945,7 @@ typedef UITableViewCellEditingStyle(^OkidokiTableViewEditingStyleBlock)(UITableV
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTableViewDidSelectRowBlock block))didSelectRowAtIndexPath;
+@property (nonatomic, strong, readonly) Okidoki *(^didSelectRowAtIndexPath)(OkidokiTableViewDidSelectRowBlock block);
 
 /** 
  tableView:didDeselectRowAtIndexPath: block
@@ -955,7 +955,7 @@ typedef UITableViewCellEditingStyle(^OkidokiTableViewEditingStyleBlock)(UITableV
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTableViewDidDeselectRowBlock block))didDeselectRowAtIndexPath;
+@property (nonatomic, strong, readonly) Okidoki *(^didDeselectRowAtIndexPath)(OkidokiTableViewDidDeselectRowBlock block);
 
 /** 
  tableView:willDisplayCell:forRowAtIndexPath: block
@@ -965,7 +965,7 @@ typedef UITableViewCellEditingStyle(^OkidokiTableViewEditingStyleBlock)(UITableV
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTableViewWillDisplayCellBlock block))willDisplayCell;
+@property (nonatomic, strong, readonly) Okidoki *(^willDisplayCell)(OkidokiTableViewWillDisplayCellBlock block);
 
 /** 
  tableView:didEndDisplayingCell:forRowAtIndexPath: block
@@ -975,7 +975,7 @@ typedef UITableViewCellEditingStyle(^OkidokiTableViewEditingStyleBlock)(UITableV
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTableViewDidEndDisplayingCellBlock block))didEndDisplayingCell;
+@property (nonatomic, strong, readonly) Okidoki *(^didEndDisplayingCell)(OkidokiTableViewDidEndDisplayingCellBlock block);
 
 /** 
  tableView:editingStyleForRowAtIndexPath: block
@@ -985,7 +985,7 @@ typedef UITableViewCellEditingStyle(^OkidokiTableViewEditingStyleBlock)(UITableV
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTableViewEditingStyleBlock block))editingStyleForRowAtIndexPath;
+@property (nonatomic, strong, readonly) Okidoki *(^editingStyleForRowAtIndexPath)(OkidokiTableViewEditingStyleBlock block);
 
 @end
 
@@ -1014,7 +1014,7 @@ typedef void(^OkidokiCollectionViewDidEndDisplayingCellBlock)(UICollectionView *
  .cvRegisterCellClass(@[[UICollectionViewCell class], @"Cell"])
  @endcode
  */
-- (Okidoki*(^)(NSArray *params))cvRegisterCellClass;
+@property (nonatomic, strong, readonly) Okidoki *(^cvRegisterCellClass)(NSArray *params);
 
 /** 
  Register cell nib with identifier
@@ -1023,7 +1023,7 @@ typedef void(^OkidokiCollectionViewDidEndDisplayingCellBlock)(UICollectionView *
  .cvRegisterCellNib(@[@"MyCell", @"Cell"])
  @endcode
  */
-- (Okidoki*(^)(NSArray *params))cvRegisterCellNib;
+@property (nonatomic, strong, readonly) Okidoki *(^cvRegisterCellNib)(NSArray *params);
 
 /** 
  Register supplementary view class with identifier
@@ -1032,7 +1032,7 @@ typedef void(^OkidokiCollectionViewDidEndDisplayingCellBlock)(UICollectionView *
  .cvRegisterSupplementaryViewClass(@[[UICollectionReusableView class], UICollectionElementKindSectionHeader, @"Header"])
  @endcode
  */
-- (Okidoki*(^)(NSArray *params))cvRegisterSupplementaryViewClass;
+@property (nonatomic, strong, readonly) Okidoki *(^cvRegisterSupplementaryViewClass)(NSArray *params);
 
 /** 
  Register supplementary view nib with identifier
@@ -1041,7 +1041,7 @@ typedef void(^OkidokiCollectionViewDidEndDisplayingCellBlock)(UICollectionView *
  .cvRegisterSupplementaryViewNib(@[@"HeaderView", UICollectionElementKindSectionHeader, @"Header"])
  @endcode
  */
-- (Okidoki*(^)(NSArray *params))cvRegisterSupplementaryViewNib;
+@property (nonatomic, strong, readonly) Okidoki *(^cvRegisterSupplementaryViewNib)(NSArray *params);
 
 // UICollectionViewDataSource
 /** 
@@ -1052,7 +1052,7 @@ typedef void(^OkidokiCollectionViewDidEndDisplayingCellBlock)(UICollectionView *
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiCollectionViewNumberOfSectionsBlock block))cvNumberOfSections;
+@property (nonatomic, strong, readonly) Okidoki *(^cvNumberOfSections)(OkidokiCollectionViewNumberOfSectionsBlock block);
 
 /** 
  collectionView:numberOfItemsInSection: block
@@ -1062,7 +1062,7 @@ typedef void(^OkidokiCollectionViewDidEndDisplayingCellBlock)(UICollectionView *
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiCollectionViewNumberOfItemsInSectionBlock block))cvNumberOfItemsInSection;
+@property (nonatomic, strong, readonly) Okidoki *(^cvNumberOfItemsInSection)(OkidokiCollectionViewNumberOfItemsInSectionBlock block);
 
 /** 
  collectionView:cellForItemAtIndexPath: block
@@ -1072,7 +1072,7 @@ typedef void(^OkidokiCollectionViewDidEndDisplayingCellBlock)(UICollectionView *
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiCollectionViewCellForItemAtIndexPathBlock block))cvCellForItemAtIndexPath;
+@property (nonatomic, strong, readonly) Okidoki *(^cvCellForItemAtIndexPath)(OkidokiCollectionViewCellForItemAtIndexPathBlock block);
 
 /** 
  collectionView:viewForSupplementaryElementOfKind:atIndexPath: block
@@ -1082,7 +1082,7 @@ typedef void(^OkidokiCollectionViewDidEndDisplayingCellBlock)(UICollectionView *
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiCollectionViewViewForSupplementaryElementBlock block))cvViewForSupplementaryElement;
+@property (nonatomic, strong, readonly) Okidoki *(^cvViewForSupplementaryElement)(OkidokiCollectionViewViewForSupplementaryElementBlock block);
 
 // UICollectionViewDelegate
 /** 
@@ -1093,7 +1093,7 @@ typedef void(^OkidokiCollectionViewDidEndDisplayingCellBlock)(UICollectionView *
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiCollectionViewDidSelectItemBlock block))cvDidSelectItemAtIndexPath;
+@property (nonatomic, strong, readonly) Okidoki *(^cvDidSelectItemAtIndexPath)(OkidokiCollectionViewDidSelectItemBlock block);
 
 /** 
  collectionView:didDeselectItemAtIndexPath: block
@@ -1103,7 +1103,7 @@ typedef void(^OkidokiCollectionViewDidEndDisplayingCellBlock)(UICollectionView *
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiCollectionViewDidDeselectItemBlock block))cvDidDeselectItemAtIndexPath;
+@property (nonatomic, strong, readonly) Okidoki *(^cvDidDeselectItemAtIndexPath)(OkidokiCollectionViewDidDeselectItemBlock block);
 
 /** 
  collectionView:willDisplayCell:forItemAtIndexPath: block
@@ -1113,7 +1113,7 @@ typedef void(^OkidokiCollectionViewDidEndDisplayingCellBlock)(UICollectionView *
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiCollectionViewWillDisplayCellBlock block))cvWillDisplayCell;
+@property (nonatomic, strong, readonly) Okidoki *(^cvWillDisplayCell)(OkidokiCollectionViewWillDisplayCellBlock block);
 
 /** 
  collectionView:didEndDisplayingCell:forItemAtIndexPath: block
@@ -1123,7 +1123,7 @@ typedef void(^OkidokiCollectionViewDidEndDisplayingCellBlock)(UICollectionView *
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiCollectionViewDidEndDisplayingCellBlock block))cvDidEndDisplayingCell;
+@property (nonatomic, strong, readonly) Okidoki *(^cvDidEndDisplayingCell)(OkidokiCollectionViewDidEndDisplayingCellBlock block);
 
 // UICollectionViewDelegateFlowLayout
 /** 
@@ -1134,7 +1134,7 @@ typedef void(^OkidokiCollectionViewDidEndDisplayingCellBlock)(UICollectionView *
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiCollectionViewSizeForItemBlock block))cvSizeForItemAtIndexPath;
+@property (nonatomic, strong, readonly) Okidoki *(^cvSizeForItemAtIndexPath)(OkidokiCollectionViewSizeForItemBlock block);
 
 /** 
  collectionView:layout:insetForSectionAtIndex: block
@@ -1144,7 +1144,7 @@ typedef void(^OkidokiCollectionViewDidEndDisplayingCellBlock)(UICollectionView *
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiCollectionViewInsetForSectionBlock block))cvInsetForSectionAtIndex;
+@property (nonatomic, strong, readonly) Okidoki *(^cvInsetForSectionAtIndex)(OkidokiCollectionViewInsetForSectionBlock block);
 
 /** 
  collectionView:layout:minimumLineSpacingForSectionAtIndex: block
@@ -1154,7 +1154,7 @@ typedef void(^OkidokiCollectionViewDidEndDisplayingCellBlock)(UICollectionView *
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiCollectionViewMinimumLineSpacingBlock block))cvMinimumLineSpacing;
+@property (nonatomic, strong, readonly) Okidoki *(^cvMinimumLineSpacing)(OkidokiCollectionViewMinimumLineSpacingBlock block);
 
 /** 
  collectionView:layout:minimumInteritemSpacingForSectionAtIndex: block
@@ -1164,7 +1164,7 @@ typedef void(^OkidokiCollectionViewDidEndDisplayingCellBlock)(UICollectionView *
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiCollectionViewMinimumInteritemSpacingBlock block))cvMinimumInteritemSpacing;
+@property (nonatomic, strong, readonly) Okidoki *(^cvMinimumInteritemSpacing)(OkidokiCollectionViewMinimumInteritemSpacingBlock block);
 
 @end
 
@@ -1205,7 +1205,7 @@ typedef BOOL(^OkidokiTextFieldShouldReturnBlock)(UITextField *textField);
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTextFieldShouldBeginEditingBlock block))tfShouldBeginEditing;
+@property (nonatomic, strong, readonly) Okidoki *(^tfShouldBeginEditing)(OkidokiTextFieldShouldBeginEditingBlock block);
 
 /** 
  textFieldDidBeginEditing: block
@@ -1215,7 +1215,7 @@ typedef BOOL(^OkidokiTextFieldShouldReturnBlock)(UITextField *textField);
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTextFieldDidBeginEditingBlock block))tfDidBeginEditing;
+@property (nonatomic, strong, readonly) Okidoki *(^tfDidBeginEditing)(OkidokiTextFieldDidBeginEditingBlock block);
 
 /** 
  textFieldShouldEndEditing: block
@@ -1225,7 +1225,7 @@ typedef BOOL(^OkidokiTextFieldShouldReturnBlock)(UITextField *textField);
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTextFieldShouldEndEditingBlock block))tfShouldEndEditing;
+@property (nonatomic, strong, readonly) Okidoki *(^tfShouldEndEditing)(OkidokiTextFieldShouldEndEditingBlock block);
 
 /** 
  textFieldDidEndEditing: block
@@ -1235,7 +1235,7 @@ typedef BOOL(^OkidokiTextFieldShouldReturnBlock)(UITextField *textField);
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTextFieldDidEndEditingBlock block))tfDidEndEditing;
+@property (nonatomic, strong, readonly) Okidoki *(^tfDidEndEditing)(OkidokiTextFieldDidEndEditingBlock block);
 
 /** 
  textField:shouldChangeCharactersInRange:replacementString: block
@@ -1245,7 +1245,7 @@ typedef BOOL(^OkidokiTextFieldShouldReturnBlock)(UITextField *textField);
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTextFieldShouldChangeCharactersBlock block))tfShouldChangeCharacters;
+@property (nonatomic, strong, readonly) Okidoki *(^tfShouldChangeCharacters)(OkidokiTextFieldShouldChangeCharactersBlock block);
 
 /** 
  textFieldShouldClear: block
@@ -1255,7 +1255,7 @@ typedef BOOL(^OkidokiTextFieldShouldReturnBlock)(UITextField *textField);
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTextFieldShouldClearBlock block))tfShouldClear;
+@property (nonatomic, strong, readonly) Okidoki *(^tfShouldClear)(OkidokiTextFieldShouldClearBlock block);
 
 /** 
  textFieldShouldReturn: block
@@ -1266,7 +1266,7 @@ typedef BOOL(^OkidokiTextFieldShouldReturnBlock)(UITextField *textField);
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTextFieldShouldReturnBlock block))tfShouldReturn;
+@property (nonatomic, strong, readonly) Okidoki *(^tfShouldReturn)(OkidokiTextFieldShouldReturnBlock block);
 
 /** 
  Keyboard notification handler for UITextField
@@ -1278,7 +1278,7 @@ typedef BOOL(^OkidokiTextFieldShouldReturnBlock)(UITextField *textField);
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiKeyboardHandlerBlock block))keyboardHandler;
+@property (nonatomic, strong, readonly) Okidoki *(^keyboardHandler)(OkidokiKeyboardHandlerBlock block);
 
 /** 
  Configure input limit for UITextField
@@ -1299,7 +1299,7 @@ typedef BOOL(^OkidokiTextFieldShouldReturnBlock)(UITextField *textField);
  .tfInputLimit(OkidokiInputLimitTypeCustom, 0, @"0123456789.-", nil)
  @endcode
  */
-- (Okidoki*(^)(OkidokiInputLimitType type, NSUInteger length, NSString * _Nullable customCharacters, OkidokiInputLimitDidChangeBlock _Nullable changeBlock))tfInputLimit;
+@property (nonatomic, strong, readonly) Okidoki *(^tfInputLimit)(OkidokiInputLimitType type, NSUInteger length, NSString * _Nullable customCharacters, OkidokiInputLimitDidChangeBlock _Nullable changeBlock);
 
 @end
 
@@ -1324,7 +1324,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTextViewShouldBeginEditingBlock block))tvShouldBeginEditing;
+@property (nonatomic, strong, readonly) Okidoki *(^tvShouldBeginEditing)(OkidokiTextViewShouldBeginEditingBlock block);
 
 /** 
  textViewDidBeginEditing: block
@@ -1334,7 +1334,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTextViewDidBeginEditingBlock block))tvDidBeginEditing;
+@property (nonatomic, strong, readonly) Okidoki *(^tvDidBeginEditing)(OkidokiTextViewDidBeginEditingBlock block);
 
 /** 
  textViewShouldEndEditing: block
@@ -1344,7 +1344,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTextViewShouldEndEditingBlock block))tvShouldEndEditing;
+@property (nonatomic, strong, readonly) Okidoki *(^tvShouldEndEditing)(OkidokiTextViewShouldEndEditingBlock block);
 
 /** 
  textViewDidEndEditing: block
@@ -1354,7 +1354,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTextViewDidEndEditingBlock block))tvDidEndEditing;
+@property (nonatomic, strong, readonly) Okidoki *(^tvDidEndEditing)(OkidokiTextViewDidEndEditingBlock block);
 
 /** 
  textViewDidChange: block
@@ -1364,7 +1364,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTextViewDidChangeBlock block))tvDidChange;
+@property (nonatomic, strong, readonly) Okidoki *(^tvDidChange)(OkidokiTextViewDidChangeBlock block);
 
 /** 
  textViewDidChangeSelection: block
@@ -1374,7 +1374,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTextViewDidChangeSelectionBlock block))tvDidChangeSelection;
+@property (nonatomic, strong, readonly) Okidoki *(^tvDidChangeSelection)(OkidokiTextViewDidChangeSelectionBlock block);
 
 /** 
  textView:shouldChangeTextInRange:replacementText: block
@@ -1384,7 +1384,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiTextViewShouldChangeTextBlock block))tvShouldChangeText;
+@property (nonatomic, strong, readonly) Okidoki *(^tvShouldChangeText)(OkidokiTextViewShouldChangeTextBlock block);
 
 /** 
  textView:shouldChangeTextInRanges:replacementText: block (iOS 26+)
@@ -1395,7 +1395,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  }) API_AVAILABLE(ios(26.0), tvos(26.0), visionos(26.0), watchos(26.0))
  @endcode
  */
-- (Okidoki*(^)(OkidokiTextViewShouldChangeTextInRangesBlock block))tvShouldChangeTextInRanges API_AVAILABLE(ios(26.0), tvos(26.0), visionos(26.0), watchos(26.0));
+@property (nonatomic, strong, readonly) Okidoki *(^tvShouldChangeTextInRanges)(OkidokiTextViewShouldChangeTextInRangesBlock block) API_AVAILABLE(ios(26.0), tvos(26.0), visionos(26.0), watchos(26.0));
 
 /** 
  Keyboard notification handler for UITextView
@@ -1407,7 +1407,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  })
  @endcode
  */
-- (Okidoki*(^)(OkidokiKeyboardHandlerBlock block))keyboardHandler;
+@property (nonatomic, strong, readonly) Okidoki *(^keyboardHandler)(OkidokiKeyboardHandlerBlock block);
 
 /** 
  Configure input limit for UITextView
@@ -1425,7 +1425,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .tvInputLimit(OkidokiInputLimitTypeChinese | OkidokiInputLimitTypeAlphabet, 200, nil, nil)
  @endcode
  */
-- (Okidoki*(^)(OkidokiInputLimitType type, NSUInteger length, NSString * _Nullable customCharacters, OkidokiInputLimitDidChangeBlock _Nullable changeBlock))tvInputLimit;
+@property (nonatomic, strong, readonly) Okidoki *(^tvInputLimit)(OkidokiInputLimitType type, NSUInteger length, NSString * _Nullable customCharacters, OkidokiInputLimitDidChangeBlock _Nullable changeBlock);
 
 @end
 
@@ -1444,7 +1444,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .leadingAnchor(@[brotherView.trailingAnchor, @20])
  @endcode
  */
-- (Okidoki*(^)(id params))leadingAnchor;
+@property (nonatomic, strong, readonly) Okidoki *(^leadingAnchor)(id params);
 
 /**
  Leading anchor constraint (greater than or equal)
@@ -1453,7 +1453,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .leadingAnchorGreaterOrEqual(@[superview, @20])
  @endcode
  */
-- (Okidoki*(^)(id params))leadingAnchorGreaterOrEqual;
+@property (nonatomic, strong, readonly) Okidoki *(^leadingAnchorGreaterOrEqual)(id params);
 
 /**
  Leading anchor constraint (less than or equal)
@@ -1462,7 +1462,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .leadingAnchorLessOrEqual(@[superview, @20])
  @endcode
  */
-- (Okidoki*(^)(id params))leadingAnchorLessOrEqual;
+@property (nonatomic, strong, readonly) Okidoki *(^leadingAnchorLessOrEqual)(id params);
 
 /**
  Trailing anchor constraint
@@ -1473,7 +1473,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .trailingAnchor(@[brotherView.leadingAnchor, @(-20)])
  @endcode
  */
-- (Okidoki*(^)(id params))trailingAnchor;
+@property (nonatomic, strong, readonly) Okidoki *(^trailingAnchor)(id params);
 
 /**
  Trailing anchor constraint (greater than or equal)
@@ -1482,7 +1482,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .trailingAnchorGreaterOrEqual(@[superview, @(-20)])
  @endcode
  */
-- (Okidoki*(^)(id params))trailingAnchorGreaterOrEqual;
+@property (nonatomic, strong, readonly) Okidoki *(^trailingAnchorGreaterOrEqual)(id params);
 
 /**
  Trailing anchor constraint (less than or equal)
@@ -1491,7 +1491,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .trailingAnchorLessOrEqual(@[superview, @(-20)])
  @endcode
  */
-- (Okidoki*(^)(id params))trailingAnchorLessOrEqual;
+@property (nonatomic, strong, readonly) Okidoki *(^trailingAnchorLessOrEqual)(id params);
 
 /**
  Left anchor constraint
@@ -1501,7 +1501,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .leftAnchor(@[superview, @20])
  @endcode
  */
-- (Okidoki*(^)(id params))leftAnchor;
+@property (nonatomic, strong, readonly) Okidoki *(^leftAnchor)(id params);
 
 /**
  Left anchor constraint (greater than or equal)
@@ -1510,7 +1510,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .leftAnchorGreaterOrEqual(@[superview, @20])
  @endcode
  */
-- (Okidoki*(^)(id params))leftAnchorGreaterOrEqual;
+@property (nonatomic, strong, readonly) Okidoki *(^leftAnchorGreaterOrEqual)(id params);
 
 /**
  Left anchor constraint (less than or equal)
@@ -1519,7 +1519,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .leftAnchorLessOrEqual(@[superview, @20])
  @endcode
  */
-- (Okidoki*(^)(id params))leftAnchorLessOrEqual;
+@property (nonatomic, strong, readonly) Okidoki *(^leftAnchorLessOrEqual)(id params);
 
 /**
  Right anchor constraint
@@ -1529,7 +1529,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .rightAnchor(@[superview, @(-20)])
  @endcode
  */
-- (Okidoki*(^)(id params))rightAnchor;
+@property (nonatomic, strong, readonly) Okidoki *(^rightAnchor)(id params);
 
 /**
  Right anchor constraint (greater than or equal)
@@ -1538,7 +1538,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .rightAnchorGreaterOrEqual(@[superview, @(-20)])
  @endcode
  */
-- (Okidoki*(^)(id params))rightAnchorGreaterOrEqual;
+@property (nonatomic, strong, readonly) Okidoki *(^rightAnchorGreaterOrEqual)(id params);
 
 /**
  Right anchor constraint (less than or equal)
@@ -1547,7 +1547,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .rightAnchorLessOrEqual(@[superview, @(-20)])
  @endcode
  */
-- (Okidoki*(^)(id params))rightAnchorLessOrEqual;
+@property (nonatomic, strong, readonly) Okidoki *(^rightAnchorLessOrEqual)(id params);
 
 /**
  Top anchor constraint
@@ -1559,7 +1559,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .topAnchor(@[brotherView.bottomAnchor, @10])
  @endcode
  */
-- (Okidoki*(^)(id params))topAnchor;
+@property (nonatomic, strong, readonly) Okidoki *(^topAnchor)(id params);
 
 /**
  Top anchor constraint (greater than or equal)
@@ -1568,7 +1568,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .topAnchorGreaterOrEqual(@[superview, @10])
  @endcode
  */
-- (Okidoki*(^)(id params))topAnchorGreaterOrEqual;
+@property (nonatomic, strong, readonly) Okidoki *(^topAnchorGreaterOrEqual)(id params);
 
 /**
  Top anchor constraint (less than or equal)
@@ -1577,7 +1577,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .topAnchorLessOrEqual(@[superview, @10])
  @endcode
  */
-- (Okidoki*(^)(id params))topAnchorLessOrEqual;
+@property (nonatomic, strong, readonly) Okidoki *(^topAnchorLessOrEqual)(id params);
 
 /**
  Bottom anchor constraint
@@ -1588,7 +1588,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .bottomAnchor(@[brotherView.topAnchor, @(-10)])
  @endcode
  */
-- (Okidoki*(^)(id params))bottomAnchor;
+@property (nonatomic, strong, readonly) Okidoki *(^bottomAnchor)(id params);
 
 /**
  Bottom anchor constraint (greater than or equal)
@@ -1597,7 +1597,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .bottomAnchorGreaterOrEqual(@[superview, @(-10)])
  @endcode
  */
-- (Okidoki*(^)(id params))bottomAnchorGreaterOrEqual;
+@property (nonatomic, strong, readonly) Okidoki *(^bottomAnchorGreaterOrEqual)(id params);
 
 /**
  Bottom anchor constraint (less than or equal)
@@ -1606,7 +1606,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .bottomAnchorLessOrEqual(@[superview, @(-10)])
  @endcode
  */
-- (Okidoki*(^)(id params))bottomAnchorLessOrEqual;
+@property (nonatomic, strong, readonly) Okidoki *(^bottomAnchorLessOrEqual)(id params);
 
 /**
  Width anchor constraint
@@ -1617,7 +1617,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .widthAnchor(@[superview, @0.5, @(-20)])
  @endcode
  */
-- (Okidoki*(^)(id params))widthAnchor;
+@property (nonatomic, strong, readonly) Okidoki *(^widthAnchor)(id params);
 
 /**
  Width anchor constraint (greater than or equal)
@@ -1628,7 +1628,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .widthAnchorGreaterOrEqual(@[superview, @0.5, @0])
  @endcode
  */
-- (Okidoki*(^)(id params))widthAnchorGreaterOrEqual;
+@property (nonatomic, strong, readonly) Okidoki *(^widthAnchorGreaterOrEqual)(id params);
 
 /**
  Width anchor constraint (less than or equal)
@@ -1639,7 +1639,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .widthAnchorLessOrEqual(@[superview, @1.0, @(-20)])
  @endcode
  */
-- (Okidoki*(^)(id params))widthAnchorLessOrEqual;
+@property (nonatomic, strong, readonly) Okidoki *(^widthAnchorLessOrEqual)(id params);
 
 /**
  Height anchor constraint
@@ -1650,7 +1650,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .heightAnchor(@[superview, @0.5, @0])
  @endcode
  */
-- (Okidoki*(^)(id params))heightAnchor;
+@property (nonatomic, strong, readonly) Okidoki *(^heightAnchor)(id params);
 
 /**
  Height anchor constraint (greater than or equal)
@@ -1661,7 +1661,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .heightAnchorGreaterOrEqual(@[superview, @0.5, @0])
  @endcode
  */
-- (Okidoki*(^)(id params))heightAnchorGreaterOrEqual;
+@property (nonatomic, strong, readonly) Okidoki *(^heightAnchorGreaterOrEqual)(id params);
 
 /**
  Height anchor constraint (less than or equal)
@@ -1672,7 +1672,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .heightAnchorLessOrEqual(@[superview, @1.0, @0])
  @endcode
  */
-- (Okidoki*(^)(id params))heightAnchorLessOrEqual;
+@property (nonatomic, strong, readonly) Okidoki *(^heightAnchorLessOrEqual)(id params);
 
 /**
  CenterX anchor constraint
@@ -1682,7 +1682,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .centerXAnchor(@[superview, @10])
  @endcode
  */
-- (Okidoki*(^)(id params))centerXAnchor;
+@property (nonatomic, strong, readonly) Okidoki *(^centerXAnchor)(id params);
 
 /**
  CenterX anchor constraint (greater than or equal)
@@ -1691,7 +1691,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .centerXAnchorGreaterOrEqual(@[superview, @10])
  @endcode
  */
-- (Okidoki*(^)(id params))centerXAnchorGreaterOrEqual;
+@property (nonatomic, strong, readonly) Okidoki *(^centerXAnchorGreaterOrEqual)(id params);
 
 /**
  CenterX anchor constraint (less than or equal)
@@ -1700,7 +1700,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .centerXAnchorLessOrEqual(@[superview, @10])
  @endcode
  */
-- (Okidoki*(^)(id params))centerXAnchorLessOrEqual;
+@property (nonatomic, strong, readonly) Okidoki *(^centerXAnchorLessOrEqual)(id params);
 
 /**
  CenterY anchor constraint
@@ -1710,7 +1710,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .centerYAnchor(@[superview, @0])
  @endcode
  */
-- (Okidoki*(^)(id params))centerYAnchor;
+@property (nonatomic, strong, readonly) Okidoki *(^centerYAnchor)(id params);
 
 /**
  CenterY anchor constraint (greater than or equal)
@@ -1719,7 +1719,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .centerYAnchorGreaterOrEqual(@[superview, @0])
  @endcode
  */
-- (Okidoki*(^)(id params))centerYAnchorGreaterOrEqual;
+@property (nonatomic, strong, readonly) Okidoki *(^centerYAnchorGreaterOrEqual)(id params);
 
 /**
  CenterY anchor constraint (less than or equal)
@@ -1728,7 +1728,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .centerYAnchorLessOrEqual(@[superview, @0])
  @endcode
  */
-- (Okidoki*(^)(id params))centerYAnchorLessOrEqual;
+@property (nonatomic, strong, readonly) Okidoki *(^centerYAnchorLessOrEqual)(id params);
 
 /**
  Edge to superview with insets
@@ -1742,7 +1742,7 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  .edgeToSuperView(nil)
  @endcode
  */
-- (Okidoki*(^)(id _Nullable params))edgeToSuperView;
+@property (nonatomic, strong, readonly) Okidoki *(^edgeToSuperView)(id _Nullable params);
 
 @end
 
