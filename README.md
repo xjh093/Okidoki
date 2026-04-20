@@ -67,6 +67,10 @@ textView.okidoki
 
 # Logs:
 
+### 2026-04-20
+- 0.1.0
+  - 方法声明替换
+
 ### 2026-04-03
 - 0.0.14
   - Input Limit: tfInputLimit & tvInputLimit
