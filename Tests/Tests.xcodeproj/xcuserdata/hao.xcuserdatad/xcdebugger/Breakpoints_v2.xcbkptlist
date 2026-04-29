@@ -30,8 +30,8 @@
             filePath = "Tests/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "541"
-            endingLineNumber = "541"
+            startingLineNumber = "758"
+            endingLineNumber = "758"
             landmarkName = "-tableView"
             landmarkType = "7">
          </BreakpointContent>
@@ -49,6 +49,22 @@
             startingLineNumber = "481"
             endingLineNumber = "481"
             landmarkName = "-testControl"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A58E1437-D314-4CA9-B1AC-8ACC5F3D2210"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Tests/ViewController.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "200"
+            endingLineNumber = "200"
+            landmarkName = "-basic_Example"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

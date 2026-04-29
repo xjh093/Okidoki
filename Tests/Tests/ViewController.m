@@ -22,12 +22,13 @@
 
     // See TestsTests.m for more infomation.
 
+    [self basic_Example];
 
 //    [self shadow_Example];
     
 //    [self layout_Example:self.view];
     
-    [self panAnimation_Example];
+//    [self panAnimation_Example];
     
 //    [self tableView_Example];
     
@@ -38,6 +39,222 @@
 //    [self textView_Example];
     
 
+}
+
+- (void)basic_Example
+{
+    UIView.new.okidoki
+    .addToSuperview(UIScrollView.new.okidoki
+                    .addToSuperview(self.view)
+                    .edgeToSuperView(nil)
+                    .view)
+    .tag(@100)
+    //.frame([NSValue valueWithCGRect:CGRectInset(self.view.bounds, 20, 70)])
+    .alpha(@1)
+    .hidden(@"0")
+    .bgColor(@"EEEEEE")
+    .bdColor(@"FFFEEE")
+    .bdWidth(@1)
+    .cnRadius(@6)
+    .shadowColor(@"#000000") // 黑色阴影
+    .shadowOpacity(@0.3) // 不透明度 30%
+    .shadowOffset(@"{0, 2}") // 向下偏移 2pt
+    .shadowRadius(@4)
+    .edgeToSuperView(@20)
+    .widthAnchor(@[self.view, @1, @-40]) // 宽度为屏幕的宽度 * 1 - 40
+    .addSubviewWithConfig(UILabel.new, ^(Okidoki * _Nonnull ok) {
+        UIView *s = ok.view.superview;
+        ok.tag(@101)
+        .text(@"Okidoki")
+        .font(@"b24")
+        .color(@"333333")
+        .leadingAnchor(@[s.leadingAnchor, @20])
+        .topAnchor(@[s, @20]);
+    })
+    .addSubviewWithConfig(UILabel.new, ^(Okidoki * _Nonnull ok) {
+        UIView *s = ok.view.superview;
+        UIView *b1 = [s viewWithTag:101];
+        
+        ok.tag(@102)
+        .text(@"1、这是一个用于 iOS 开发的 Objective-C 库，核心功能是用链式语法来设置 UIKit 控件的属性。")
+        .font(@"18")
+        .color(@"444444")
+        .lines(@0)
+        .leadingAnchor(@[s.leadingAnchor, @20])
+        .trailingAnchor(@[s, @-20])
+        .topAnchor(@[b1.bottomAnchor, @10]);
+    })
+    .addSubviewWithConfig(UIView.new, ^(Okidoki * _Nonnull ok) {
+        UIView *s = ok.view.superview;
+        UIView *b2 = [s viewWithTag:102];
+        
+        [self setupCodeSubView:ok tag:103 subView:b2
+                          text:@"1.1、基础 UI 属性"
+                        detail:@"链式设置 tag、透明度、背景色、圆角、边框等。"
+                          code:@"代码示例：\n```\nview.okidoki\n.tag(@100)\n.alpha(@0.5)\n.cnRadius(@3);\n```"];
+    })
+    .addSubviewWithConfig(UIView.new, ^(Okidoki * _Nonnull ok) {
+        UIView *s = ok.view.superview;
+        UIView *b3 = [s viewWithTag:103];
+        
+        [self setupCodeSubView:ok tag:104 subView:b3
+                          text:@"1.2、文本控件"
+                        detail:@"快速配置文本、颜色、字体、对齐、行数等。"
+                          code:@"代码示例：\n```\nlabel.okidoki\n.text(@\"label\")\n.font([UIFont systemFontOfSize:14]);\n```"];
+    })
+    .addSubviewWithConfig(UIView.new, ^(Okidoki * _Nonnull ok) {
+        UIView *s = ok.view.superview;
+        UIView *b4 = [s viewWithTag:104];
+        
+        [self setupCodeSubView:ok tag:105 subView:b4
+                          text:@"1.3、按钮"
+                        detail:@"为不同状态设置标题、颜色和图片。"
+                          code:@"代码示例：\n```\nbutton.okidoki\n.titleForState(@\"button\",@0);\n```"];
+    })
+    .addSubviewWithConfig(UIView.new, ^(Okidoki * _Nonnull ok) {
+        UIView *s = ok.view.superview;
+        UIView *b5 = [s viewWithTag:105];
+        
+        [self setupCodeSubView:ok tag:106 subView:b5
+                          text:@"1.4、输入限制"
+                        detail:@"支持为 UITextField 和 UITextView 设置输入字符类型和长度限制。"
+                          code:@"代码示例：\n```\ntextField.okidoki.\ntfInputLimit(OkidokiInputLimitTypeDigital, 6, nil, nil);\n```"];
+    })
+    
+    .addSubviewWithConfig(UILabel.new, ^(Okidoki * _Nonnull ok) {
+        UIView *s = ok.view.superview;
+        UIView *b1 = [s viewWithTag:106];
+        
+        ok.tag(@107)
+        .text(@"2、还支持自动布局、手势、键盘处理、输入限制等等。")
+        .font(@"18")
+        .color(@"444444")
+        .lines(@0)
+        .leadingAnchor(@[b1])
+        .trailingAnchor(@[b1])
+        .topAnchor(@[b1.bottomAnchor, @30]);
+    })
+    .addSubviewWithConfig(UIView.new, ^(Okidoki * _Nonnull ok) {
+        UIView *s = ok.view.superview;
+        UIView *b2 = [s viewWithTag:107];
+        
+        [self setupCodeSubView:ok tag:108 subView:b2
+                          text:@"2.1、自动布局"
+                        detail:@"支持系统的 AutoLayout，快速调用设置约束。"
+                          code:@"代码示例：\n```\nUIView.new.okidoki\n"
+         @".addToSuperview(UIScrollView.new.okidoki\n"
+         @"    .addToSuperview(self.view)\n"
+         @"    .edgeToSuperView(nil)\n"
+         @"    .view)\n"
+         @".tag(@100)\n"
+         @".edgeToSuperView(@20)\n"
+         @".widthAnchor(@[self.view, @1, @-40])\n```"];
+    })
+    .addSubviewWithConfig(UIView.new, ^(Okidoki * _Nonnull ok) {
+        UIView *s = ok.view.superview;
+        UIView *b2 = [s viewWithTag:108];
+        
+        [self setupCodeSubView:ok tag:109 subView:b2
+                          text:@"2.2、手势"
+                        detail:@"支持系统的常用手势，快速设置。"
+                          code:@"代码示例：\n```\nview.okidoki.tapGesture(^(UITapGestureRecognizer *tap) {\n"
+            @"    NSLog(@\"点击了视图\");\n"
+            @"})\n"
+            @".longPressGesture(^(UILongPressGestureRecognizer *longPress) {\n"
+            @"    if (longPress.state == UIGestureRecognizerStateBegan) {\n"
+            @"        NSLog(@\"长按开始\");\n"
+            @"    }\n"
+            @"})\n"
+            @".swipeGesture(UISwipeGestureRecognizerDirectionRight, ^(UISwipeGestureRecognizer *swipe) {\n"
+            @"    NSLog(@\"向右滑动\");\n"
+            @"})\n"
+            @".panGesture(^(UIPanGestureRecognizer *pan) {\n"
+            @"    NSLog(@\"拖动视图\");\n"
+            @"})\n"
+            @".pinchGesture(^(UIPinchGestureRecognizer *pinch) {\n"
+            @"    NSLog(@\"缩放视图\");\n"
+            @"})\n"
+            @".rotationGesture(^(UIRotationGestureRecognizer *rotation) {\n"
+            @"    NSLog(@\"旋转视图\");\n"
+            @"})\n```"];
+    })
+    .addSubviewWithConfig(UIView.new, ^(Okidoki * _Nonnull ok) {
+        UIView *s = ok.view.superview;
+        UIView *b2 = [s viewWithTag:109];
+        
+        [self setupCodeSubView:ok tag:110 subView:b2
+                          text:@"2.3、输入限制"
+                        detail:@"过滤数字、字母、中文，限制长度，以及自定义字符。"
+                          code:@"代码示例：\n```\ntextField.okidoki\n"
+         @".tfInputLimit(OkidokiInputLimitTypeDigital, 6, nil, ^(NSString *original, NSString *matched) {\n"
+         @"    // 限制只能输入数字,且最大长度为 6\n"
+         @"    NSLog(@\"Input changed: %@ -> %@\", original, matched);\n"
+         @"})\n```"];
+    })
+    
+    
+    .addSubviewWithConfig(UILabel.new, ^(Okidoki * _Nonnull ok) {
+        UIView *s = ok.view.superview;
+        UIView *b = s.subviews[s.subviews.count-2];
+        
+        ok.tag(@1999)
+        .text(@"End")
+        .font(@"b24")
+        .color(@"333333")
+        .leadingAnchor(@[b])
+        .topAnchor(@[b.bottomAnchor, @30])
+        .bottomAnchor(@[s, @-20]);
+    })
+    ;
+}
+
+- (void)setupCodeSubView:(Okidoki *)ok tag:(NSInteger)tag subView:(UIView *)b2 text:(NSString *)text detail:(NSString *)detail code:(NSString *)code
+{
+    ok.tag(@(tag))
+    .bgColor(@"DDDDDD")
+    .bdColor(@"CCCCCC")
+    .bdWidth(@1)
+    .cnRadius(@6)
+    .leadingAnchor(@[b2])
+    .trailingAnchor(@[b2])
+    .topAnchor(@[b2.bottomAnchor, @10])
+    .addSubviewWithConfig(UILabel.new, ^(Okidoki * _Nonnull ok) {
+        UIView *s = ok.view.superview;
+        ok.tag(@1000)
+        .text(text)
+        .font(@"14")
+        .color(@"666666")
+        .leadingAnchor(@[s, @10])
+        .trailingAnchor(@[s, @-10])
+        .topAnchor(@[s, @10]);
+    })
+    .addSubviewWithConfig(UILabel.new, ^(Okidoki * _Nonnull ok) {
+        UIView *s = ok.view.superview;
+        UIView *b1 = [s viewWithTag:1000];
+        
+        ok.tag(@2000)
+        .text(detail)
+        .font(@"14")
+        .color(@"666666")
+        .lines(@0)
+        .leadingAnchor(@[b1])
+        .trailingAnchor(@[b1])
+        .topAnchor(@[b1.bottomAnchor, @10]);
+    })
+    .addSubviewWithConfig(UILabel.new, ^(Okidoki * _Nonnull ok) {
+        UIView *s = ok.view.superview;
+        UIView *b1 = [s viewWithTag:2000];
+        
+        ok.tag(@3000)
+        .text(code)
+        .font(@"14")
+        .color(@"666666")
+        .lines(@0)
+        .leadingAnchor(@[b1])
+        .trailingAnchor(@[b1])
+        .topAnchor(@[b1.bottomAnchor, @10])
+        .bottomAnchor(@[s]);
+    });
 }
 
 - (void)refreshAction
