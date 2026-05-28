@@ -192,6 +192,20 @@
          @"})\n```"];
     })
     
+    .addSubviewWithConfig([self shadow_Example], ^(Okidoki * _Nonnull ok) {
+        UIView *s = ok.view.superview;
+        UIView *b2 = [s viewWithTag:110];
+        
+        ok.tag(@(111))
+        .bgColor(@"DDDDDD")
+        .bdColor(@"CCCCCC")
+        .bdWidth(@1)
+        .cnRadius(@6)
+        .leadingAnchor(@[b2])
+        .trailingAnchor(@[b2])
+        .topAnchor(@[b2.bottomAnchor, @10])
+        .heightAnchor(@600);
+    })
     
     .addSubviewWithConfig(UILabel.new, ^(Okidoki * _Nonnull ok) {
         UIView *s = ok.view.superview;
@@ -274,15 +288,14 @@
     NSLog(@"viewDidLayoutSubviews");
 }
 
-- (void)shadow_Example
+- (UIView *)shadow_Example
 {
-    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
-    view.userInteractionEnabled = YES;
+    UIView *view = [[UIView alloc] init];
     
     // 示例 1: 基础阴影效果
-    view.okidoki
-    .addToSuperview(self.view)
-    .frame(@"{{30, 70}, {100, 100}}")
+    UIView.new.okidoki
+    .addToSuperview(view)
+    .frame(@"{{20, 30}, {60, 60}}")
     .bgColor(@"#FFFFFF")
     .cnRadius(@10)
     .shadowColor(@"#000000")           // 黑色阴影
@@ -293,8 +306,8 @@
     // 示例 2: 卡片阴影效果
     UIView *card = [[UIView alloc] init];
     card.okidoki
-    .addToSuperview(self.view)
-    .frame(@"{{170, 70}, {200, 100}}")
+    .addToSuperview(view)
+    .frame(@"{{100, 30}, {200, 60}}")
     .bgColor(@"#FFFFFF")
     .cnRadius(@8)
     .shadowColor(@"#333333")
@@ -305,8 +318,8 @@
     // 示例 3: 浮起效果（大阴影）
     UIView *floatView = [[UIView alloc] init];
     floatView.okidoki
-    .addToSuperview(self.view)
-    .frame(@"{{20, 200}, {200, 80}}")
+    .addToSuperview(view)
+    .frame(@"{{20, 120}, {200, 80}}")
     .bgColor(@"#FF6B6B")
     .cnRadius(@16)
     .shadowColor(@"#000000")
@@ -315,10 +328,10 @@
     .shadowRadius(@20);
 
     // 示例 4: 使用 shadowPath 优化性能
-    UIView *optimizedView = [[UIView alloc] initWithFrame:CGRectMake(20, 320, 150, 100)];
+    UIView *optimizedView = [[UIView alloc] initWithFrame:CGRectMake(20, 250, 150, 100)];
     UIBezierPath *shadowPath = [UIBezierPath bezierPathWithRoundedRect:optimizedView.bounds cornerRadius:10];
     optimizedView.okidoki
-    .addToSuperview(self.view)
+    .addToSuperview(view)
     .bgColor(@"#4ECDC4")
     .cnRadius(@10)
     .shadowColor(@"#000000")
@@ -330,8 +343,8 @@
     // 示例 5: 内阴影效果（需要配合 masksToBounds）
     UIView *innerShadow = [[UIView alloc] init];
     innerShadow.okidoki
-    .addToSuperview(self.view)
-    .frame(@"{{250, 320}, {100, 100}}")
+    .addToSuperview(view)
+    .frame(@"{{200, 250}, {100, 100}}")
     .bgColor(@"#95E1D3")
     .cnRadius(@50)                     // 圆形
     .mtBounds(@NO)                     // 不裁剪，显示阴影
@@ -343,8 +356,8 @@
     // 示例 6: 彩色阴影
     UIView *colorShadow = [[UIView alloc] init];
     colorShadow.okidoki
-    .addToSuperview(self.view)
-    .frame(@"{{20, 450}, {120, 60}}")
+    .addToSuperview(view)
+    .frame(@"{{20, 400}, {120, 60}}")
     .bgColor(@"#FFFFFF")
     .cnRadius(@12)
     .shadowColor(@"#FF6B6B")           // 红色阴影
@@ -355,8 +368,8 @@
     // 示例 7: UILabel 带阴影
     UILabel *label = [[UILabel alloc] init];
     label.okidoki
-    .addToSuperview(self.view)
-    .frame(@"{{20, 550}, {200, 50}}")
+    .addToSuperview(view)
+    .frame(@"{{20, 500}, {160, 50}}")
     .text(@"带阴影的文字")
     .align(@1)
     .font(@"b20")
@@ -373,8 +386,8 @@
     // 示例 8: 按钮点击效果（通过改变阴影）
     UIButton *button = [[UIButton alloc] init];
     button.okidoki
-    .addToSuperview(self.view)
-    .frame(@"{{250, 550}, {100, 44}}")
+    .addToSuperview(view)
+    .frame(@"{{220, 500}, {80, 44}}")
     .title(@"按钮")
     .color(@"00FF00")
     .bgColor(@"#A29BFE")
@@ -385,6 +398,8 @@
     .shadowRadius(@8)
     .colorForState(@"FF00FF", @(UIControlStateHighlighted))
     .highlighted(@1);
+    
+    return view;
 }
 
 - (void)layout_Example:(UIView *)containerView
