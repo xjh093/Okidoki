@@ -207,6 +207,37 @@
         .heightAnchor(@600);
     })
     
+    .addSubviewWithConfig([self layout_Example], ^(Okidoki * _Nonnull ok) {
+        UIView *s = ok.view.superview;
+        UIView *b2 = [s viewWithTag:111];
+        
+        ok.tag(@(112))
+        .bgColor(@"DDDDDD")
+        .bdColor(@"CCCCCC")
+        .bdWidth(@1)
+        .cnRadius(@6)
+        .leadingAnchor(@[b2])
+        .trailingAnchor(@[b2])
+        .topAnchor(@[b2.bottomAnchor, @10])
+        .heightAnchor(@800);
+    })
+    
+    .addSubviewWithConfig([self panAnimation_Example], ^(Okidoki * _Nonnull ok) {
+        UIView *s = ok.view.superview;
+        UIView *b2 = [s viewWithTag:112];
+        
+        ok.tag(@(113))
+        .bgColor(@"DDDDDD")
+        .bdColor(@"CCCCCC")
+        .bdWidth(@1)
+        .cnRadius(@6)
+        .leadingAnchor(@[b2])
+        .trailingAnchor(@[b2])
+        .topAnchor(@[b2.bottomAnchor, @10])
+        .heightAnchor(@600);
+    })
+    
+    
     .addSubviewWithConfig(UILabel.new, ^(Okidoki * _Nonnull ok) {
         UIView *s = ok.view.superview;
         UIView *b = s.subviews[s.subviews.count-2];
@@ -402,8 +433,10 @@
     return view;
 }
 
-- (void)layout_Example:(UIView *)containerView
+- (UIView *)layout_Example
 {
+    UIView *containerView = [[UIView alloc] init];
+    
     // 示例 1: 基础布局 - 固定大小
     UIView *box1 = [[UIView alloc] init];
     box1.okidoki
@@ -412,7 +445,15 @@
     .widthAnchor(@100)           // 宽度 100
     .heightAnchor(@100)          // 高度 100
     .centerXAnchor(@[containerView])  // 水平居中
-    .topAnchor(@[containerView, @(80)])
+    .topAnchor(@[containerView, @(20)])
+    .addSubviewWithConfig(UILabel.new, ^(Okidoki * _Nonnull ok) {
+        UIView *s = ok.view.superview;
+        
+        ok.widthAnchor(@[s])
+        .heightAnchor(@40)
+        .text(@"手势事件")
+        .align(@1);
+    })
     .tapGesture(^(UITapGestureRecognizer *tap) {
         NSLog(@"点击了视图");
         tap.view.okidoki.removeGesture(UITapGestureRecognizer.class);
@@ -598,9 +639,12 @@
         .widthAnchor(@6)
         .heightAnchor(@100);
     });
+    
+    return containerView;
 }
 
-- (void)panAnimation_Example
+
+- (UIView *)panAnimation_Example
 {
 #if 0
     UIView *box1 = UIView.new;
@@ -643,13 +687,16 @@
     .widthAnchorGreaterOrEqual(@100)   // 现在会生效！
     .heightAnchorGreaterOrEqual(@100);  // 现在会生效！
 #else
+    
+    UIView *view = [[UIView alloc] init];
+    
     UIView *box1 = UIView.new;
     UIView *box2 = UIView.new;
     
     box1.okidoki
-    .addToSuperview(self.view)
+    .addToSuperview(view)
     //.frame(@"{{30, 70}, {100, 100}}")
-    .frame([NSValue valueWithCGRect:CGRectMake(30, 70, 100, 100)])
+    .frame([NSValue valueWithCGRect:CGRectMake(30, 50, 100, 100)])
     .bgColor(@"FF0000".okidokiHexColor.okidokiAlpha(0.8))
     .panGesture(^(UIPanGestureRecognizer *pan) {
         NSLog(@"拖动视图");
@@ -670,12 +717,12 @@
     });
     
     box2.okidoki
-    .addToSuperview(self.view)
+    .addToSuperview(view)
     .bgColor(UIColor.systemGreenColor.okidokiAlpha(0.9))
     .leadingAnchor(@[box1, @10])
     .topAnchor(@[box1.bottomAnchor, @20])
-    .rightAnchor(@[self.view, @(-120)])
-    .bottomAnchor(@[self.view, @(-120)])
+    .rightAnchor(@[view, @(-100)])
+    .bottomAnchor(@[view, @(-100)])
     .widthAnchorGreaterOrEqual(@100)
     .heightAnchorGreaterOrEqual(@[@100]);
     
@@ -690,7 +737,7 @@
 //    }
     
     // box2 的 bottom, right 约束, 调低优先级
-    for (NSLayoutConstraint *c in self.view.constraints) {
+    for (NSLayoutConstraint *c in view.constraints) {
         if (c.firstItem == box2){ // 关键：检查是哪个视图的约束
             if ([c.identifier isEqualToString:@"okidoki_bottom"]) {
                 c.priority = 900;
@@ -700,6 +747,7 @@
         }
     }
     
+    return view;
 #endif
 }
 
