@@ -940,9 +940,26 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number)
 
 @interface Okidoki ()
 @property (nonatomic,    weak) UIView *view;
+@property (nonatomic, assign) NSInteger batchDepth;
+@property (nonatomic, strong) NSMutableArray<NSLayoutConstraint *> *batchConstraints;
 @end
 
 @implementation Okidoki
+
+#pragma mark - Batch
+
+- (void)p_activateConstraint:(NSLayoutConstraint *)constraint {
+    if (self.batchDepth > 0) {
+        // 同 identifier 的只保留最后一个，避免重复约束冲突
+        if (constraint.identifier) {
+            [self.batchConstraints filterUsingPredicate:
+                [NSPredicate predicateWithFormat:@"identifier != %@", constraint.identifier]];
+        }
+        [self.batchConstraints addObject:constraint];
+    } else {
+        constraint.active = YES;
+    }
+}
 
 #pragma mark - UIView
 
@@ -3396,7 +3413,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.leadingAnchor constraintEqualToAnchor:toAnchor constant:constant];
                     constraint.identifier = kOkidokiConstraintLeading;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -3426,7 +3443,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.leadingAnchor constraintGreaterThanOrEqualToAnchor:toAnchor constant:constant];
                     constraint.identifier = kOkidokiConstraintLeadingGTE;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -3456,7 +3473,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.leadingAnchor constraintLessThanOrEqualToAnchor:toAnchor constant:constant];
                     constraint.identifier = kOkidokiConstraintLeadingLTE;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -3486,7 +3503,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.trailingAnchor constraintEqualToAnchor:toAnchor constant:constant];
                     constraint.identifier = kOkidokiConstraintTrailing;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -3516,7 +3533,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.trailingAnchor constraintGreaterThanOrEqualToAnchor:toAnchor constant:constant];
                     constraint.identifier = kOkidokiConstraintTrailingGTE;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -3546,7 +3563,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.trailingAnchor constraintLessThanOrEqualToAnchor:toAnchor constant:constant];
                     constraint.identifier = kOkidokiConstraintTrailingLTE;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -3576,7 +3593,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.leftAnchor constraintEqualToAnchor:toAnchor constant:constant];
                     constraint.identifier = kOkidokiConstraintLeft;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -3606,7 +3623,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.leftAnchor constraintGreaterThanOrEqualToAnchor:toAnchor constant:constant];
                     constraint.identifier = kOkidokiConstraintLeftGTE;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -3636,7 +3653,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.leftAnchor constraintLessThanOrEqualToAnchor:toAnchor constant:constant];
                     constraint.identifier = kOkidokiConstraintLeftLTE;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -3666,7 +3683,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.rightAnchor constraintEqualToAnchor:toAnchor constant:constant];
                     constraint.identifier = kOkidokiConstraintRight;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -3696,7 +3713,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.rightAnchor constraintGreaterThanOrEqualToAnchor:toAnchor constant:constant];
                     constraint.identifier = kOkidokiConstraintRightGTE;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -3726,7 +3743,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.rightAnchor constraintLessThanOrEqualToAnchor:toAnchor constant:constant];
                     constraint.identifier = kOkidokiConstraintRightLTE;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -3756,7 +3773,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.topAnchor constraintEqualToAnchor:toAnchor constant:constant];
                     constraint.identifier = kOkidokiConstraintTop;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -3786,7 +3803,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.topAnchor constraintGreaterThanOrEqualToAnchor:toAnchor constant:constant];
                     constraint.identifier = kOkidokiConstraintTopGTE;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -3816,7 +3833,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.topAnchor constraintLessThanOrEqualToAnchor:toAnchor constant:constant];
                     constraint.identifier = kOkidokiConstraintTopLTE;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -3846,7 +3863,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.bottomAnchor constraintEqualToAnchor:toAnchor constant:constant];
                     constraint.identifier = kOkidokiConstraintBottom;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -3876,7 +3893,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.bottomAnchor constraintGreaterThanOrEqualToAnchor:toAnchor constant:constant];
                     constraint.identifier = kOkidokiConstraintBottomGTE;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -3906,7 +3923,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.bottomAnchor constraintLessThanOrEqualToAnchor:toAnchor constant:constant];
                     constraint.identifier = kOkidokiConstraintBottomLTE;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -3925,7 +3942,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
             CGFloat width = [params floatValue];
             NSLayoutConstraint *constraint = [view.widthAnchor constraintEqualToConstant:width];
             constraint.identifier = kOkidokiConstraintWidth;
-            constraint.active = YES;
+            [self p_activateConstraint:constraint];
         } else if ([params isKindOfClass:[NSArray class]]) {
             // 相对宽度
             NSArray *array = (NSArray *)params;
@@ -3944,7 +3961,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.widthAnchor constraintEqualToAnchor:toAnchor multiplier:multiplier constant:constant];
                     constraint.identifier = kOkidokiConstraintWidth;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -3963,7 +3980,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
             CGFloat height = [params floatValue];
             NSLayoutConstraint *constraint = [view.heightAnchor constraintEqualToConstant:height];
             constraint.identifier = kOkidokiConstraintHeight;
-            constraint.active = YES;
+            [self p_activateConstraint:constraint];
         } else if ([params isKindOfClass:[NSArray class]]) {
             // 相对高度
             NSArray *array = (NSArray *)params;
@@ -3982,7 +3999,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.heightAnchor constraintEqualToAnchor:toAnchor multiplier:multiplier constant:constant];
                     constraint.identifier = kOkidokiConstraintHeight;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -4001,7 +4018,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
             CGFloat width = [params floatValue];
             NSLayoutConstraint *constraint = [view.widthAnchor constraintGreaterThanOrEqualToConstant:width];
             constraint.identifier = kOkidokiConstraintWidthGTE;
-            constraint.active = YES;
+            [self p_activateConstraint:constraint];
         } else if ([params isKindOfClass:[NSArray class]]) {
             NSArray *array = (NSArray *)params;
             if (array.count > 0) {
@@ -4013,7 +4030,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                     CGFloat width = [firstItem floatValue];
                     NSLayoutConstraint *constraint = [view.widthAnchor constraintGreaterThanOrEqualToConstant:width];
                     constraint.identifier = kOkidokiConstraintWidthGTE;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 } else {
                     // 相对最小宽度: @[toView, multiplier, constant]
                     id toItem = firstItem;
@@ -4030,7 +4047,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                     if (toAnchor) {
                         NSLayoutConstraint *constraint = [view.widthAnchor constraintGreaterThanOrEqualToAnchor:toAnchor multiplier:multiplier constant:constant];
                         constraint.identifier = kOkidokiConstraintWidthGTE;
-                        constraint.active = YES;
+                        [self p_activateConstraint:constraint];
                     }
                 }
             }
@@ -4050,7 +4067,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
             CGFloat width = [params floatValue];
             NSLayoutConstraint *constraint = [view.widthAnchor constraintLessThanOrEqualToConstant:width];
             constraint.identifier = kOkidokiConstraintWidthLTE;
-            constraint.active = YES;
+            [self p_activateConstraint:constraint];
         } else if ([params isKindOfClass:[NSArray class]]) {
             // 相对最大宽度
             NSArray *array = (NSArray *)params;
@@ -4069,7 +4086,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.widthAnchor constraintLessThanOrEqualToAnchor:toAnchor multiplier:multiplier constant:constant];
                     constraint.identifier = kOkidokiConstraintWidthLTE;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -4088,7 +4105,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
             CGFloat height = [params floatValue];
             NSLayoutConstraint *constraint = [view.heightAnchor constraintGreaterThanOrEqualToConstant:height];
             constraint.identifier = kOkidokiConstraintHeightGTE;
-            constraint.active = YES;
+            [self p_activateConstraint:constraint];
         } else if ([params isKindOfClass:[NSArray class]]) {
             NSArray *array = (NSArray *)params;
             if (array.count > 0) {
@@ -4100,7 +4117,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                     CGFloat height = [firstItem floatValue];
                     NSLayoutConstraint *constraint = [view.heightAnchor constraintGreaterThanOrEqualToConstant:height];
                     constraint.identifier = kOkidokiConstraintHeightGTE;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 } else {
                     // 相对最小高度: @[toView, multiplier, constant]
                     id toItem = firstItem;
@@ -4117,7 +4134,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                     if (toAnchor) {
                         NSLayoutConstraint *constraint = [view.heightAnchor constraintGreaterThanOrEqualToAnchor:toAnchor multiplier:multiplier constant:constant];
                         constraint.identifier = kOkidokiConstraintHeightGTE;
-                        constraint.active = YES;
+                        [self p_activateConstraint:constraint];
                     }
                 }
             }
@@ -4137,7 +4154,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
             CGFloat height = [params floatValue];
             NSLayoutConstraint *constraint = [view.heightAnchor constraintLessThanOrEqualToConstant:height];
             constraint.identifier = kOkidokiConstraintHeightLTE;
-            constraint.active = YES;
+            [self p_activateConstraint:constraint];
         } else if ([params isKindOfClass:[NSArray class]]) {
             // 相对最大高度
             NSArray *array = (NSArray *)params;
@@ -4156,7 +4173,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.heightAnchor constraintLessThanOrEqualToAnchor:toAnchor multiplier:multiplier constant:constant];
                     constraint.identifier = kOkidokiConstraintHeightLTE;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -4186,7 +4203,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.centerXAnchor constraintEqualToAnchor:toAnchor constant:constant];
                     constraint.identifier = kOkidokiConstraintCenterX;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -4216,7 +4233,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.centerXAnchor constraintGreaterThanOrEqualToAnchor:toAnchor constant:constant];
                     constraint.identifier = kOkidokiConstraintCenterXGTE;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -4246,7 +4263,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.centerXAnchor constraintLessThanOrEqualToAnchor:toAnchor constant:constant];
                     constraint.identifier = kOkidokiConstraintCenterXLTE;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -4276,7 +4293,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.centerYAnchor constraintEqualToAnchor:toAnchor constant:constant];
                     constraint.identifier = kOkidokiConstraintCenterY;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -4306,7 +4323,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.centerYAnchor constraintGreaterThanOrEqualToAnchor:toAnchor constant:constant];
                     constraint.identifier = kOkidokiConstraintCenterYGTE;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -4336,7 +4353,7 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
                 if (toAnchor) {
                     NSLayoutConstraint *constraint = [view.centerYAnchor constraintLessThanOrEqualToAnchor:toAnchor constant:constant];
                     constraint.identifier = kOkidokiConstraintCenterYLTE;
-                    constraint.active = YES;
+                    [self p_activateConstraint:constraint];
                 }
             }
         }
@@ -4397,12 +4414,35 @@ static const char kOkidokiTextViewInputLimitHandlerKey;
             right = -insets.right;
         }
         
-        [view.topAnchor constraintEqualToAnchor:superview.topAnchor constant:top].active = YES;
-        [view.leadingAnchor constraintEqualToAnchor:superview.leadingAnchor constant:left].active = YES;
-        [view.trailingAnchor constraintEqualToAnchor:superview.trailingAnchor constant:right].active = YES;
-        [view.bottomAnchor constraintEqualToAnchor:superview.bottomAnchor constant:bottom].active = YES;
+        NSLayoutConstraint *edgeTop = [view.topAnchor constraintEqualToAnchor:superview.topAnchor constant:top];
+        NSLayoutConstraint *edgeLeading = [view.leadingAnchor constraintEqualToAnchor:superview.leadingAnchor constant:left];
+        NSLayoutConstraint *edgeTrailing = [view.trailingAnchor constraintEqualToAnchor:superview.trailingAnchor constant:right];
+        NSLayoutConstraint *edgeBottom = [view.bottomAnchor constraintEqualToAnchor:superview.bottomAnchor constant:bottom];
+        [self p_activateConstraint:edgeTop];
+        [self p_activateConstraint:edgeLeading];
+        [self p_activateConstraint:edgeTrailing];
+        [self p_activateConstraint:edgeBottom];
         
         return view.okidoki;
+    };
+}
+
+- (Okidoki *(^)(void(^)(Okidoki *)))batch {
+    return ^Okidoki *(void(^block)(Okidoki *ok)) {
+        self.batchDepth++;
+        if (!self.batchConstraints) {
+            self.batchConstraints = [NSMutableArray array];
+        }
+        @try {
+            if (block) block(self);
+        } @finally {
+            self.batchDepth--;
+            if (self.batchDepth == 0) {
+                [NSLayoutConstraint activateConstraints:self.batchConstraints];
+                self.batchConstraints = nil;
+            }
+        }
+        return self;
     };
 }
 

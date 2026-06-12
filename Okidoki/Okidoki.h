@@ -27,8 +27,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-// version: 0.1.0
-// 2026-04-20 11:08:14
+// version: 0.2.0
+// 2026-06-12 16:56:53
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
@@ -1743,6 +1743,22 @@ typedef BOOL(^OkidokiTextViewShouldChangeTextInRangesBlock)(UITextView *textView
  @endcode
  */
 @property (nonatomic, strong, readonly) Okidoki *(^edgeToSuperView)(id _Nullable params);
+
+/**
+ Batch activate constraints for better performance.
+ All constraint methods inside the block are collected and activated at once
+ via +[NSLayoutConstraint activateConstraints:] when the block returns.
+ Supports nesting. Safe against exceptions via @finally.
+ @code
+ view.okidoki.batch(^(Okidoki *ok) {
+     ok.leadingAnchor(@[superview, @10])
+       .topAnchor(@[superview, @10])
+       .widthAnchor(@100)
+       .heightAnchor(@50);
+ });
+ @endcode
+ */
+@property (nonatomic, strong, readonly) Okidoki *(^batch)(void(^)(Okidoki *ok));
 
 @end
 

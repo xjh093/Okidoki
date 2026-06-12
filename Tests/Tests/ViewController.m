@@ -60,16 +60,20 @@
     .shadowOpacity(@0.3) // 不透明度 30%
     .shadowOffset(@"{0, 2}") // 向下偏移 2pt
     .shadowRadius(@4)
-    .edgeToSuperView(@20)
-    .widthAnchor(@[self.view, @1, @-40]) // 宽度为屏幕的宽度 * 1 - 40
+    .batch(^(Okidoki *ok) {
+        ok.edgeToSuperView(@20)
+          .widthAnchor(@[self.view, @1, @-40]);
+    })
     .addSubviewWithConfig(UILabel.new, ^(Okidoki * _Nonnull ok) {
         UIView *s = ok.view.superview;
         ok.tag(@101)
         .text(@"Okidoki")
         .font(@"b24")
         .color(@"333333")
-        .leadingAnchor(@[s.leadingAnchor, @20])
-        .topAnchor(@[s, @20]);
+        .batch(^(Okidoki *ok) {
+            ok.leadingAnchor(@[s.leadingAnchor, @20])
+              .topAnchor(@[s, @20]);
+        });
     })
     .addSubviewWithConfig(UILabel.new, ^(Okidoki * _Nonnull ok) {
         UIView *s = ok.view.superview;
@@ -80,9 +84,11 @@
         .font(@"18")
         .color(@"444444")
         .lines(@0)
-        .leadingAnchor(@[s.leadingAnchor, @20])
-        .trailingAnchor(@[s, @-20])
-        .topAnchor(@[b1.bottomAnchor, @10]);
+        .batch(^(Okidoki *ok) {
+            ok.leadingAnchor(@[s.leadingAnchor, @20])
+              .trailingAnchor(@[s, @-20])
+              .topAnchor(@[b1.bottomAnchor, @10]);
+        });
     })
     .addSubviewWithConfig(UIView.new, ^(Okidoki * _Nonnull ok) {
         UIView *s = ok.view.superview;
@@ -130,9 +136,11 @@
         .font(@"18")
         .color(@"444444")
         .lines(@0)
-        .leadingAnchor(@[b1])
-        .trailingAnchor(@[b1])
-        .topAnchor(@[b1.bottomAnchor, @30]);
+        .batch(^(Okidoki *ok) {
+            ok.leadingAnchor(@[b1])
+              .trailingAnchor(@[b1])
+              .topAnchor(@[b1.bottomAnchor, @30]);
+        });
     })
     .addSubviewWithConfig(UIView.new, ^(Okidoki * _Nonnull ok) {
         UIView *s = ok.view.superview;
@@ -201,10 +209,12 @@
         .bdColor(@"CCCCCC")
         .bdWidth(@1)
         .cnRadius(@6)
-        .leadingAnchor(@[b2])
-        .trailingAnchor(@[b2])
-        .topAnchor(@[b2.bottomAnchor, @10])
-        .heightAnchor(@600);
+        .batch(^(Okidoki *ok) {
+            ok.leadingAnchor(@[b2])
+              .trailingAnchor(@[b2])
+              .topAnchor(@[b2.bottomAnchor, @10])
+              .heightAnchor(@600);
+        });
     })
     
     .addSubviewWithConfig([self layout_Example], ^(Okidoki * _Nonnull ok) {
@@ -216,10 +226,12 @@
         .bdColor(@"CCCCCC")
         .bdWidth(@1)
         .cnRadius(@6)
-        .leadingAnchor(@[b2])
-        .trailingAnchor(@[b2])
-        .topAnchor(@[b2.bottomAnchor, @10])
-        .heightAnchor(@800);
+        .batch(^(Okidoki *ok) {
+            ok.leadingAnchor(@[b2])
+              .trailingAnchor(@[b2])
+              .topAnchor(@[b2.bottomAnchor, @10])
+              .heightAnchor(@800);
+        });
     })
     
     .addSubviewWithConfig([self panAnimation_Example], ^(Okidoki * _Nonnull ok) {
@@ -231,10 +243,12 @@
         .bdColor(@"CCCCCC")
         .bdWidth(@1)
         .cnRadius(@6)
-        .leadingAnchor(@[b2])
-        .trailingAnchor(@[b2])
-        .topAnchor(@[b2.bottomAnchor, @10])
-        .heightAnchor(@600);
+        .batch(^(Okidoki *ok) {
+            ok.leadingAnchor(@[b2])
+              .trailingAnchor(@[b2])
+              .topAnchor(@[b2.bottomAnchor, @10])
+              .heightAnchor(@600);
+        });
     })
     
     
@@ -246,9 +260,11 @@
         .text(@"End")
         .font(@"b24")
         .color(@"333333")
-        .leadingAnchor(@[b])
-        .topAnchor(@[b.bottomAnchor, @30])
-        .bottomAnchor(@[s, @-20]);
+        .batch(^(Okidoki *ok) {
+            ok.leadingAnchor(@[b])
+              .topAnchor(@[b.bottomAnchor, @30])
+              .bottomAnchor(@[s, @-20]);
+        });
     })
     ;
 }
@@ -260,18 +276,22 @@
     .bdColor(@"CCCCCC")
     .bdWidth(@1)
     .cnRadius(@6)
-    .leadingAnchor(@[b2])
-    .trailingAnchor(@[b2])
-    .topAnchor(@[b2.bottomAnchor, @10])
+    .batch(^(Okidoki *ok) {
+        ok.leadingAnchor(@[b2])
+          .trailingAnchor(@[b2])
+          .topAnchor(@[b2.bottomAnchor, @10]);
+    })
     .addSubviewWithConfig(UILabel.new, ^(Okidoki * _Nonnull ok) {
         UIView *s = ok.view.superview;
         ok.tag(@1000)
         .text(text)
         .font(@"14")
         .color(@"666666")
-        .leadingAnchor(@[s, @10])
-        .trailingAnchor(@[s, @-10])
-        .topAnchor(@[s, @10]);
+        .batch(^(Okidoki *ok) {
+            ok.leadingAnchor(@[s, @10])
+              .trailingAnchor(@[s, @-10])
+              .topAnchor(@[s, @10]);
+        });
     })
     .addSubviewWithConfig(UILabel.new, ^(Okidoki * _Nonnull ok) {
         UIView *s = ok.view.superview;
@@ -282,9 +302,11 @@
         .font(@"14")
         .color(@"666666")
         .lines(@0)
-        .leadingAnchor(@[b1])
-        .trailingAnchor(@[b1])
-        .topAnchor(@[b1.bottomAnchor, @10]);
+        .batch(^(Okidoki *ok) {
+            ok.leadingAnchor(@[b1])
+              .trailingAnchor(@[b1])
+              .topAnchor(@[b1.bottomAnchor, @10]);
+        });
     })
     .addSubviewWithConfig(UILabel.new, ^(Okidoki * _Nonnull ok) {
         UIView *s = ok.view.superview;
@@ -295,10 +317,12 @@
         .font(@"14")
         .color(@"666666")
         .lines(@0)
-        .leadingAnchor(@[b1])
-        .trailingAnchor(@[b1])
-        .topAnchor(@[b1.bottomAnchor, @10])
-        .bottomAnchor(@[s]);
+        .batch(^(Okidoki *ok) {
+            ok.leadingAnchor(@[b1])
+              .trailingAnchor(@[b1])
+              .topAnchor(@[b1.bottomAnchor, @10])
+              .bottomAnchor(@[s]);
+        });
     });
 }
 
@@ -442,15 +466,19 @@
     box1.okidoki
     .addToSuperview(containerView)
     .bgColor(UIColor.systemRedColor)
-    .widthAnchor(@100)           // 宽度 100
-    .heightAnchor(@100)          // 高度 100
-    .centerXAnchor(@[containerView])  // 水平居中
-    .topAnchor(@[containerView, @(20)])
+    .batch(^(Okidoki *ok) {
+        ok.widthAnchor(@100)
+          .heightAnchor(@100)
+          .centerXAnchor(@[containerView])
+          .topAnchor(@[containerView, @(20)]);
+    })
     .addSubviewWithConfig(UILabel.new, ^(Okidoki * _Nonnull ok) {
         UIView *s = ok.view.superview;
         
-        ok.widthAnchor(@[s])
-        .heightAnchor(@40)
+        ok.batch(^(Okidoki *ok) {
+            ok.widthAnchor(@[s])
+              .heightAnchor(@40);
+        })
         .text(@"手势事件")
         .align(@1);
     })
@@ -493,10 +521,12 @@
     box2.okidoki
         .addToSuperview(containerView)
         .bgColor(UIColor.systemGreenColor)
-        .topAnchor(@[box1.bottomAnchor, @20])        // 距离顶部 20
-        .leadingAnchor(@[containerView, @20])    // 距离左边 20
-        .trailingAnchor(@[containerView, @(-20)]) // 距离右边 20（负数）
-        .bottomAnchor(@[containerView, @(-100)]);  // 距离底部 20（负数）
+        .batch(^(Okidoki *ok) {
+            ok.topAnchor(@[box1.bottomAnchor, @20])
+              .leadingAnchor(@[containerView, @20])
+              .trailingAnchor(@[containerView, @(-20)])
+              .bottomAnchor(@[containerView, @(-100)]);
+        });
     
     // 示例 3: 垂直排列两个视图
     UIView *topView = [[UIView alloc] init];
@@ -505,19 +535,23 @@
     topView.okidoki
         .addToSuperview(box2)
         .bgColor(UIColor.systemBlueColor)
-        .topAnchor(@[box2, @20])
-        .leadingAnchor(@[box2, @20])
-        .trailingAnchor(@[box2, @(-20)])
-        .heightAnchor(@100);
+        .batch(^(Okidoki *ok) {
+            ok.topAnchor(@[box2, @20])
+              .leadingAnchor(@[box2, @20])
+              .trailingAnchor(@[box2, @(-20)])
+              .heightAnchor(@100);
+        });
     
     bottomView.okidoki
         .addToSuperview(box2)
         .bgColor(UIColor.systemGrayColor)
-        .topAnchor(@[topView.bottomAnchor, @20])  // 相对于 topView 底部，间距 20
-        .leadingAnchor(@[box2, @20])
-        .trailingAnchor(@[box2, @(-20)])
-//        .heightAnchor(@100)
-        .bottomAnchor(@[box2.bottomAnchor, @(-20)]);
+        .batch(^(Okidoki *ok) {
+            ok.topAnchor(@[topView.bottomAnchor, @20])
+              .leadingAnchor(@[box2, @20])
+              .trailingAnchor(@[box2, @(-20)])
+//              .heightAnchor(@100)
+              .bottomAnchor(@[box2.bottomAnchor, @(-20)]);
+        });
     
     // 示例 4: 水平排列三个等宽视图
     UIView *left = [[UIView alloc] init];
@@ -527,46 +561,56 @@
     left.okidoki
         .addToSuperview(topView)
         .bgColor(@"#A29BFE")
-        .topAnchor(@[topView, @10])
-        .leadingAnchor(@[topView, @20])
-        .widthAnchor(@[topView, @(1.0/3.0), @(-26.67)])  // 1/3 宽度，减去边距
-        .heightAnchor(@80);
+        .batch(^(Okidoki *ok) {
+            ok.topAnchor(@[topView, @10])
+              .leadingAnchor(@[topView, @20])
+              .widthAnchor(@[topView, @(1.0/3.0), @(-26.67)])
+              .heightAnchor(@80);
+        });
     
     middle.okidoki
         .addToSuperview(topView)
         .bgColor(@"#6C5CE7")
-        .topAnchor(@[topView, @10])
-        .leadingAnchor(@[left.trailingAnchor, @10])
-        .widthAnchor(@[left])  // 与 left 等宽
-        .heightAnchor(@80);
+        .batch(^(Okidoki *ok) {
+            ok.topAnchor(@[topView, @10])
+              .leadingAnchor(@[left.trailingAnchor, @10])
+              .widthAnchor(@[left])
+              .heightAnchor(@80);
+        });
     
     right.okidoki
         .addToSuperview(topView)
         .bgColor(@"#A29BFE")
-        .topAnchor(@[topView, @10])
-        .leadingAnchor(@[middle.trailingAnchor, @10])
-        .trailingAnchor(@[topView, @(-20)])
-        .heightAnchor(@80);
+        .batch(^(Okidoki *ok) {
+            ok.topAnchor(@[topView, @10])
+              .leadingAnchor(@[middle.trailingAnchor, @10])
+              .trailingAnchor(@[topView, @(-20)])
+              .heightAnchor(@80);
+        });
     
     // 示例 5: 按比例布局
     UIView *halfWidthView = [[UIView alloc] init];
     halfWidthView.okidoki
         .addToSuperview(bottomView)
         .bgColor(UIColor.systemYellowColor)
-        .topAnchor(@[bottomView, @20])
-        .leadingAnchor(@[bottomView, @30])
-        .widthAnchor(@[bottomView, @0.5, @0])   // 父视图宽度的 50%
-        .heightAnchor(@[bottomView, @0.3, @0]); // 父视图高度的 30%
+        .batch(^(Okidoki *ok) {
+            ok.topAnchor(@[bottomView, @20])
+              .leadingAnchor(@[bottomView, @30])
+              .widthAnchor(@[bottomView, @0.5, @0])
+              .heightAnchor(@[bottomView, @0.3, @0]);
+        });
     
     // 示例 6: 混合使用 frame 和 AutoLayout（不推荐，但可以做到）
     UIView *mixedView = [[UIView alloc] init];
     mixedView.okidoki
         .addToSuperview(halfWidthView)
         .bgColor(UIColor.brownColor)
-        .topAnchor(@[halfWidthView, @50])
-        .leadingAnchor(@[halfWidthView, @50])
-        .widthAnchor(@100)
-        .heightAnchor(@60);
+        .batch(^(Okidoki *ok) {
+            ok.topAnchor(@[halfWidthView, @50])
+              .leadingAnchor(@[halfWidthView, @50])
+              .widthAnchor(@100)
+              .heightAnchor(@60);
+        });
     
     // 示例 7: UILabel 使用 AutoLayout
     UILabel *label = [[UILabel alloc] init];
@@ -576,10 +620,12 @@
         .font(@"b16")
         .color(@"#2D3436")
         .bgColor(@"#DFE6E9")
-        .centerXAnchor(@[bottomView])
-        .topAnchor(@[mixedView.bottomAnchor, @30])
-        .widthAnchor(@[bottomView, @0.5, @10])
-        .heightAnchor(@44);
+        .batch(^(Okidoki *ok) {
+            ok.centerXAnchor(@[bottomView])
+              .topAnchor(@[mixedView.bottomAnchor, @30])
+              .widthAnchor(@[bottomView, @0.5, @10])
+              .heightAnchor(@44);
+        });
     
     // 示例 8: UIButton 使用 AutoLayout
     UIButton *button = [[UIButton alloc] init];
@@ -588,10 +634,12 @@
     .title(@"点击我")
     .bgColor(UIColor.systemBlueColor)
     .cnRadius(@8)
-    .topAnchor(@[box2.bottomAnchor, @(10)])
-    .centerXAnchor(@[containerView])
-    .widthAnchor(@200)
-    .heightAnchor(@44)
+    .batch(^(Okidoki *ok) {
+        ok.topAnchor(@[box2.bottomAnchor, @(10)])
+          .centerXAnchor(@[containerView])
+          .widthAnchor(@200)
+          .heightAnchor(@44);
+    })
     .addControlEvent(UIControlEventTouchUpInside, ^(UIButton *button) {
         NSLog(@"点击事件");
         
@@ -603,10 +651,12 @@
     view9.okidoki
     .addToSuperview(bottomView)
     .bgColor(@"#DFE6E9")
-    .topAnchor(@[label.bottomAnchor, @30])
-    .leadingAnchor(@[bottomView, @20])
-    .trailingAnchor(@[bottomView, @(-20)])
-    .bottomAnchor(@[bottomView, @(-20)])
+    .batch(^(Okidoki *ok) {
+        ok.topAnchor(@[label.bottomAnchor, @30])
+          .leadingAnchor(@[bottomView, @20])
+          .trailingAnchor(@[bottomView, @(-20)])
+          .bottomAnchor(@[bottomView, @(-20)]);
+    })
     .addSubviewWithConfig(UIView.new, ^(Okidoki *ok){
         ok.bgColor(@"#00B894")
         .cnRadius(@20)
@@ -634,10 +684,12 @@
     .addSubviewWithConfig_superView(UIView.new, ^(Okidoki *ok, UIView *superView){
         ok.bgColor(UIColor.redColor)
         .cnRadius(@3)
-        .leadingAnchor(@[superView, @0])
-        .centerYAnchor(@[superView])
-        .widthAnchor(@6)
-        .heightAnchor(@100);
+        .batch(^(Okidoki *ok) {
+            ok.leadingAnchor(@[superView, @0])
+              .centerYAnchor(@[superView])
+              .widthAnchor(@6)
+              .heightAnchor(@100);
+        });
     });
     
     return containerView;
@@ -646,48 +698,6 @@
 
 - (UIView *)panAnimation_Example
 {
-#if 0
-    UIView *box1 = UIView.new;
-    UIView *box2 = UIView.new;
-    
-    __block NSLayoutConstraint *box1LeadingConstraint;
-    __block NSLayoutConstraint *box1TopConstraint;
-
-    box1.okidoki
-    .addToSuperview(self.view)
-    .bgColor(@"FF0000")
-//    .leadingAnchorWithConstraint(@[self.view, @30], ^(NSLayoutConstraint *constraint) {
-//        box1LeadingConstraint = constraint;
-//    })
-//    .topAnchorWithConstraint(@[self.view, @70], ^(NSLayoutConstraint *constraint) {
-//        box1TopConstraint = constraint;
-//    })
-    .widthAnchor(@100)
-    .heightAnchor(@100)
-    .panGesture(^(UIPanGestureRecognizer *pan) {
-        CGPoint translation = [pan translationInView:pan.view.superview];
-        box1LeadingConstraint.constant += translation.x;
-        box1TopConstraint.constant += translation.y;
-        [pan setTranslation:CGPointZero inView:pan.view.superview];
-    });
-    
-    box1LeadingConstraint = [box1.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:30];
-    box1TopConstraint = [box1.topAnchor constraintEqualToAnchor:self.view.topAnchor constant:70];
-    box1LeadingConstraint.active = YES;
-    box1TopConstraint.active = YES;
-
-    // box2 现在会正确跟随了！
-    box2.okidoki
-    .addToSuperview(self.view)
-    .bgColor(UIColor.systemGreenColor)
-    .leadingAnchor(@[box1, @10])
-    .topAnchor(@[box1.bottomAnchor, @20])
-    .rightAnchor(@[self.view, @(-20)])
-    .bottomAnchor(@[self.view, @(-20)])
-    .widthAnchorGreaterOrEqual(@100)   // 现在会生效！
-    .heightAnchorGreaterOrEqual(@100);  // 现在会生效！
-#else
-    
     UIView *view = [[UIView alloc] init];
     
     UIView *box1 = UIView.new;
@@ -719,12 +729,14 @@
     box2.okidoki
     .addToSuperview(view)
     .bgColor(UIColor.systemGreenColor.okidokiAlpha(0.9))
-    .leadingAnchor(@[box1, @10])
-    .topAnchor(@[box1.bottomAnchor, @20])
-    .rightAnchor(@[view, @(-100)])
-    .bottomAnchor(@[view, @(-100)])
-    .widthAnchorGreaterOrEqual(@100)
-    .heightAnchorGreaterOrEqual(@[@100]);
+    .batch(^(Okidoki *ok) {
+        ok.leadingAnchor(@[box1, @10])
+          .topAnchor(@[box1.bottomAnchor, @20])
+          .rightAnchor(@[view, @(-100)])
+          .bottomAnchor(@[view, @(-100)])
+          .widthAnchorGreaterOrEqual(@100)
+          .heightAnchorGreaterOrEqual(@[@100]);
+    });
     
     //NSLog(@"box2.constraints = %@", box2.constraints);
     //NSLog(@"self.view.constraints = %@", box2.superview.constraints);
@@ -748,7 +760,6 @@
     }
     
     return view;
-#endif
 }
 
 
