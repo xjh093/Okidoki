@@ -76,11 +76,11 @@
             ok.leadingAnchor(@[s.leadingAnchor, @20])
               .topAnchor(@[s, @20]);
         })
-        .whenEnabled(^(UILabel * _Nonnull view) {
-            view.textColor = [UIColor systemOrangeColor];
+        .whenEnabled(^(UIView * _Nonnull view) {
+            view.okidoki.color([UIColor systemOrangeColor]);
         })
-        .whenDisabled(^(UILabel * _Nonnull view) {
-            view.textColor = [UIColor systemGreenColor];
+        .whenDisabled(^(UIView * _Nonnull view) {
+            view.okidoki.color([UIColor systemGreenColor]);
         });
     })
     .addSubviewWithConfig(UIButton.new, ^(Okidoki * _Nonnull ok) {
@@ -126,6 +126,15 @@
                           text:@"1.1、基础 UI 属性"
                         detail:@"链式设置 tag、透明度、背景色、圆角、边框等。"
                           code:@"代码示例：\n```\nview.okidoki\n.tag(@100)\n.alpha(@0.5)\n.cnRadius(@3);\n```"];
+        
+        UIView *b3 = [s viewWithTag:103];
+        b3.okidoki
+        .mtBounds(@1)
+        .gradient(@[
+            [UIColor.systemRedColor colorWithAlphaComponent:0.8],
+            [UIColor.systemGreenColor colorWithAlphaComponent:0.8],
+        ])
+        .gradientDirection(2);
     })
     .addSubviewWithConfig(UIView.new, ^(Okidoki * _Nonnull ok) {
         UIView *s = ok.view.superview;

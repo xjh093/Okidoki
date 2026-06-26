@@ -69,6 +69,14 @@ FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintCenterY;
 FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintCenterYGTE;
 FOUNDATION_EXPORT NSString * _Nonnull const kOkidokiConstraintCenterYLTE;
 
+/** 渐变方向枚举，配合 gradientDirection 使用。 */
+typedef NS_ENUM(NSInteger, OkidokiGradientDirection) {
+    OkidokiGradientDirectionVertical        = 0,  ///< 上 → 下（默认）
+    OkidokiGradientDirectionHorizontal      = 1,  ///< 左 → 右
+    OkidokiGradientDirectionDiagonalDownRight = 2, ///< 左上 → 右下
+    OkidokiGradientDirectionDiagonalDownLeft  = 3, ///< 右上 → 左下
+};
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface Okidoki : NSObject
@@ -163,14 +171,32 @@ NS_ASSUME_NONNULL_BEGIN
  以便后续 userInteractionEnabled 设为 YES 时再次触发。
  block: void(^)(UIView *view)
  */
-@property (nonatomic, strong, readonly) Okidoki *(^whenEnabled)(void(^block)(__kindof UIView *view));
+@property (nonatomic, strong, readonly) Okidoki *(^whenEnabled)(void(^block)(UIView *view));
 
 /**
  注册 block；当前已是 disabled 状态则立即调用，同时保存到 view 上，
  以便后续 userInteractionEnabled 设为 NO 时再次触发。
  block: void(^)(UIView *view)
  */
-@property (nonatomic, strong, readonly) Okidoki *(^whenDisabled)(void(^block)(__kindof UIView *view));
+@property (nonatomic, strong, readonly) Okidoki *(^whenDisabled)(void(^block)(UIView *view));
+
+/**
+ 在链式调用中插入任意逻辑，block 提供当前 view 引用，执行后继续链式。
+ block: void(^)(UIView *view)
+ */
+@property (nonatomic, strong, readonly) Okidoki *(^then)(void(^block)(UIView *view));
+
+/**
+ 设置渐变颜色，内部使用 CAGradientLayer 插入 layer 最底层，随父视图 layout 自动同步 frame。
+ colors: NSArray<UIColor *>
+ */
+@property (nonatomic, strong, readonly) Okidoki *(^gradient)(NSArray<UIColor *> *colors);
+
+/**
+ 设置渐变方向。
+ direction: OkidokiGradientDirection（枚举值）
+ */
+@property (nonatomic, strong, readonly) Okidoki *(^gradientDirection)(NSInteger direction);
 
 
 #pragma mark - Gesture

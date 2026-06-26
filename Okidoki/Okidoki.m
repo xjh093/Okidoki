@@ -103,6 +103,19 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number)
     }; \
 }
 
+static const void *kOkidokiGradientLayerKey = &kOkidokiGradientLayerKey;
+
+// 隐藏的布局观察视图：随父视图 layoutSubviews 自动同步渐变层 frame
+@interface _OkidokiGradientObserver : UIView
+@end
+@implementation _OkidokiGradientObserver
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    CAGradientLayer *layer = objc_getAssociatedObject(self.superview, kOkidokiGradientLayerKey);
+    if (layer) layer.frame = self.superview.bounds;
+}
+@end
+
 // 内部 Target 类，用于持有手势的 block
 @interface _OkidokiGestureTarget : NSObject
 @property (nonatomic, copy) void (^block)(id gesture);
@@ -958,6 +971,18 @@ CGFloat Okidoki_NumberAdaptor(CGFloat number)
         }
         [self.batchConstraints addObject:constraint];
     } else {
+        // 非批量模式：先 deactivate 同 identifier 的旧约束，再激活新约束
+        if (constraint.identifier) {
+            NSString *targetId = constraint.identifier;
+            NSArray *searchIn = [self.view.constraints arrayByAddingObjectsFromArray:
+                                 self.view.superview.constraints ?: @[]];
+            for (NSLayoutConstraint *existing in searchIn) {
+                if ([existing.identifier isEqualToString:targetId]) {
+                    existing.active = NO;
+                    break;
+                }
+            }
+        }
         constraint.active = YES;
     }
 }
@@ -1149,7 +1174,7 @@ kOkidoki_imp(userInteractionEnabled, ({
     }
 }))
 
-- (Okidoki *(^)(void(^)(__kindof UIView *)))whenEnabled {
+- (Okidoki *(^)(void(^)(UIView *)))whenEnabled {
     return ^id(void(^block)(UIView *view)) {
         UIView *v = self.view;
         objc_setAssociatedObject(v, kOkidokiWhenEnabledBlockKey, block, OBJC_ASSOCIATION_COPY_NONATOMIC);
@@ -1158,7 +1183,7 @@ kOkidoki_imp(userInteractionEnabled, ({
     };
 }
 
-- (Okidoki *(^)(void(^)(__kindof UIView *)))whenDisabled {
+- (Okidoki *(^)(void(^)(UIView *)))whenDisabled {
     return ^id(void(^block)(UIView *view)) {
         UIView *v = self.view;
         objc_setAssociatedObject(v, kOkidokiWhenDisabledBlockKey, block, OBJC_ASSOCIATION_COPY_NONATOMIC);
@@ -1166,6 +1191,78 @@ kOkidoki_imp(userInteractionEnabled, ({
         return self;
     };
 }
+
+- (Okidoki *(^)(void(^)(UIView *)))then {
+    return ^id(void(^block)(UIView *view)) {
+        if (block) block(self.view);
+        return self;
+    };
+}
+
+
+#pragma mark - Gradient
+
+/// 懒加载渐变层：首次访问时创建并插入 layer 最底层，同时添加布局观察子视图自动同步 frame。
+- (CAGradientLayer *)p_gradientLayerForView:(UIView *)view {
+    CAGradientLayer *existing = objc_getAssociatedObject(view, kOkidokiGradientLayerKey);
+    if (existing) return existing;
+
+    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
+    gradientLayer.frame      = view.bounds;
+    gradientLayer.startPoint = CGPointMake(0.5, 0);
+    gradientLayer.endPoint   = CGPointMake(0.5, 1);
+    [view.layer insertSublayer:gradientLayer atIndex:0];
+    objc_setAssociatedObject(view, kOkidokiGradientLayerKey, gradientLayer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+
+    // 添加布局观察子视图，利用其 layoutSubviews 自动同步渐变层 frame
+    _OkidokiGradientObserver *observer = [[_OkidokiGradientObserver alloc] init];
+    observer.hidden                = YES;
+    observer.userInteractionEnabled = NO;
+    observer.autoresizingMask      = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [view addSubview:observer];
+
+    return gradientLayer;
+}
+
+- (Okidoki *(^)(NSArray<UIColor *> *))gradient {
+    return ^id(NSArray<UIColor *> *colors) {
+        CAGradientLayer *layer = [self p_gradientLayerForView:self.view];
+        NSMutableArray *cgColors = [NSMutableArray arrayWithCapacity:colors.count];
+        for (UIColor *c in colors) {
+            [cgColors addObject:(__bridge id)c.CGColor];
+        }
+        layer.colors = cgColors;
+        layer.frame  = self.view.bounds;
+        return self;
+    };
+}
+
+- (Okidoki *(^)(NSInteger))gradientDirection {
+    return ^id(NSInteger direction) {
+        CAGradientLayer *layer = [self p_gradientLayerForView:self.view];
+        switch (direction) {
+            case 1: // horizontal
+                layer.startPoint = CGPointMake(0, 0.5);
+                layer.endPoint   = CGPointMake(1, 0.5);
+                break;
+            case 2: // diagonalDownRight
+                layer.startPoint = CGPointMake(0, 0);
+                layer.endPoint   = CGPointMake(1, 1);
+                break;
+            case 3: // diagonalDownLeft
+                layer.startPoint = CGPointMake(1, 0);
+                layer.endPoint   = CGPointMake(0, 1);
+                break;
+            default: // vertical
+                layer.startPoint = CGPointMake(0.5, 0);
+                layer.endPoint   = CGPointMake(0.5, 1);
+                break;
+        }
+        layer.frame = self.view.bounds;
+        return self;
+    };
+}
+
 
 #pragma mark - Gesture
 
