@@ -8,6 +8,8 @@
 
 #import "ViewController.h"
 #import "Okidoki.h"
+#import "OkidokiLabel.h"
+
 
 @interface ViewController ()
 @property (nonatomic,  strong) UITableView *tableView;
@@ -73,9 +75,33 @@
         .batch(^(Okidoki *ok) {
             ok.leadingAnchor(@[s.leadingAnchor, @20])
               .topAnchor(@[s, @20]);
+        })
+        .whenEnabled(^(UILabel * _Nonnull view) {
+            view.textColor = [UIColor systemOrangeColor];
+        })
+        .whenDisabled(^(UILabel * _Nonnull view) {
+            view.textColor = [UIColor systemGreenColor];
         });
     })
-    .addSubviewWithConfig(UILabel.new, ^(Okidoki * _Nonnull ok) {
+    .addSubviewWithConfig(UIButton.new, ^(Okidoki * _Nonnull ok) {
+        UIView *s = ok.view.superview;
+        UIView *b1 = [s viewWithTag:101];
+        
+        ok.title(@"点击~")
+        .font(@"18")
+        .color(@"ffffff")
+        .bgColor(UIColor.systemBlueColor)
+        .batch(^(Okidoki *ok) {
+            ok.leadingAnchor(@[b1.trailingAnchor, @20])
+              .heightAnchor(@30)
+              .topAnchor(@[b1]);
+        })
+        .tapGesture(^(UITapGestureRecognizer *tap) {
+            UILabel *label = [self.view viewWithTag:101];
+            label.okidoki.userInteractionEnabled(@(!label.userInteractionEnabled));
+        });
+    })
+    .addSubviewWithConfig(OkidokiLabel.new, ^(Okidoki * _Nonnull ok) {
         UIView *s = ok.view.superview;
         UIView *b1 = [s viewWithTag:101];
         
@@ -84,6 +110,8 @@
         .font(@"18")
         .color(@"444444")
         .lines(@0)
+        .textInsets(UIEdgeInsetsMake(5, 10, 5, 10))
+        .debugBorder(@YES)
         .batch(^(Okidoki *ok) {
             ok.leadingAnchor(@[s.leadingAnchor, @20])
               .trailingAnchor(@[s, @-20])

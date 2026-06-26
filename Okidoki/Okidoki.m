@@ -28,6 +28,7 @@
 //  SOFTWARE.
 
 #import "Okidoki.h"
+#import "OkidokiLabel.h"
 #import <objc/runtime.h>
 
 // AutoLayout constraint identifiers
@@ -1129,12 +1130,42 @@ kOkidoki_imp(addSubview, ({
     };
 }
 
+
+static const void *kOkidokiWhenEnabledBlockKey  = &kOkidokiWhenEnabledBlockKey;
+static const void *kOkidokiWhenDisabledBlockKey = &kOkidokiWhenDisabledBlockKey;
+
 kOkidoki_imp(userInteractionEnabled, ({
     if ([userInteractionEnabled isKindOfClass:[NSNumber class]] ||
         [userInteractionEnabled isKindOfClass:[NSString class]]) {
-        view.userInteractionEnabled = [userInteractionEnabled boolValue];
+        BOOL b = [userInteractionEnabled boolValue];
+        view.userInteractionEnabled = b;
+        if (b) {
+            void(^blk)(UIView *) = objc_getAssociatedObject(view, kOkidokiWhenEnabledBlockKey);
+            if (blk) blk(view);
+        } else {
+            void(^blk)(UIView *) = objc_getAssociatedObject(view, kOkidokiWhenDisabledBlockKey);
+            if (blk) blk(view);
+        }
     }
 }))
+
+- (Okidoki *(^)(void(^)(__kindof UIView *)))whenEnabled {
+    return ^id(void(^block)(UIView *view)) {
+        UIView *v = self.view;
+        objc_setAssociatedObject(v, kOkidokiWhenEnabledBlockKey, block, OBJC_ASSOCIATION_COPY_NONATOMIC);
+        if (v.isUserInteractionEnabled && block) block(v);
+        return self;
+    };
+}
+
+- (Okidoki *(^)(void(^)(__kindof UIView *)))whenDisabled {
+    return ^id(void(^block)(UIView *view)) {
+        UIView *v = self.view;
+        objc_setAssociatedObject(v, kOkidokiWhenDisabledBlockKey, block, OBJC_ASSOCIATION_COPY_NONATOMIC);
+        if (!v.isUserInteractionEnabled && block) block(v);
+        return self;
+    };
+}
 
 #pragma mark - Gesture
 
@@ -1405,6 +1436,30 @@ kOkidoki_imp(highlightedTextColor, ({
         }
     }
 }))
+
+- (Okidoki *(^)(UIEdgeInsets))textInsets {
+    return ^id(UIEdgeInsets textInsets) {
+        UIView *view = self.view;
+        if ([view isKindOfClass:[OkidokiLabel class]]) {
+            [(OkidokiLabel *)view setTextInsets:textInsets];
+        }
+        return self;
+    };
+}
+
+#ifdef DEBUG
+kOkidoki_imp(debugBorder, ({
+    if ([view isKindOfClass:[OkidokiLabel class]]) {
+        BOOL b = NO;
+        if ([debugBorder isKindOfClass:[NSNumber class]]) {
+            b = [(NSNumber *)debugBorder boolValue];
+        } else if ([debugBorder isKindOfClass:[NSString class]]) {
+            b = [(NSString *)debugBorder boolValue];
+        }
+        [(OkidokiLabel *)view setDebugBorder:b];
+    }
+}))
+#endif
 
 - (Okidoki*(^)(id,id))attributedSubstring{
     return ^id(id string, id value){

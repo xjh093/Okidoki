@@ -27,8 +27,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-// version: 0.2.0
-// 2026-06-12 16:56:53
+// version: 0.2.1
+// 2026-06-26 14:26:30
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
@@ -157,6 +157,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** @(YES) or @(NO),NSString */
 @property (nonatomic, strong, readonly) Okidoki *(^userInteractionEnabled)(id userInteractionEnabled);
+
+/**
+ 注册 block；当前已是 enabled 状态则立即调用，同时保存到 view 上，
+ 以便后续 userInteractionEnabled 设为 YES 时再次触发。
+ block: void(^)(UIView *view)
+ */
+@property (nonatomic, strong, readonly) Okidoki *(^whenEnabled)(void(^block)(__kindof UIView *view));
+
+/**
+ 注册 block；当前已是 disabled 状态则立即调用，同时保存到 view 上，
+ 以便后续 userInteractionEnabled 设为 NO 时再次触发。
+ block: void(^)(UIView *view)
+ */
+@property (nonatomic, strong, readonly) Okidoki *(^whenDisabled)(void(^block)(__kindof UIView *view));
 
 
 #pragma mark - Gesture
@@ -296,6 +310,13 @@ NS_ASSUME_NONNULL_BEGIN
 /** UIColor,NSString(eg.FFFEEE,#FFFEEE,0xFFFEEE,0XFFFEEE) */
 @property (nonatomic, strong, readonly) Okidoki *(^highlightedTextColor)(id highlightedTextColor);
 
+/** OkidokiLabel only. UIEdgeInsets 文字内边距，left/right 按 leading/trailing 语义自动适配 RTL。 */
+@property (nonatomic, strong, readonly) Okidoki *(^textInsets)(UIEdgeInsets textInsets);
+
+#ifdef DEBUG
+/** OkidokiLabel only. @(YES)/@(NO) — 可视化展示 textInsets 区域，仅 DEBUG 生效。 */
+@property (nonatomic, strong, readonly) Okidoki *(^debugBorder)(id debugBorder);
+#endif
 
 #pragma mark - UIControl
 

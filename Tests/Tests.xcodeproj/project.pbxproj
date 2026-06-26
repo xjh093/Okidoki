@@ -16,6 +16,8 @@
 		1861F28624D2ED6E00F98728 /* TestsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1861F28524D2ED6E00F98728 /* TestsTests.m */; };
 		1861F2A724D2EF5600F98728 /* Okidoki.m in Sources */ = {isa = PBXBuildFile; fileRef = 1861F2A624D2EF5600F98728 /* Okidoki.m */; };
 		1861F2A824D2EF5600F98728 /* Okidoki.m in Sources */ = {isa = PBXBuildFile; fileRef = 1861F2A624D2EF5600F98728 /* Okidoki.m */; };
+		3FB4478D2FEE2D8A00429EFD /* OkidokiLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB4478C2FEE2D8A00429EFD /* OkidokiLabel.m */; };
+		3FB4478E2FEE2D8A00429EFD /* OkidokiLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FB4478C2FEE2D8A00429EFD /* OkidokiLabel.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +46,8 @@
 		1861F28724D2ED6E00F98728 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1861F2A524D2EF5600F98728 /* Okidoki.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Okidoki.h; sourceTree = "<group>"; };
 		1861F2A624D2EF5600F98728 /* Okidoki.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Okidoki.m; sourceTree = "<group>"; };
+		3FB4478B2FEE2D8A00429EFD /* OkidokiLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OkidokiLabel.h; sourceTree = "<group>"; };
+		3FB4478C2FEE2D8A00429EFD /* OkidokiLabel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OkidokiLabel.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,6 +117,8 @@
 			children = (
 				1861F2A524D2EF5600F98728 /* Okidoki.h */,
 				1861F2A624D2EF5600F98728 /* Okidoki.m */,
+				3FB4478B2FEE2D8A00429EFD /* OkidokiLabel.h */,
+				3FB4478C2FEE2D8A00429EFD /* OkidokiLabel.m */,
 			);
 			name = Okidoki;
 			path = ../../Okidoki;
@@ -222,6 +228,7 @@
 				1861F2A724D2EF5600F98728 /* Okidoki.m in Sources */,
 				1861F26B24D2ED6900F98728 /* AppDelegate.m in Sources */,
 				1861F27C24D2ED6E00F98728 /* main.m in Sources */,
+				3FB4478D2FEE2D8A00429EFD /* OkidokiLabel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -231,6 +238,7 @@
 			files = (
 				1861F2A824D2EF5600F98728 /* Okidoki.m in Sources */,
 				1861F28624D2ED6E00F98728 /* TestsTests.m in Sources */,
+				3FB4478E2FEE2D8A00429EFD /* OkidokiLabel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
