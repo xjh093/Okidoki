@@ -27,8 +27,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-// version: 0.2.1
-// 2026-06-26 14:26:30
+// version: 0.2.3
+// 2026-06-29 15:47:51
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>

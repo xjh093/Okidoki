@@ -971,13 +971,14 @@ static const void *kOkidokiGradientLayerKey = &kOkidokiGradientLayerKey;
         }
         [self.batchConstraints addObject:constraint];
     } else {
-        // 非批量模式：先 deactivate 同 identifier 的旧约束，再激活新约束
+        // 非批量模式：先 deactivate 同 identifier 且属于当前 view 的旧约束，再激活新约束
         if (constraint.identifier) {
             NSString *targetId = constraint.identifier;
             NSArray *searchIn = [self.view.constraints arrayByAddingObjectsFromArray:
                                  self.view.superview.constraints ?: @[]];
             for (NSLayoutConstraint *existing in searchIn) {
-                if ([existing.identifier isEqualToString:targetId]) {
+                if ([existing.identifier isEqualToString:targetId] &&
+                    (existing.firstItem == self.view || existing.secondItem == self.view)) {
                     existing.active = NO;
                     break;
                 }
