@@ -12,6 +12,7 @@
 
 
 @interface ViewController ()
+@property (nonatomic,  strong) UILabel *textLabel;
 @property (nonatomic,  strong) UITableView *tableView;
 @property (nonatomic,  strong) UICollectionView *collectionView;
 @end
@@ -45,6 +46,8 @@
 
 - (void)basic_Example
 {
+    __block UILabel *label1;
+
     UIView.new.okidoki
     .addToSuperview(UIScrollView.new.okidoki
                     .addToSuperview(self.view)
@@ -69,6 +72,7 @@
     .addSubviewWithConfig(UILabel.new, ^(Okidoki * _Nonnull ok) {
         UIView *s = ok.view.superview;
         ok.tag(@101)
+        .assignTo(&self->_textLabel)
         .text(@"Okidoki")
         .font(@"b24")
         .color(@"333333")
@@ -106,6 +110,7 @@
         UIView *b1 = [s viewWithTag:101];
         
         ok.tag(@102)
+        .assignTo(&label1)
         .text(@"1、这是一个用于 iOS 开发的 Objective-C 库，核心功能是用链式语法来设置 UIKit 控件的属性。")
         .font(@"18")
         .color(@"444444")
@@ -304,6 +309,9 @@
         });
     })
     ;
+    
+    NSLog(@"text 1: %@", self.textLabel.text);
+    NSLog(@"text 2: %@", label1.text);
 }
 
 - (void)setupCodeSubView:(Okidoki *)ok tag:(NSInteger)tag subView:(UIView *)b2 text:(NSString *)text detail:(NSString *)detail code:(NSString *)code

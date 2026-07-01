@@ -27,8 +27,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-// version: 0.2.3
-// 2026-06-29 15:47:51
+// version: 0.2.4
+// 2026-07-01 17:51:40
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
@@ -197,6 +197,25 @@ NS_ASSUME_NONNULL_BEGIN
  direction: OkidokiGradientDirection（枚举值）
  */
 @property (nonatomic, strong, readonly) Okidoki *(^gradientDirection)(NSInteger direction);
+
+/**
+ Assign the current UIView to an ivar or a __block local variable.
+
+ @note Inside a block, use &self->_ivarName (recommended):
+       - &self.prop      ❌ compile error  — property getter has no address
+       - &_ivarName      ⚠️ warning       — implicitly captures self
+       - &self->_ivarName ✅ correct       — explicit ivar access, no warning
+       - __block local    ✅ correct       — __block var is mutable inside block
+ @code
+ // Recommended: explicit ivar access inside a block
+ ok.assignTo(&self->_label).frame(@"{{0,0},{100,30}}");
+
+ // Also OK: __block local variable
+ __block UILabel *label;
+ ok.assignTo(&label).frame(@"{{0,0},{100,30}}");
+ @endcode
+ */
+@property (nonatomic, strong, readonly) Okidoki *(^assignTo)(__strong id _Nullable * _Nullable target);
 
 
 #pragma mark - Gesture

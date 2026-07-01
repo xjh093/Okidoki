@@ -1264,6 +1264,15 @@ kOkidoki_imp(userInteractionEnabled, ({
     };
 }
 
+- (Okidoki *(^)(__strong id *))assignTo {
+    return ^Okidoki *(__strong id *target) {
+        UIView *view = self.view;
+        if (target) {
+            *target = view;
+        }
+        return view.okidoki;
+    };
+}
 
 #pragma mark - Gesture
 
